@@ -2,19 +2,31 @@
 
 import Link from "next/link";
 import Image from 'next/image';
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import logo from '@/content/logo.png';
+import { useCart } from "@/hooks/use-cart";
+import { Button } from "./ui/Button";
 
 export default function NavBar() {
-    const [isOpen, setIsOpen] = useState(false)
+    const [isOpen, setIsOpen] = useState(false);
+    const [numberItems, setNumberItems] = useState(0);
+    const cart = useCart();
+
+    useEffect( () => {
+      if(cart.items && cart.items.length > 0){
+        setNumberItems( cart.items.reduce((acc, obj) => { return acc + obj.qty; }, 0) );
+      }
+      else setNumberItems(0);
+
+    }, [ cart , ])
 
     const toggleMenu = () => {
       setIsOpen(!isOpen)
     }
   
     return (
-      <nav className="bg-white-800 fixed w-full top-0 left-0 z-50">
+      <nav className="bg-white fixed w-full top-0 left-0 z-50">
         <div className="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
             {/* Logo */}
             <Link href="/" className="text-2xl font-semibold">
@@ -27,7 +39,7 @@ export default function NavBar() {
                 <div className="hover:text-gray-500">About Us</div>
             </Link>
             <Link href="/shop">
-                <div className="hover:text-gray-500">Shop</div>
+                <div className="hover:text-gray-500">Pre-order</div>
             </Link>
             <Link href="/contact">
                 <div className="hover:text-gray-500">Find Us</div>
@@ -37,10 +49,12 @@ export default function NavBar() {
 
         {/* Login Button */}
         <div>
-          <Link href="/login">
-            <div className="px-6 py-2 bg-black hover:bg-black rounded-lg transition-all duration-300 text-white">
-              Cart (0)
-            </div>
+          <Link href="/cart">
+          <Button 
+            label="Cart"
+            num={numberItems}
+            onClickAction={() => {}}
+          />
           </Link>
         </div>
   

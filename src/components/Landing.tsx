@@ -1,7 +1,7 @@
 // import Image from 'next/image';
 // import landingImg from '@/content/landing.png'
 import EmailSignup from './EmailSignup';
-import { Tile } from './Tile';
+import { Tile } from './ui/Tile';
 
 export default function Landing() {
   return (
@@ -33,10 +33,10 @@ export default function Landing() {
         {/* Email */}
         <div className="mt-30">
           <Tile title="">
-          <h3>Lazy Bread is just launching: subscribe now to receive updates!</h3>
-          <br/>
-          <br/>
-          <EmailSignup />
+            <h3>Lazy Bread is just launching: subscribe now to receive updates!</h3>
+            <br/>
+            <br/>
+            <EmailSignup />
           </Tile>
         </div>
 
