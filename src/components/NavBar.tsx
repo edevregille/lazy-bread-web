@@ -4,7 +4,7 @@ import Link from "next/link";
 import Image from 'next/image';
 import { useEffect, useState } from "react";
 
-import logo from '@/content/logo.png';
+import logo from '../../public/logo-lazy-bread.png';
 import { useCart } from "@/hooks/use-cart";
 import { Button } from "./ui/Button";
 
@@ -27,10 +27,14 @@ export default function NavBar() {
   
     return (
       <nav className="bg-white fixed w-full top-0 left-0 z-50">
-        <div className="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
+        <div className="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between gap-x-8">
             {/* Logo */}
             <Link href="/" className="text-2xl font-semibold">
-                <Image src={logo} alt="Lazy Bread" />
+                <Image 
+                  src={logo} 
+                  alt="Lazy Bread" 
+                  className="w-16 h-16"
+                  />
             </Link>
   
           {/* Desktop Nav Links */}
