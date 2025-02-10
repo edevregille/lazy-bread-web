@@ -26,7 +26,7 @@ export default function NavBar() {
     }
   
     return (
-      <nav className="bg-white fixed w-full top-0 left-0 z-50">
+      <nav className="bg-white fixed w-full top-0 left-0 z-50 text-lg">
         <div className="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between gap-x-8">
             {/* Logo */}
             <Link href="/" className="text-2xl font-semibold">

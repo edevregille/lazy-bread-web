@@ -67,7 +67,7 @@ const Cart = () => {
                     type="number"
                     value={item.qty}
                     onChange={(e) =>
-                      updateQuantity(item.product, Math.max(1, Number(e.target.value)))
+                      updateQuantity(item.product, Math.max(0, Number(e.target.value)))
                     }
                     className="w-20 p-2 border border-gray-300 rounded"
                   />
