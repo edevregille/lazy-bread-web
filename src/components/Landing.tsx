@@ -13,9 +13,11 @@ export default function Landing() {
             Lazy Bread PDX <br/><br/>
           
             <span className="text-gradient_indigo-purple font-extrabold">
-              Soup & Foccacia Bread
-              </span>
+            Sourdough Focaccia Bread
+            </span>
           </h1>
+          <h2> (with a side of soup, coming soon)
+          </h2>
         </div>
         <br/><br/><br/>
 

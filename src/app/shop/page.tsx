@@ -1,10 +1,12 @@
 
-import Shop from '@/components/Shop';
+import PreOrder from '@/components/PreOrder';
+// import Shop from '@/components/Shop';
 
 export default function PageContact() {
   return (
     <div>
-      <Shop />
+      {/* <Shop /> */}
+      <PreOrder />
     </div>
   );
 }

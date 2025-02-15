@@ -33,13 +33,17 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <CartProvider>
-          <NavBar />
-          <section className="h-full flex items-center justify-center py-16 md:py-32 px-4 md:px-8">
-            {children}
-          </section>
-        </CartProvider>
-        <Footer />
+        <div className="min-h-screen flex flex-col">
+          <div className="flex-grow">
+            <CartProvider>
+              <NavBar />
+              <section className="h-full flex items-center justify-center py-16 md:py-32 px-4 md:px-8">
+                {children}
+              </section>
+            </CartProvider>
+          </div>
+          <Footer />
+        </div>
       </body>
     </html>
   );

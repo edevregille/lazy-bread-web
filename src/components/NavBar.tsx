@@ -2,24 +2,24 @@
 
 import Link from "next/link";
 import Image from 'next/image';
-import { useEffect, useState } from "react";
+import {  useState } from "react";
 
 import logo from '../../public/logo-lazy-bread.png';
-import { useCart } from "@/hooks/use-cart";
-import { Button } from "./ui/Button";
+// import { useCart } from "@/hooks/use-cart";
+//import { Button } from "./ui/Button";
 
 export default function NavBar() {
     const [isOpen, setIsOpen] = useState(false);
-    const [numberItems, setNumberItems] = useState(0);
-    const cart = useCart();
+    // const [numberItems, setNumberItems] = useState(0);
+    // const cart = useCart();
 
-    useEffect( () => {
-      if(cart.items && cart.items.length > 0){
-        setNumberItems( cart.items.reduce((acc, obj) => { return acc + obj.qty; }, 0) );
-      }
-      else setNumberItems(0);
+    // useEffect( () => {
+    //   if(cart.items && cart.items.length > 0){
+    //     setNumberItems( cart.items.reduce((acc, obj) => { return acc + obj.qty; }, 0) );
+    //   }
+    //   else setNumberItems(0);
 
-    }, [ cart , ])
+    // }, [ cart , ])
 
     const toggleMenu = () => {
       setIsOpen(!isOpen)
@@ -42,9 +42,9 @@ export default function NavBar() {
             <Link href="/about">
                 <div className="hover:text-gray-500">About Us</div>
             </Link>
-            <Link href="/shop">
+            {/* <Link href="/shop">
                 <div className="hover:text-gray-500">Pre-order</div>
-            </Link>
+            </Link> */}
             <Link href="/contact">
                 <div className="hover:text-gray-500">Find Us</div>
             </Link>
@@ -53,13 +53,13 @@ export default function NavBar() {
 
         {/* Login Button */}
         <div>
-          <Link href="/cart">
+          {/* <Link href="/cart">
           <Button 
             label="Cart"
             num={numberItems}
             onClickAction={() => {}}
           />
-          </Link>
+          </Link> */}
         </div>
   
           {/* Mobile Hamburger Menu */}
