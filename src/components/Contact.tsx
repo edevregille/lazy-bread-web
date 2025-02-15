@@ -5,7 +5,7 @@ import imgMarket from '../../public/contact-market.png'
 import imgCafe from '../../public/contact-cafe11.png';
 export default function Contact () {
   return (
-    <div className="flex justify-center space-x-8 p-8">
+    <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 p-4">
       <Tile title="">
         <Image
           src={imgCafe}

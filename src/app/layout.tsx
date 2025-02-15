@@ -37,7 +37,7 @@ export default function RootLayout({
           <div className="flex-grow">
             <CartProvider>
               <NavBar />
-              <section className="h-full flex items-center justify-center py-16 md:py-32 px-4 md:px-8">
+              <section className="h-full flex items-center justify-center py-16 md:py-32 px-4">
                 {children}
               </section>
             </CartProvider>

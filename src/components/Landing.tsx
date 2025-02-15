@@ -6,7 +6,7 @@ import { Tile } from './ui/Tile';
 export default function Landing() {
   return (
     
-      <div className="flex flex-col h-full w-full items-center mx-auto text-center ">
+      <div className="flex flex-col h-full w-full items-center mx-auto text-center mt-8 md:mt-0">
         {/* Tagline */}
         <div className="h-auto">
           <h1 className="text-4xl md:text-5xl font-bold mb-6">

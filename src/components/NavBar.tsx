@@ -64,7 +64,7 @@ export default function NavBar() {
   
           {/* Mobile Hamburger Menu */}
           <div className="md:hidden flex items-center">
-            <button onClick={toggleMenu} className="text-white">
+            <button onClick={toggleMenu} className="text-black">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 fill="none"
@@ -87,13 +87,13 @@ export default function NavBar() {
         <div
           className={`${
             isOpen ? 'block' : 'hidden'
-          } md:hidden bg-gray-800 text-white py-4 px-6 space-y-4`}
+          } md:hidden text-gradient_indigo-purple py-4 px-6 space-y-4`}
         >
-          <Link href="/about" className="block hover:text-gray-400">
+          <Link href="/about" className="block hover:text-gray-400" onClick={() => toggleMenu()}>
             About
           </Link>
-          <Link href="/login" className="block hover:text-gray-400">
-            Login
+          <Link href="/contact" className="block hover:text-gray-400" onClick={() => toggleMenu()}>
+            Find Us
           </Link>
         </div>
       </nav>
