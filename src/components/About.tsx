@@ -5,9 +5,9 @@ import aboutImg from '../../public/about.png';
 export default function About() {
     return (
         <div className="flex justify-center p-8">
-            <div className="w-[66.66%] md:w-full">
+            <div className="w-full sm:w-2/3">
                 <Tile title="About">
-                    <div className="flex gap-x-20 md:gap-x-0">               
+                    <div className="flex sm:gap-x-20">               
                         <div className="flex-[1]">
                             <p>
                                 Welcome to Lazy Bread! A small cottage bakery in the heart of the Piedmont neighborhood in North Portland. Ever since getting the hang of baking with sourdough about ten years ago, our family of 5 is stocked with a loaf of homemade bread at all times (and when we do run out, you can probably find an emergency loaf hiding in the freezer!). 
