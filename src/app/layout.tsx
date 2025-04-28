@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import NavBar from "@/components/NavBar";
+import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { CartProvider } from "@/hooks/use-cart";
 
@@ -36,13 +36,15 @@ export default function RootLayout({
         <div className="min-h-screen flex flex-col">
           <div className="flex-grow">
             <CartProvider>
-              <NavBar />
-              <section className="h-full flex items-center justify-center py-16 md:py-32 px-4">
-                {children}
-              </section>
+              <Header />
+              <main className="pt-20 pb-10 px-4 bg-gradient-to-br from-gray-50 to-gray-100">
+                <div className="container mx-auto">
+                  {children}
+                </div>
+              </main>
+              <Footer />
             </CartProvider>
           </div>
-          <Footer />
         </div>
       </body>
     </html>

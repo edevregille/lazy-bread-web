@@ -4,7 +4,7 @@ import aboutImg from '../../public/about.png';
 
 export default function About() {
     return (
-        <div className="flex justify-center p-8">
+        <section id="about" className="flex justify-center p-8 mb-10">
             <div className="w-full sm:w-2/3">
                 <Tile title="About">
                     <div className="flex sm:gap-x-20">               
@@ -32,5 +32,5 @@ export default function About() {
                     </div>
                 </Tile>
             </div>
-        </div>);
+        </section>);
 }
