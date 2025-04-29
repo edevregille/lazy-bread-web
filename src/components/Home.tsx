@@ -35,7 +35,7 @@ const Home: React.FC = () => {
             </div>
             <div className="md:w-1/2 p-6 md:p-12 flex flex-col justify-center">
               <p className="text-lg text-gray-600 mb-6">
-                Farmers market menu
+                Sample farmers market menu
               </p>
               
               <div className="grid grid-cols-1 md:grid-cols-1 gap-4 mb-6">

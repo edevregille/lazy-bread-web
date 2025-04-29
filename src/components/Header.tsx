@@ -12,7 +12,7 @@ const NAV_ITEMS = [
   {"name": "Find Us", path: "/contact"},
 ];
 // import { useCart } from "@/hooks/use-cart";
-//import { Button } from "./ui/Button";
+// import { Button } from "./ui/Button";
 
 export default function Header() {
     const [isOpen, setIsOpen] = useState(false);
@@ -59,6 +59,15 @@ export default function Header() {
                   {item.name}
                 </a>
               ))}
+               {/* <div>
+                <Link href="/cart">
+                  <Button 
+                    label="Cart"
+                    num={numberItems}
+                    onClickAction={() => {}}
+                  />
+                </Link>
+              </div> */}
             </div>
           </nav>
           
@@ -118,5 +127,11 @@ export default function Header() {
         </div>
       </div>
     </header>
-  )
+
+      
+
+      //   {/* Cart */}
+       
+  
+    )
 }
