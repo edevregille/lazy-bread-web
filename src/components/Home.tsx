@@ -17,7 +17,7 @@ const MENU_ITEMS = [
 const Home: React.FC = () => {
   return (
     <><section id="about" className="flex justify-center p-8">
-       <div className="w-full sm:w-2/3">
+       <div className="w-full">
          <Tile title="">
           <div className="md:flex">
             <div className="md:w-1/2 relative" >
@@ -28,8 +28,8 @@ const Home: React.FC = () => {
                   className="object-cover"
                   priority
                   
-                  width={700}
-                  height={700}
+                  width={500}
+                  height={500}
                 />
               </div>
             </div>
@@ -60,7 +60,7 @@ const Home: React.FC = () => {
     </section>
 
     <section id="email" className="flex justify-center p-8 mb-10">
-      <div className="w-full sm:w-2/3">
+      <div className="w-full">
       <Tile title="Follow us!">
         <h3>Lazy Bread is just launching: subscribe now to receive updates!</h3>
         <br/>
