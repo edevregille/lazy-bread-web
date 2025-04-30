@@ -27,22 +27,21 @@ const Home: React.FC = () => {
           <Tile title="">
             <div className="md:flex">
               <div className="md:w-1/3 relative">
-                <div className="h-64 md:h-full relative overflow-hidden">
+                <div className="md:h-full relative overflow-hidden flex items-center justify-center">
                   <Image 
-                    src={aboutImg} 
-                    alt="Hero" 
-                    fill
-                    className="object-cover"
+                    src={welcomeImg} 
+                    alt="Lazy Bread" 
+                    width={250}
+                    height={250}
                     priority
+                    className="object-contain max-h-full max-w-full"
                   />
                 </div>
               </div>
               <div className="md:w-2/3 p-8">
-                <h1 className="text-3xl font-bold text-indigo-900">Lazy Bread Cottage Bakery</h1>
+                <h1 className="text-3xl font-bold text-indigo-900">Organic Sourdough Cottage Bakery</h1>
                 <p className="mt-4 text-lg text-gray-600">
-                  Delicious sourdough and gluten free Foccacia Breads.
-                  <br/>
-                  Many flavors.
+                  Specializing in whole wheat and gluten free focaccia bread
                 </p>
                 <div className="w-18  mt-6 px-0 py-3 w-[200px]">
                   <Link href="/contact">
@@ -63,15 +62,14 @@ const Home: React.FC = () => {
          <Tile title="">
           <div className="md:flex">
             <div className="md:w-1/2 relative" >
-              <div className="md:h-full relative overflow-hidden">
+              <div className="md:h-full relative overflow-hidden flex items-center justify-center">
                 <Image 
-                  src={welcomeImg}
+                  src={aboutImg}
                   alt="Lazy Bread"
-                  className="object-cover"
                   priority
-                  
-                  width={500}
-                  height={500}
+                  width={350}
+                  height={150}
+                  className="object-contain max-h-full max-w-full"
                 />
               </div>
             </div>
