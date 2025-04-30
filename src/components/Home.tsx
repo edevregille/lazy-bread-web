@@ -1,9 +1,14 @@
+'use client'
+
 import React from "react";
 import Image from "next/image";
 import { Tile } from "./ui/Tile";
 import EmailSignup from "./EmailSignup";
+import { Button } from "./ui/Button";
+import Link from "next/link";
 
-import welcomeImg from '../../public/welcome-img.png'
+import welcomeImg from '../../public/welcome-img.png';
+import aboutImg from '../../public/about.png';
 
 const MENU_ITEMS = [
     { title: "Classic salt", description: "" },
@@ -16,7 +21,44 @@ const MENU_ITEMS = [
 
 const Home: React.FC = () => {
   return (
-    <><section id="about" className="flex justify-center p-8">
+    <>
+      <section id="menu" className="flex justify-center p-8">
+        <div className="w-full">
+          <Tile title="">
+            <div className="md:flex">
+              <div className="md:w-1/3 relative">
+                <div className="h-64 md:h-full relative overflow-hidden">
+                  <Image 
+                    src={aboutImg} 
+                    alt="Hero" 
+                    fill
+                    className="object-cover"
+                    priority
+                  />
+                </div>
+              </div>
+              <div className="md:w-2/3 p-8">
+                <h1 className="text-3xl font-bold text-indigo-900">Lazy Bread Cottage Bakery</h1>
+                <p className="mt-4 text-lg text-gray-600">
+                  Delicious sourdough and gluten free Foccacia Breads.
+                  <br/>
+                  Many flavors.
+                </p>
+                <div className="w-18  mt-6 px-0 py-3 w-[200px]">
+                  <Link href="/contact">
+                    <Button 
+                      label="Find Us"
+                      onClickAction={() => {}}
+                    />
+                  </Link>
+                </div>
+              </div>
+            </div>
+          </Tile>
+        </div>
+      </section>
+
+    <section id="menu" className="flex justify-center p-8">
        <div className="w-full">
          <Tile title="">
           <div className="md:flex">
@@ -34,9 +76,9 @@ const Home: React.FC = () => {
               </div>
             </div>
             <div className="md:w-1/2 p-6 md:p-12 flex flex-col justify-center">
-              <p className="text-lg text-gray-600 mb-6">
+              <h1 className="text-lg text-gray-600 mb-6 font-bold text-indigo-900">
                 Sample farmers market menu
-              </p>
+              </h1>
               
               <div className="grid grid-cols-1 md:grid-cols-1 gap-4 mb-6">
                 {MENU_ITEMS.map((feature, index) => (

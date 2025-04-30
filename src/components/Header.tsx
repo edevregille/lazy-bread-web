@@ -54,7 +54,7 @@ export default function Header() {
                 <a
                   key={item.name}
                   href={item.path}
-                  className="text-gray-700 hover:text-indigo-600 px-3 py-2 rounded-md text-sm font-medium"
+                  className="text-gray-700 hover:text-indigo-600 px-3 py-2 rounded-md text-lg font-medium"
                 >
                   {item.name}
                 </a>
