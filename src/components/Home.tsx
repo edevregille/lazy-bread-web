@@ -10,7 +10,7 @@ export default function Home() {
   return (
     <>
       {/* Hero Section */}
-      <section className="py-16 px-8 bg-warm-cream">
+      <section className="py-8 px-8 bg-warm-cream">
         <div className="max-w-6xl mx-auto">
           <div className="md:flex items-center">
             <div className="md:w-1/3 relative animate-gentle-float">
@@ -35,7 +35,7 @@ export default function Home() {
               </p>
               <div className="flex flex-col sm:flex-row gap-4">
                 <Link href="/order">
-                  <button className="btn-bakery-primary font-body text-lg px-8 py-4">
+                  <button className="btn-bakery-secondary font-body text-lg px-8 py-4">
                     Order
                   </button>
                 </Link>
@@ -51,7 +51,7 @@ export default function Home() {
       </section>
 
       {/* Menu Section */}
-      <section className="py-16 px-8 bg-warm-cream">
+      <section className="py-8 px-8 bg-warm-cream">
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl font-bakery font-bold text-bakery-primary mb-4">
