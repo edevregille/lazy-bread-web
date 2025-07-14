@@ -2,43 +2,359 @@
 @tailwind components;
 @tailwind utilities;
 
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Roboto:wght@400;500;700&display=swap');
-
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Roboto:wght@400;500;700&family=Playfair+Display:wght@400;500;600;700;800;900&family=Caveat:wght@400;500;600;700&family=Lora:wght@400;500;600;700&family=Crimson+Text:wght@400;600;700&display=swap');
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #FDF8F0;
+  --foreground: #6B4423;
+  --primary: #8B4513;
+  --primary-light: #A0522D;
+  --secondary: #D2691E;
+  --accent: #F4A460;
+  --warm-cream: #FDF5E6;
+  --warm-beige: #F5F5DC;
+  --earth-brown: #8B4513;
+  --golden-wheat: #DAA520;
+  --sage-green: #9DC183;
+  --rust-orange: #CD853F;
 }
-
-/* @media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-} */
 
 body {
   color: var(--foreground);
   background: var(--background);
+  font-family: 'Lora', serif;
+  line-height: 1.6;
 }
 
-.light-purple-filter {
-  filter: brightness(0.99) saturate(1) hue-rotate(20deg) opacity(0.7);
+/* Artisanal Bakery Typography */
+.font-bakery {
+  font-family: 'Playfair Display', serif;
 }
 
+.font-body {
+  font-family: 'Inter', sans-serif;
+}
 
-.text-gradient_indigo-purple {
-  background: linear-gradient(90deg, #000080 0%, rgba(0, 0, 128, 0.8) 100%);
+.font-accent {
+  font-family: 'Source Sans Pro', sans-serif;
+}
+
+/* Warm, Organic Color Palette */
+.text-bakery-primary {
+  color: var(--primary);
+}
+
+.text-bakery-secondary {
+  color: var(--secondary);
+}
+
+.text-warm-cream {
+  color: var(--warm-cream);
+}
+
+.text-earth-brown {
+  color: var(--earth-brown);
+}
+
+.text-golden-wheat {
+  color: var(--golden-wheat);
+}
+
+.text-sage-green {
+  color: var(--sage-green);
+}
+
+/* Background Colors */
+.bg-bakery-primary {
+  background-color: var(--primary);
+}
+
+.bg-bakery-secondary {
+  background-color: var(--secondary);
+}
+
+.bg-warm-cream {
+  background-color: var(--warm-cream);
+}
+
+.bg-warm-beige {
+  background-color: var(--warm-beige);
+}
+
+.bg-earth-brown {
+  background-color: var(--earth-brown);
+}
+
+.bg-golden-wheat {
+  background-color: var(--golden-wheat);
+}
+
+.bg-sage-green {
+  background-color: var(--sage-green);
+}
+
+/* Gradients */
+.text-gradient-bakery {
+  background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 50%, var(--golden-wheat) 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
 }
 
+.background-gradient-bakery {
+  background: linear-gradient(135deg, var(--warm-cream) 0%, var(--warm-beige) 50%, #fff8dc 100%);
+}
+
+.background-gradient-warm {
+  background: linear-gradient(135deg, var(--warm-cream) 0%, #faf0e6 100%);
+}
+
+/* Organic Shadows and Effects */
+.shadow-bakery {
+  box-shadow: 0 4px 20px rgba(139, 69, 19, 0.15), 0 2px 8px rgba(139, 69, 19, 0.1);
+}
+
+.shadow-bakery-hover {
+  box-shadow: 0 8px 30px rgba(139, 69, 19, 0.2), 0 4px 12px rgba(139, 69, 19, 0.15);
+}
+
+.shadow-golden {
+  box-shadow: 0 4px 15px rgba(218, 165, 32, 0.3), 0 2px 6px rgba(218, 165, 32, 0.2);
+}
+
+/* Organic Borders */
+.border-bakery {
+  border: 2px solid var(--primary);
+}
+
+.border-bakery-light {
+  border: 1px solid var(--accent);
+}
+
+.border-golden {
+  border: 2px solid var(--golden-wheat);
+}
+
+/* Button Styles */
+.btn-bakery-primary {
+  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+  color: white;
+  padding: 12px 24px;
+  border-radius: 8px;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(139, 69, 19, 0.3);
+}
+
+.btn-bakery-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(139, 69, 19, 0.4);
+}
+
+.btn-bakery-secondary {
+  background: linear-gradient(135deg, var(--secondary) 0%, var(--accent) 100%);
+  color: white;
+  padding: 12px 24px;
+  border-radius: 8px;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(210, 105, 30, 0.3);
+}
+
+.btn-bakery-secondary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(210, 105, 30, 0.4);
+}
+
+/* Card Styles */
+.card-bakery {
+  background: white;
+  border-radius: 12px;
+  padding: 24px;
+  box-shadow: 0 4px 20px rgba(139, 69, 19, 0.1);
+  border: 1px solid rgba(139, 69, 19, 0.1);
+  transition: all 0.3s ease;
+}
+
+.card-bakery:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 30px rgba(139, 69, 19, 0.15);
+}
+
+/* Organic Patterns */
+.pattern-dots {
+  background-image: radial-gradient(circle, var(--accent) 1px, transparent 1px);
+  background-size: 20px 20px;
+}
+
+.pattern-lines {
+  background-image: repeating-linear-gradient(
+    45deg,
+    transparent,
+    transparent 2px,
+    rgba(139, 69, 19, 0.05) 2px,
+    rgba(139, 69, 19, 0.05) 4px
+  );
+}
+
+/* Focaccia-specific styling */
+.focaccia-hero {
+  position: relative;
+  overflow: hidden;
+}
+
+.focaccia-hero::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image: 
+    radial-gradient(circle at 20% 80%, rgba(218, 165, 32, 0.1) 0%, transparent 50%),
+    radial-gradient(circle at 80% 20%, rgba(139, 69, 19, 0.05) 0%, transparent 50%);
+  pointer-events: none;
+}
+
+/* Organic animations */
+@keyframes gentle-float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-10px); }
+}
+
+.animate-gentle-float {
+  animation: gentle-float 6s ease-in-out infinite;
+}
+
+@keyframes warm-glow {
+  0%, 100% { opacity: 0.8; }
+  50% { opacity: 1; }
+}
+
+.animate-warm-glow {
+  animation: warm-glow 4s ease-in-out infinite;
+}
+
+/* Responsive bakery styling */
+@media (max-width: 768px) {
+  .card-bakery {
+    padding: 16px;
+    border-radius: 8px;
+  }
+  
+  .btn-bakery-primary,
+  .btn-bakery-secondary {
+    padding: 10px 20px;
+    font-size: 14px;
+  }
+}
+
+/* Authentic Bakery Utility Classes */
+@layer components {
+  .btn-bakery-primary {
+    @apply bg-bakery-brown text-bakery-cream px-6 py-3 rounded-lg font-bakery font-semibold 
+           hover:bg-bakery-rust transition-all duration-300 shadow-bakery hover:shadow-bakery-hover
+           focus:outline-none focus:ring-2 focus:ring-bakery-gold focus:ring-offset-2;
+  }
+
+  .btn-bakery-secondary {
+    @apply bg-bakery-cream text-bakery-brown border-2 border-bakery-brown px-6 py-3 rounded-lg 
+           font-bakery font-semibold hover:bg-bakery-warm transition-all duration-300 
+           shadow-rustic hover:shadow-bakery focus:outline-none focus:ring-2 focus:ring-bakery-gold focus:ring-offset-2;
+  }
+
+  .card-bakery {
+    @apply bg-bakery-cream border border-bakery-warm rounded-lg p-6 shadow-bakery 
+           hover:shadow-bakery-hover transition-all duration-300;
+  }
+
+  .text-bakery-primary {
+    @apply text-bakery-brown;
+  }
+
+  .text-bakery-secondary {
+    @apply text-bakery-earth;
+  }
+
+  .border-bakery-light {
+    @apply border-bakery-warm;
+  }
+
+  .border-bakery-primary {
+    @apply border-bakery-brown;
+  }
+
+  .shadow-bakery-hover {
+    @apply shadow-[0_10px_15px_rgba(139,69,19,0.1),0_4px_6px_rgba(139,69,19,0.05)];
+  }
+
+  .shadow-golden {
+    @apply shadow-[0_2px_4px_rgba(212,175,55,0.3)];
+  }
+
+  .background-gradient-warm {
+    @apply bg-gradient-to-br from-[#FDF8F0] via-[#F5E6D3] to-[#F4E4BC];
+  }
+}
+
+/* Custom bakery patterns and effects */
+.bakery-texture {
+  background-image: 
+    radial-gradient(circle at 25% 25%, rgba(139, 69, 19, 0.05) 0%, transparent 50%),
+    radial-gradient(circle at 75% 75%, rgba(212, 175, 55, 0.05) 0%, transparent 50%);
+}
+
+.rustic-border {
+  border: 2px solid;
+  border-image: linear-gradient(45deg, #8B4513, #D4AF37, #8B4513) 1;
+}
+
+.handwritten-accent {
+  font-family: 'Caveat', cursive;
+  font-weight: 600;
+}
+
+.artisan-heading {
+  font-family: 'Playfair Display', serif;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+.rustic-text {
+  font-family: 'Lora', serif;
+  line-height: 1.6;
+}
+
+/* Warm glow effect for interactive elements */
+.warm-glow:hover {
+  filter: brightness(1.05) saturate(1.1);
+  transition: filter 0.3s ease;
+}
+
+/* Authentic bakery background pattern */
+.bakery-pattern-bg {
+  background-image: 
+    radial-gradient(circle at 20% 20%, rgba(139, 69, 19, 0.03) 0%, transparent 50%),
+    radial-gradient(circle at 80% 80%, rgba(212, 175, 55, 0.03) 0%, transparent 50%),
+    radial-gradient(circle at 40% 60%, rgba(107, 68, 35, 0.02) 0%, transparent 50%);
+}
+
+/* Legacy classes for backward compatibility */
+.light-purple-filter {
+  filter: brightness(0.99) saturate(1) hue-rotate(20deg) opacity(0.7);
+}
+
+.text-gradient_indigo-purple {
+  background: linear-gradient(90deg, #8B4513 0%, #D4AF37 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
 
 .background-gradient_indigo-purple {
-  background: linear-gradient(90deg, #000080 0%, rgba(0, 0, 128, 0.8) 100%);
+  background: linear-gradient(90deg, #8B4513 0%, #D4AF37 100%);
 }
 
 .orange-light{
-  box-shadow: 0 4px 6px rgba(255, 165, 0, 0.3), 0 1px 3px rgb(255, 166, 0);
+  box-shadow: 0 4px 6px rgba(212, 175, 55, 0.3), 0 1px 3px rgba(212, 175, 55, 0.2);
 }
