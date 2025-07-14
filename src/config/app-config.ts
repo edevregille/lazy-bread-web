@@ -8,10 +8,10 @@ export const NAV_ITEMS = [
 ];
 
 export const BREAD_TYPES = [
-  { id: 'classic-salt', name: 'Classic Salt', price: 8.99, description: 'Traditional sourdough with sea salt' },
-  { id: 'rosemary', name: 'Rosemary', price: 9.99, description: 'Artisan bread with fresh rosemary' },
-  { id: 'green-olive', name: 'Green Olive', price: 10.99, description: 'Rustic bread with green olives' },
-  { id: 'cheez-it', name: 'Cheez-it', price: 11.99, description: 'Cheesy bread with a crispy crust' },
+  { id: 'classic-salt', name: 'Classic Salt', price: 6.5, description: 'Traditional sourdough with sea salt' },
+  { id: 'rosemary', name: 'Rosemary', price: 6.5, description: 'Artisan bread with fresh rosemary' },
+  { id: 'green-olive', name: 'Green Olive', price: 6.5, description: 'Rustic bread with green olives' },
+  { id: 'cheez-it', name: 'Cheez-it', price: 6.5, description: 'Cheesy bread with a crispy crust' },
 ];
 
 export const BUSINESS_SETTINGS = {
