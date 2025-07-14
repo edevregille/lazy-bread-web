@@ -24,15 +24,15 @@ export default {
         'bakery-cinnamon': '#D2691E',   // Cinnamon brown
       },
       fontFamily: {
-        sans: ['Inter', 'Roboto', 'ui-sans-serif', 'system-ui', 'sans-serif'],
-        serif: ['Playfair Display', 'ui-serif', 'Georgia', 'serif'],
+        sans: ['Source Sans Pro', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+        serif: ['Crimson Text', 'ui-serif', 'Georgia', 'serif'],
         mono: ['IBM Plex Mono', 'ui-monospace', 'monospace'],
-        display: ['Montserrat', 'sans-serif'],
-        body: ['Open Sans', 'sans-serif'],
+        display: ['Crimson Text', 'serif'],
+        body: ['Source Sans Pro', 'sans-serif'],
         // Authentic bakery fonts
-        'bakery': ['Playfair Display', 'serif'],      // Elegant serif for headings
+        'bakery': ['Crimson Text', 'serif'],          // Elegant serif for headings
         'handwritten': ['Caveat', 'cursive'],         // Handwritten feel
-        'rustic': ['Lora', 'serif'],                  // Rustic serif
+        'rustic': ['Source Sans Pro', 'sans-serif'],  // Clean, readable body text
         'artisan': ['Crimson Text', 'serif'],         // Artisan serif
       },
       boxShadow: {
