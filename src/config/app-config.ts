@@ -56,7 +56,7 @@ export const PAGE_CONTENT = {
   orderPageTitle: "Order Organic Sourdough Focaccia Bread",
   holidayPageTitle: "We're on Holiday!",
   recurringDeliveryMessage: "For weekly or monthly recurring deliveries, please contact us directly at",
-  deliveryInstructions: "We deliver on Wednesdays and Fridays only. Orders must be placed at least 24 hours in advance.",
+  deliveryInstructions: "We deliver on Wednesdays and Fridays. Orders must be placed at least 24 hours in advance.",
   commentsPlaceholder: "Any special requests, delivery instructions, or other details you'd like us to know...",
   commentsHelper: "Optional: Let us know about any special requirements or delivery preferences. (Max 255 characters)",
 };
