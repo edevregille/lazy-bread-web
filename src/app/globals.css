@@ -1,0 +1,44 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Roboto:wght@400;500;700&display=swap');
+
+
+:root {
+  --background: #ffffff;
+  --foreground: #171717;
+}
+
+/* @media (prefers-color-scheme: dark) {
+  :root {
+    --background: #0a0a0a;
+    --foreground: #ededed;
+  }
+} */
+
+body {
+  color: var(--foreground);
+  background: var(--background);
+}
+
+.light-purple-filter {
+  filter: brightness(0.99) saturate(1) hue-rotate(20deg) opacity(0.7);
+}
+
+
+.text-gradient_indigo-purple {
+  background: linear-gradient(90deg, #000080 0%, rgba(0, 0, 128, 0.8) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+
+.background-gradient_indigo-purple {
+  background: linear-gradient(90deg, #000080 0%, rgba(0, 0, 128, 0.8) 100%);
+}
+
+.orange-light{
+  box-shadow: 0 4px 6px rgba(255, 165, 0, 0.3), 0 1px 3px rgb(255, 166, 0);
+}
