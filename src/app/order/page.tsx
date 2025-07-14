@@ -290,7 +290,7 @@ export default function OrderPage() {
 
                     {/* Item Total */}
                     {orderForm.breadQuantities[bread.id] > 0 && (
-                      <div className="mt-3 pt-3 border-t border-bakery-light">
+                      <div className="mt-3 pt-3">
                         <div className="flex justify-between items-center">
                           <span className="text-sm text-black font-body">
                             {bread.name} × {orderForm.breadQuantities[bread.id]}
@@ -311,9 +311,7 @@ export default function OrderPage() {
 
             {/* Delivery Date Selection */}
             <div>
-              <label className="block text-sm font-medium text-black mb-2 font-body">
-                Delivery Date *
-              </label>
+              <h3 className="text-lg font-semibold text-black mb-4 font-body">Delivery Date</h3>
               <select
                 value={orderForm.deliveryDate}
                 onChange={(e) => setOrderForm({ ...orderForm, deliveryDate: e.target.value })}
@@ -329,76 +327,73 @@ export default function OrderPage() {
               {errors.deliveryDate && (
                 <p className="text-red-600 text-sm mt-1">{errors.deliveryDate}</p>
               )}
-              <p className="text-sm text-black mt-2 font-accent">
+              <p className="text-sm text-black mt-2 font-body">
                 {PAGE_CONTENT.deliveryInstructions}
               </p>
-            </div>
-
-            {/* Customer Information */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                              <div>
-                  <label className="block text-sm font-medium text-black mb-2 font-body">
-                    Full Name *
-                  </label>
-                <input
-                  type="text"
-                  value={orderForm.customerName}
-                  onChange={(e) => setOrderForm({ ...orderForm, customerName: e.target.value })}
-                  className="w-full px-3 py-2 border border-bakery-light rounded-md focus:outline-none focus:ring-2 focus:ring-bakery-primary focus:border-bakery-primary font-body"
-                  placeholder="John Doe"
-                />
-                {errors.customerName && (
-                  <p className="text-red-600 text-sm mt-1">{errors.customerName}</p>
-                )}
-              </div>
-
-                              <div>
-                  <label className="block text-sm font-medium text-black mb-2 font-body">
-                    Email *
-                  </label>
-                <input
-                  type="email"
-                  value={orderForm.email}
-                  onChange={(e) => setOrderForm({ ...orderForm, email: e.target.value })}
-                  className="w-full px-3 py-2 border border-bakery-light rounded-md focus:outline-none focus:ring-2 focus:ring-bakery-primary focus:border-bakery-primary font-body"
-                  placeholder="john@example.com"
-                />
-                {errors.email && (
-                  <p className="text-red-600 text-sm mt-1">{errors.email}</p>
-                )}
-              </div>
-
-                              <div>
-                  <label className="block text-sm font-medium text-black mb-2 font-body">
-                    Phone Number *
-                  </label>
-                <input
-                  type="tel"
-                  value={orderForm.phone}
-                  onChange={(e) => setOrderForm({ ...orderForm, phone: e.target.value })}
-                  className="w-full px-3 py-2 border border-bakery-light rounded-md focus:outline-none focus:ring-2 focus:ring-bakery-primary focus:border-bakery-primary font-body"
-                  placeholder="(503) 555-0123"
-                />
-                {orderForm.phone && (
-                  <p className="text-sm text-black mt-1 font-accent">
-                    Formatted: {formatPhoneNumber(orderForm.phone)}
-                  </p>
-                )}
-                {errors.phone && (
-                  <p className="text-red-600 text-sm mt-1">{errors.phone}</p>
-                )}
-              </div>
             </div>
 
             {/* Delivery Address */}
             <div>
               <h3 className="text-lg font-semibold text-black mb-4 font-body">Delivery Address</h3>
-              <p className="text-sm text-black mb-4 font-accent">
-                We currently only deliver to {DELIVERY_ZONES.cityName}, {DELIVERY_ZONES.stateName}
-              </p>
               
-              <div className="space-y-4">
-                                  <div>
+              {/* Customer Information */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                <div>
+                  <label className="block text-sm font-medium text-black mb-2 font-body">
+                    Full Name *
+                  </label>
+                  <input
+                    type="text"
+                    value={orderForm.customerName}
+                    onChange={(e) => setOrderForm({ ...orderForm, customerName: e.target.value })}
+                    className="w-full px-3 py-2 border border-bakery-light rounded-md focus:outline-none focus:ring-2 focus:ring-bakery-primary focus:border-bakery-primary font-body"
+                    placeholder="John Doe"
+                  />
+                  {errors.customerName && (
+                    <p className="text-red-600 text-sm mt-1">{errors.customerName}</p>
+                  )}
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-black mb-2 font-body">
+                    Email *
+                  </label>
+                  <input
+                    type="email"
+                    value={orderForm.email}
+                    onChange={(e) => setOrderForm({ ...orderForm, email: e.target.value })}
+                    className="w-full px-3 py-2 border border-bakery-light rounded-md focus:outline-none focus:ring-2 focus:ring-bakery-primary focus:border-bakery-primary font-body"
+                    placeholder="john@example.com"
+                  />
+                  {errors.email && (
+                    <p className="text-red-600 text-sm mt-1">{errors.email}</p>
+                  )}
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-black mb-2 font-body">
+                    Phone Number *
+                  </label>
+                  <input
+                    type="tel"
+                    value={orderForm.phone}
+                    onChange={(e) => setOrderForm({ ...orderForm, phone: e.target.value })}
+                    className="w-full px-3 py-2 border border-bakery-light rounded-md focus:outline-none focus:ring-2 focus:ring-bakery-primary focus:border-bakery-primary font-body"
+                    placeholder="(503) 555-0123"
+                  />
+                  {orderForm.phone && (
+                    <p className="text-sm text-black mt-1 font-accent">
+                      Formatted: {formatPhoneNumber(orderForm.phone)}
+                    </p>
+                  )}
+                  {errors.phone && (
+                    <p className="text-red-600 text-sm mt-1">{errors.phone}</p>
+                  )}
+                </div>
+              </div>
+              
+              <div className="space-y-6">
+                <div>
                     <label className="block text-sm font-medium text-black mb-2 font-body">
                       Street Address *
                     </label>
@@ -426,7 +421,7 @@ export default function OrderPage() {
                       className="w-full px-3 py-2 border border-bakery-light rounded-md bg-warm-cream text-earth-brown cursor-not-allowed font-body"
                       placeholder={DELIVERY_ZONES.cityName}
                     />
-                                          <p className="text-sm text-black mt-1 font-accent">
+                                          <p className="text-sm text-black mt-1 font-body">
                         We currently only deliver to {DELIVERY_ZONES.cityName}
                       </p>
                   </div>
@@ -464,14 +459,14 @@ export default function OrderPage() {
                 className="w-full px-3 py-2 border border-bakery-light rounded-md focus:outline-none focus:ring-2 focus:ring-bakery-primary focus:border-bakery-primary resize-none font-body"
                 placeholder={PAGE_CONTENT.commentsPlaceholder}
               />
-              <p className="text-sm text-black mt-1 font-accent">
+              <p className="text-sm text-black mt-1 font-body">
                 {PAGE_CONTENT.commentsHelper}
               </p>
             </div>
 
             {/* Order Summary */}
             {totalAmount > 0 && (
-              <div className="border-t border-bakery-light pt-6">
+              <div className="pt-6">
                 <h3 className="text-lg font-semibold text-black mb-4 font-body">Order Summary</h3>
                 <div className="bg-warm-cream rounded-lg p-4 shadow-bakery">
                   {BREAD_TYPES.map((bread) => {
@@ -486,7 +481,7 @@ export default function OrderPage() {
                     }
                     return null;
                   })}
-                  <div className="border-t border-bakery-light pt-2">
+                  <div className="pt-2">
                     <div className="flex justify-between items-center">
                       <span className="text-lg font-bold text-black font-body">Total</span>
                       <span className="text-xl font-bold text-bakery-primary">${totalAmount.toFixed(2)}</span>
