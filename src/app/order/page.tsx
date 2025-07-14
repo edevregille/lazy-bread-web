@@ -229,7 +229,7 @@ export default function OrderPage() {
           <form onSubmit={handleSubmit} className="space-y-8">
             {/* Bread Selection */}
             <div>
-              <label className="block text-sm font-medium text-earth-brown mb-3 font-body">
+              <label className="block text-sm font-medium text-black mb-3 font-body">
                 Select Bread Types and Quantities *
               </label>
               <div className="space-y-4">
@@ -244,8 +244,8 @@ export default function OrderPage() {
                   >
                     <div className="flex justify-between items-start mb-4">
                       <div>
-                        <h3 className="font-semibold text-earth-brown font-body">{bread.name}</h3>
-                        <p className="text-sm text-earth-brown opacity-80 mt-1 font-accent">{bread.description}</p>
+                        <h3 className="font-semibold text-black font-body">{bread.name}</h3>
+                        <p className="text-sm text-black opacity-80 mt-1 font-accent">{bread.description}</p>
                       </div>
                       <span className="text-lg font-bold text-bakery-primary">
                         ${bread.price.toFixed(2)}
@@ -254,7 +254,7 @@ export default function OrderPage() {
 
                     {/* Quantity Controls */}
                     <div className="flex items-center justify-between">
-                      <span className="text-sm text-earth-brown font-body">Quantity:</span>
+                      <span className="text-sm text-black font-body">Quantity:</span>
                       <div className="flex items-center space-x-4">
                         <button
                           type="button"
@@ -269,7 +269,7 @@ export default function OrderPage() {
                         >
                           -
                         </button>
-                        <span className="text-lg font-semibold w-12 text-center text-earth-brown">
+                        <span className="text-lg font-semibold w-12 text-center text-black">
                           {orderForm.breadQuantities[bread.id]}
                         </span>
                         <button
@@ -292,7 +292,7 @@ export default function OrderPage() {
                     {orderForm.breadQuantities[bread.id] > 0 && (
                       <div className="mt-3 pt-3 border-t border-bakery-light">
                         <div className="flex justify-between items-center">
-                          <span className="text-sm text-earth-brown font-body">
+                          <span className="text-sm text-black font-body">
                             {bread.name} × {orderForm.breadQuantities[bread.id]}
                           </span>
                           <span className="font-semibold text-bakery-primary">
@@ -311,7 +311,7 @@ export default function OrderPage() {
 
             {/* Delivery Date Selection */}
             <div>
-              <label className="block text-sm font-medium text-earth-brown mb-2 font-body">
+              <label className="block text-sm font-medium text-black mb-2 font-body">
                 Delivery Date *
               </label>
               <select
@@ -329,17 +329,17 @@ export default function OrderPage() {
               {errors.deliveryDate && (
                 <p className="text-red-600 text-sm mt-1">{errors.deliveryDate}</p>
               )}
-              <p className="text-sm text-earth-brown mt-2 font-accent">
+              <p className="text-sm text-black mt-2 font-accent">
                 {PAGE_CONTENT.deliveryInstructions}
               </p>
             </div>
 
             {/* Customer Information */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div>
-                <label className="block text-sm font-medium text-earth-brown mb-2 font-body">
-                  Full Name *
-                </label>
+                              <div>
+                  <label className="block text-sm font-medium text-black mb-2 font-body">
+                    Full Name *
+                  </label>
                 <input
                   type="text"
                   value={orderForm.customerName}
@@ -352,10 +352,10 @@ export default function OrderPage() {
                 )}
               </div>
 
-              <div>
-                <label className="block text-sm font-medium text-earth-brown mb-2 font-body">
-                  Email *
-                </label>
+                              <div>
+                  <label className="block text-sm font-medium text-black mb-2 font-body">
+                    Email *
+                  </label>
                 <input
                   type="email"
                   value={orderForm.email}
@@ -368,10 +368,10 @@ export default function OrderPage() {
                 )}
               </div>
 
-              <div>
-                <label className="block text-sm font-medium text-earth-brown mb-2 font-body">
-                  Phone Number *
-                </label>
+                              <div>
+                  <label className="block text-sm font-medium text-black mb-2 font-body">
+                    Phone Number *
+                  </label>
                 <input
                   type="tel"
                   value={orderForm.phone}
@@ -380,7 +380,7 @@ export default function OrderPage() {
                   placeholder="(503) 555-0123"
                 />
                 {orderForm.phone && (
-                  <p className="text-sm text-earth-brown mt-1 font-accent">
+                  <p className="text-sm text-black mt-1 font-accent">
                     Formatted: {formatPhoneNumber(orderForm.phone)}
                   </p>
                 )}
@@ -392,16 +392,16 @@ export default function OrderPage() {
 
             {/* Delivery Address */}
             <div>
-              <h3 className="text-lg font-semibold text-earth-brown mb-4 font-body">Delivery Address</h3>
-              <p className="text-sm text-earth-brown mb-4 font-accent">
+              <h3 className="text-lg font-semibold text-black mb-4 font-body">Delivery Address</h3>
+              <p className="text-sm text-black mb-4 font-accent">
                 We currently only deliver to {DELIVERY_ZONES.cityName}, {DELIVERY_ZONES.stateName}
               </p>
               
               <div className="space-y-4">
-                <div>
-                  <label className="block text-sm font-medium text-earth-brown mb-2 font-body">
-                    Street Address *
-                  </label>
+                                  <div>
+                    <label className="block text-sm font-medium text-black mb-2 font-body">
+                      Street Address *
+                    </label>
                   <input
                     type="text"
                     value={orderForm.address}
@@ -415,10 +415,10 @@ export default function OrderPage() {
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-sm font-medium text-earth-brown mb-2 font-body">
-                      City *
-                    </label>
+                                      <div>
+                      <label className="block text-sm font-medium text-black mb-2 font-body">
+                        City *
+                      </label>
                     <input
                       type="text"
                       value={orderForm.city}
@@ -426,15 +426,15 @@ export default function OrderPage() {
                       className="w-full px-3 py-2 border border-bakery-light rounded-md bg-warm-cream text-earth-brown cursor-not-allowed font-body"
                       placeholder={DELIVERY_ZONES.cityName}
                     />
-                    <p className="text-sm text-earth-brown mt-1 font-accent">
-                      We currently only deliver to {DELIVERY_ZONES.cityName}
-                    </p>
+                                          <p className="text-sm text-black mt-1 font-accent">
+                        We currently only deliver to {DELIVERY_ZONES.cityName}
+                      </p>
                   </div>
 
-                  <div>
-                    <label className="block text-sm font-medium text-earth-brown mb-2 font-body">
-                      ZIP Code *
-                    </label>
+                                      <div>
+                      <label className="block text-sm font-medium text-black mb-2 font-body">
+                        ZIP Code *
+                      </label>
                     <input
                       type="text"
                       value={orderForm.zipCode}
@@ -453,7 +453,7 @@ export default function OrderPage() {
 
             {/* Comments Section */}
             <div>
-              <label className="block text-sm font-medium text-earth-brown mb-2 font-body">
+              <label className="block text-sm font-medium text-black mb-2 font-body">
                 Additional Comments
               </label>
               <textarea
@@ -464,7 +464,7 @@ export default function OrderPage() {
                 className="w-full px-3 py-2 border border-bakery-light rounded-md focus:outline-none focus:ring-2 focus:ring-bakery-primary focus:border-bakery-primary resize-none font-body"
                 placeholder={PAGE_CONTENT.commentsPlaceholder}
               />
-              <p className="text-sm text-earth-brown mt-1 font-accent">
+              <p className="text-sm text-black mt-1 font-accent">
                 {PAGE_CONTENT.commentsHelper}
               </p>
             </div>
@@ -472,14 +472,14 @@ export default function OrderPage() {
             {/* Order Summary */}
             {totalAmount > 0 && (
               <div className="border-t border-bakery-light pt-6">
-                <h3 className="text-lg font-semibold text-earth-brown mb-4 font-body">Order Summary</h3>
+                <h3 className="text-lg font-semibold text-black mb-4 font-body">Order Summary</h3>
                 <div className="bg-warm-cream rounded-lg p-4 shadow-bakery">
                   {BREAD_TYPES.map((bread) => {
                     const quantity = orderForm.breadQuantities[bread.id];
                     if (quantity > 0) {
                       return (
                         <div key={bread.id} className="flex justify-between items-center mb-2">
-                          <span className="text-earth-brown font-body">{bread.name} × {quantity}</span>
+                          <span className="text-black font-body">{bread.name} × {quantity}</span>
                           <span className="font-semibold text-bakery-primary">${(bread.price * quantity).toFixed(2)}</span>
                         </div>
                       );
@@ -488,7 +488,7 @@ export default function OrderPage() {
                   })}
                   <div className="border-t border-bakery-light pt-2">
                     <div className="flex justify-between items-center">
-                      <span className="text-lg font-bold text-earth-brown font-body">Total</span>
+                      <span className="text-lg font-bold text-black font-body">Total</span>
                       <span className="text-xl font-bold text-bakery-primary">${totalAmount.toFixed(2)}</span>
                     </div>
                   </div>

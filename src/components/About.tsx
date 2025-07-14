@@ -9,7 +9,7 @@ export default function About() {
                     <Tile title="About">
                         <div className="flex sm:gap-x-20">               
                             <div className="flex-[1]">
-                                <p className="text-bakery-secondary rustic-text leading-relaxed">
+                                <p className="text-black rustic-text leading-relaxed">
                                     Welcome to Lazy Bread! A small cottage bakery in the heart of the Piedmont neighborhood in North Portland. Ever since getting the hang of baking with sourdough about ten years ago, our family of 5 is stocked with a loaf of homemade bread at all times (and when we do run out, you can probably find an emergency loaf hiding in the freezer!). 
                                     <br/>
                                     <br/>    

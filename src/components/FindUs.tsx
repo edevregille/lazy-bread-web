@@ -19,7 +19,7 @@ export default function FindUs () {
               />
             </div>
             <div className="mt-4 text-center">
-              <p className="text-bakery-secondary mb-4 font-bold font-body">Café Eleven every weekend <br/> 435 NE Rosa Parks, Portland OR 97211</p>
+              <p className="text-black mb-4 font-bold font-body">Café Eleven every weekend <br/> 435 NE Rosa Parks, Portland OR 97211</p>
             </div>
           </Tile>
 
@@ -34,12 +34,12 @@ export default function FindUs () {
               />
             </div>
             <div className="mt-4 text-center">
-              <p className="text-bakery-secondary mb-4 font-bold font-body">Woodlawn Farmers Market <br/>every second Saturday ( March - May 2025)</p>
+              <p className="text-black mb-4 font-bold font-body">Woodlawn Farmers Market <br/>every second Saturday ( March - May 2025)</p>
             </div>
           </Tile>
 
           <Tile title="Follow us!">
-            <h3 className="text-bakery-secondary font-body mb-6">Lazy Bread is just launching: subscribe now to receive updates!</h3>
+            <h3 className="text-black font-body mb-6">Lazy Bread is just launching: subscribe now to receive updates!</h3>
             <EmailSignup />
           </Tile>
 
