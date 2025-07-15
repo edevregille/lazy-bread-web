@@ -26,6 +26,16 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({
   const [items, setCartItems] = useState<CartItem[]>([]);
   
   const updateQty = async (product: Product, qty: number) => {
+    // Calculate total quantity excluding current product
+    const otherItemsTotal = items
+      .filter(item => item.product.id !== product.id)
+      .reduce((sum, item) => sum + item.qty, 0);
+    
+    // Check if new quantity would exceed 10 bread limit
+    if (otherItemsTotal + qty > 10) {
+      return; // Don't update if it would exceed limit
+    }
+
     if(items.length > 0 && items.filter(item => item.product.id === product.id ).length > 0 ){ // product is already in the cart
         const index = items.findIndex(el => el.product.id === product.id);
         const updatedCart = [ ... items ];
@@ -35,10 +45,10 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({
         }
         setCartItems(updatedCart);
     } else {
-        items.push({
+        setCartItems([...items, {
             product: product,
             qty: qty,
-        })
+        }]);
     }
   };
 

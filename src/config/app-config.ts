@@ -31,6 +31,7 @@ export const BUSINESS_SETTINGS = {
   // Business hours and delivery
   deliveryDays: ["Wednesday", "Friday"],
   minOrderAdvanceHours: 24,
+  maxOrderQuantity: 5,
 };
 
 export const DELIVERY_ZONES = {
@@ -44,6 +45,59 @@ export const DELIVERY_ZONES = {
     '97242', '97266', '97267', '97268', '97269', '97280', '97281', '97282', '97283',
     '97286', '97290', '97291', '97292', '97293', '97294', '97296', '97298', '97299'
   ],
+};
+
+export const FIND_US_LOCATIONS = [
+  {
+    id: 'cafe-eleven',
+    name: 'Café Eleven',
+    address: '435 NE Rosa Parks, Portland OR 97211',
+    image: '/contact-cafe11.png',
+    imageAlt: 'Café Eleven location',
+    schedule: 'Weekends',
+    active: true,
+    coordinates: {
+      lat: 45.5801,
+      lng: -122.6587
+    }
+  },
+  {
+    id: 'woodlawn-farmers-market',
+    name: 'Woodlawn Farmers Market',
+    address: 'Woodlawn Triangle, Portland OR',
+    image: '/contact-market.png',
+    imageAlt: 'Woodlawn Farmers Market',
+    schedule: 'Every other Saturday',
+    active: true,
+    coordinates: {
+      lat: 45.5647,
+      lng: -122.6587
+    }
+  },{
+    id: 'pop-up-shop',
+    name: 'Pop-Up Shop',
+    address: '55 NE Holman St, Portland OR',
+    image: '/home.png',
+    imageAlt: 'Pop-up Shop',
+    schedule: 'Weekends',
+    active: true,
+    coordinates: {
+      lat: 45.5647,
+      lng: -122.6587
+    }
+  }
+];
+
+export const SOCIAL_MEDIA = {
+  instagram: {
+    url: 'https://www.instagram.com/lazybreadpdx/',
+    handle: '@lazybreadpdx',
+    active: true
+  },
+  email: {
+    address: 'lazybreadpdx@gmail.com',
+    active: true
+  }
 };
 
 export const VALIDATION_RULES = {
