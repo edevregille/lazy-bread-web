@@ -227,7 +227,7 @@ export default function OrderPage() {
     <div className="min-h-screen bg-warm-cream py-20">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="card-bakery">
-          <h1 className="text-4xl font-bakery font-bold text-bakery-primary mb-8 text-center">
+          <h1 className="text-5xl font-bakery font-bold text-bakery-primary mb-8 text-center">
             {PAGE_CONTENT.orderPageTitle}
           </h1>
 
@@ -237,14 +237,14 @@ export default function OrderPage() {
             {/* Bread Selection */}
             <div>
               <div className="flex justify-between items-center mb-3">
-                <label className="block text-sm font-medium text-black font-body">
+                <label className="block text-lg font-medium text-black font-body">
                   Select Bread Types and Quantities *
                 </label>
               </div>
               
               {totalBreadQuantity >= maxBreads && (
                 <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg">
-                  <p className="text-sm text-red-700 font-body">
+                  <p className="text-base text-red-700 font-body">
                     ⚠️ Maximum limit of {maxBreads} breads reached. You cannot add more breads to your order.
                   </p>
                 </div>
@@ -261,8 +261,8 @@ export default function OrderPage() {
                   >
                     <div className="flex justify-between items-start mb-4">
                       <div>
-                        <h3 className="font-semibold text-black font-body">{bread.name}</h3>
-                        <p className="text-sm text-black opacity-80 mt-1 font-accent">{bread.description}</p>
+                        <h3 className="text-xl font-semibold text-black font-body">{bread.name}</h3>
+                        <p className="text-base text-black opacity-80 mt-1 font-accent">{bread.description}</p>
                       </div>
                       <span className="text-lg font-bold text-bakery-primary">
                         ${bread.price.toFixed(2)}
@@ -271,7 +271,7 @@ export default function OrderPage() {
 
                     {/* Quantity Controls */}
                     <div className="flex items-center justify-between">
-                      <span className="text-sm text-black font-body">Quantity:</span>
+                      <span className="text-base text-black font-body">Quantity:</span>
                       <div className="flex items-center space-x-4">
                         <button
                           type="button"
@@ -286,7 +286,7 @@ export default function OrderPage() {
                         >
                           -
                         </button>
-                        <span className="text-lg font-semibold w-12 text-center text-black">
+                        <span className="text-xl font-semibold w-12 text-center text-black">
                           {orderForm.breadQuantities[bread.id]}
                         </span>
                         <button
@@ -318,7 +318,7 @@ export default function OrderPage() {
                     {orderForm.breadQuantities[bread.id] > 0 && (
                       <div className="mt-3 pt-3">
                         <div className="flex justify-between items-center">
-                          <span className="text-sm text-black font-body">
+                          <span className="text-base text-black font-body">
                             {bread.name} × {orderForm.breadQuantities[bread.id]}
                           </span>
                           <span className="font-semibold text-bakery-primary">
@@ -331,17 +331,17 @@ export default function OrderPage() {
                 ))}
               </div>
               {errors.breadType && (
-                <p className="text-red-600 text-sm mt-1">{errors.breadType}</p>
+                <p className="text-red-600 text-base mt-1">{errors.breadType}</p>
               )}
             </div>
 
             {/* Delivery Date Selection */}
             <div>
-              <h3 className="text-lg font-semibold text-black mb-4 font-body">Delivery Date</h3>
+              <h3 className="text-xl font-semibold text-black mb-4 font-body">Delivery Date</h3>
               <select
                 value={orderForm.deliveryDate}
                 onChange={(e) => setOrderForm({ ...orderForm, deliveryDate: e.target.value })}
-                className="w-full px-3 py-2 border border-bakery-light rounded-md focus:outline-none focus:ring-2 focus:ring-bakery-primary focus:border-bakery-primary font-body"
+                className="w-full px-4 py-3 border border-bakery-light rounded-md focus:outline-none focus:ring-2 focus:ring-bakery-primary focus:border-bakery-primary font-body text-base"
               >
                 <option value="">Select a delivery date</option>
                 {getAvailableDeliveryDates().map((date) => (
@@ -351,121 +351,121 @@ export default function OrderPage() {
                 ))}
               </select>
               {errors.deliveryDate && (
-                <p className="text-red-600 text-sm mt-1">{errors.deliveryDate}</p>
+                <p className="text-red-600 text-base mt-1">{errors.deliveryDate}</p>
               )}
-              <p className="text-sm text-black mt-2 font-body">
+              <p className="text-base text-black mt-2 font-body">
                 {PAGE_CONTENT.deliveryInstructions}
               </p>
             </div>
 
             {/* Delivery Address */}
             <div>
-              <h3 className="text-lg font-semibold text-black mb-4 font-body">Delivery Address</h3>
+              <h3 className="text-xl font-semibold text-black mb-4 font-body">Delivery Address</h3>
               
               {/* Customer Information */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
                 <div>
-                  <label className="block text-sm font-medium text-black mb-2 font-body">
+                  <label className="block text-base font-medium text-black mb-2 font-body">
                     Full Name *
                   </label>
                   <input
                     type="text"
                     value={orderForm.customerName}
                     onChange={(e) => setOrderForm({ ...orderForm, customerName: e.target.value })}
-                    className="w-full px-3 py-2 border border-bakery-light rounded-md focus:outline-none focus:ring-2 focus:ring-bakery-primary focus:border-bakery-primary font-body"
+                    className="w-full px-4 py-3 border border-bakery-light rounded-md focus:outline-none focus:ring-2 focus:ring-bakery-primary focus:border-bakery-primary font-body text-base"
                     placeholder="John Doe"
                   />
                   {errors.customerName && (
-                    <p className="text-red-600 text-sm mt-1">{errors.customerName}</p>
+                    <p className="text-red-600 text-base mt-1">{errors.customerName}</p>
                   )}
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-black mb-2 font-body">
+                  <label className="block text-base font-medium text-black mb-2 font-body">
                     Email *
                   </label>
                   <input
                     type="email"
                     value={orderForm.email}
                     onChange={(e) => setOrderForm({ ...orderForm, email: e.target.value })}
-                    className="w-full px-3 py-2 border border-bakery-light rounded-md focus:outline-none focus:ring-2 focus:ring-bakery-primary focus:border-bakery-primary font-body"
+                    className="w-full px-4 py-3 border border-bakery-light rounded-md focus:outline-none focus:ring-2 focus:ring-bakery-primary focus:border-bakery-primary font-body text-base"
                     placeholder="john@example.com"
                   />
                   {errors.email && (
-                    <p className="text-red-600 text-sm mt-1">{errors.email}</p>
+                    <p className="text-red-600 text-base mt-1">{errors.email}</p>
                   )}
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-black mb-2 font-body">
+                  <label className="block text-base font-medium text-black mb-2 font-body">
                     Phone Number *
                   </label>
                   <input
                     type="tel"
                     value={orderForm.phone}
                     onChange={(e) => setOrderForm({ ...orderForm, phone: e.target.value })}
-                    className="w-full px-3 py-2 border border-bakery-light rounded-md focus:outline-none focus:ring-2 focus:ring-bakery-primary focus:border-bakery-primary font-body"
+                    className="w-full px-4 py-3 border border-bakery-light rounded-md focus:outline-none focus:ring-2 focus:ring-bakery-primary focus:border-bakery-primary font-body text-base"
                     placeholder="(503) 555-0123"
                   />
                   {orderForm.phone && (
-                    <p className="text-sm text-black mt-1 font-accent">
+                    <p className="text-base text-black mt-1 font-accent">
                       Formatted: {formatPhoneNumber(orderForm.phone)}
                     </p>
                   )}
                   {errors.phone && (
-                    <p className="text-red-600 text-sm mt-1">{errors.phone}</p>
+                    <p className="text-red-600 text-base mt-1">{errors.phone}</p>
                   )}
                 </div>
               </div>
               
               <div className="space-y-6">
                 <div>
-                    <label className="block text-sm font-medium text-black mb-2 font-body">
+                    <label className="block text-base font-medium text-black mb-2 font-body">
                       Street Address *
                     </label>
                   <input
                     type="text"
                     value={orderForm.address}
                     onChange={(e) => setOrderForm({ ...orderForm, address: e.target.value })}
-                    className="w-full px-3 py-2 border border-bakery-light rounded-md focus:outline-none focus:ring-2 focus:ring-bakery-primary focus:border-bakery-primary font-body"
+                    className="w-full px-4 py-3 border border-bakery-light rounded-md focus:outline-none focus:ring-2 focus:ring-bakery-primary focus:border-bakery-primary font-body text-base"
                     placeholder="123 Main St"
                   />
                   {errors.address && (
-                    <p className="text-red-600 text-sm mt-1">{errors.address}</p>
+                    <p className="text-red-600 text-base mt-1">{errors.address}</p>
                   )}
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                       <div>
-                      <label className="block text-sm font-medium text-black mb-2 font-body">
+                      <label className="block text-base font-medium text-black mb-2 font-body">
                         City *
                       </label>
                     <input
                       type="text"
                       value={orderForm.city}
                       readOnly
-                      className="w-full px-3 py-2 border border-bakery-light rounded-md bg-warm-cream text-earth-brown cursor-not-allowed font-body"
+                      className="w-full px-4 py-3 border border-bakery-light rounded-md bg-warm-cream text-earth-brown cursor-not-allowed font-body text-base"
                       placeholder={DELIVERY_ZONES.cityName}
                     />
-                                          <p className="text-sm text-black mt-1 font-body">
+                                          <p className="text-base text-black mt-1 font-body">
                         We currently only deliver to {DELIVERY_ZONES.cityName}
                       </p>
                   </div>
 
                                       <div>
-                      <label className="block text-sm font-medium text-black mb-2 font-body">
+                      <label className="block text-base font-medium text-black mb-2 font-body">
                         ZIP Code *
                       </label>
                     <input
                       type="text"
                       value={orderForm.zipCode}
                       onChange={(e) => setOrderForm({ ...orderForm, zipCode: e.target.value })}
-                      className="w-full px-3 py-2 border border-bakery-light rounded-md focus:outline-none focus:ring-2 focus:ring-bakery-primary focus:border-bakery-primary font-body"
+                      className="w-full px-4 py-3 border border-bakery-light rounded-md focus:outline-none focus:ring-2 focus:ring-bakery-primary focus:border-bakery-primary font-body text-base"
                       placeholder="97201"
                       maxLength={5}
                     />
                     {errors.zipCode && (
-                      <p className="text-red-600 text-sm mt-1">{errors.zipCode}</p>
+                      <p className="text-red-600 text-base mt-1">{errors.zipCode}</p>
                     )}
                   </div>
                 </div>
@@ -474,7 +474,7 @@ export default function OrderPage() {
 
             {/* Comments Section */}
             <div>
-              <label className="block text-sm font-medium text-black mb-2 font-body">
+              <label className="block text-base font-medium text-black mb-2 font-body">
                 Additional Comments
               </label>
               <textarea
@@ -482,10 +482,10 @@ export default function OrderPage() {
                 onChange={(e) => setOrderForm({ ...orderForm, comments: e.target.value })}
                 rows={4}
                 maxLength={VALIDATION_RULES.maxCommentLength}
-                className="w-full px-3 py-2 border border-bakery-light rounded-md focus:outline-none focus:ring-2 focus:ring-bakery-primary focus:border-bakery-primary resize-none font-body"
+                className="w-full px-4 py-3 border border-bakery-light rounded-md focus:outline-none focus:ring-2 focus:ring-bakery-primary focus:border-bakery-primary resize-none font-body text-base"
                 placeholder={PAGE_CONTENT.commentsPlaceholder}
               />
-              <p className="text-sm text-black mt-1 font-body">
+              <p className="text-base text-black mt-1 font-body">
                 {PAGE_CONTENT.commentsHelper}
               </p>
             </div>
@@ -493,15 +493,15 @@ export default function OrderPage() {
             {/* Order Summary */}
             {totalAmount > 0 && (
               <div className="pt-6">
-                <h3 className="text-lg font-semibold text-black mb-4 font-body">Order Summary</h3>
+                <h3 className="text-xl font-semibold text-black mb-4 font-body">Order Summary</h3>
                 <div className="bg-warm-cream rounded-lg p-4 shadow-bakery">
                   {BREAD_TYPES.map((bread) => {
                     const quantity = orderForm.breadQuantities[bread.id];
                     if (quantity > 0) {
                       return (
                         <div key={bread.id} className="flex justify-between items-center mb-2">
-                          <span className="text-black font-body">{bread.name} × {quantity}</span>
-                          <span className="font-semibold text-bakery-primary">${(bread.price * quantity).toFixed(2)}</span>
+                          <span className="text-black font-body text-base">{bread.name} × {quantity}</span>
+                          <span className="font-semibold text-bakery-primary text-base">${(bread.price * quantity).toFixed(2)}</span>
                         </div>
                       );
                     }
@@ -509,8 +509,8 @@ export default function OrderPage() {
                   })}
                   <div className="pt-2">
                     <div className="flex justify-between items-center">
-                      <span className="text-lg font-bold text-black font-body">Total</span>
-                      <span className="text-xl font-bold text-bakery-primary">${totalAmount.toFixed(2)}</span>
+                      <span className="text-lg font-bold text-black font-body text-xl">Total</span>
+                      <span className="text-xl font-bold text-bakery-primary text-2xl">${totalAmount.toFixed(2)}</span>
                     </div>
                   </div>
                 </div>
