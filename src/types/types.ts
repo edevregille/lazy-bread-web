@@ -6,8 +6,3 @@ export interface Product {
     image?: string;
     unitCost: number;
 }
-
-export interface CartItem {
-    product: Product,
-    qty: number,
-}
