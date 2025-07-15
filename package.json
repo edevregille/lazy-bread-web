@@ -7,7 +7,9 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "generate-favicons": "node scripts/generate-favicons.mjs"
+    "generate-favicons": "node scripts/generate-favicons.mjs",
+    "create-favicon-ico": "node scripts/create-favicon-ico.mjs",
+    "fix-safari-favicon": "node scripts/fix-safari-favicon.mjs"
   },
   "dependencies": {
     "@stripe/react-stripe-js": "^3.1.1",

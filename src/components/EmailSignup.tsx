@@ -19,7 +19,7 @@ const EmailSignup = () => {
     // setCaptchaToken(value)
     try {
       // Example API request to submit email (replace with your backend logic)
-      const response = await fetch('/api/signup', {
+      const response = await fetch('/api/stripe/signup', {
         method: 'POST',
         body: JSON.stringify({ email, captchaToken: value }),
         headers: {
@@ -63,11 +63,11 @@ const EmailSignup = () => {
           value={email}
           onChange={handleEmailChange}
           placeholder="Enter your email"
-          className="border px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 w-full"
+          className="border px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 flex-1"
         />
         <button
           onClick={handleSubmit}
-          className="background-gradient_indigo-purple text-white px-6 py-2 rounded-lg hover:bg-blue-600 focus:outline-none"
+          className="btn-bakery-secondary font-body font-bold text-lg px-4 sm:px-6 py-2"
         >
           Submit
         </button>
