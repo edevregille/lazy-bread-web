@@ -58,6 +58,11 @@ export default function OrderPage() {
   const [isProcessing, setIsProcessing] = useState(false);
   const router = useRouter();
 
+  // Calculate total bread quantity
+  const totalBreadQuantity = Object.values(orderForm.breadQuantities).reduce((sum, qty) => sum + qty, 0);
+  const maxBreads = BUSINESS_SETTINGS.maxOrderQuantity;
+  const canAddMore = totalBreadQuantity < maxBreads;
+
   const validateForm = (): boolean => {
     const newErrors: FormErrors = {};
 
@@ -65,6 +70,8 @@ export default function OrderPage() {
     const totalQuantity = Object.values(orderForm.breadQuantities).reduce((sum, qty) => sum + qty, 0);
     if (totalQuantity === 0) {
       newErrors.breadType = ERROR_MESSAGES.breadTypeRequired;
+    } else if (totalQuantity > 10) {
+      newErrors.breadType = 'Maximum limit of 10 breads exceeded.';
     }
 
     // Validate delivery date
@@ -229,9 +236,19 @@ export default function OrderPage() {
           <form onSubmit={handleSubmit} className="space-y-8">
             {/* Bread Selection */}
             <div>
-              <label className="block text-sm font-medium text-black mb-3 font-body">
-                Select Bread Types and Quantities *
-              </label>
+              <div className="flex justify-between items-center mb-3">
+                <label className="block text-sm font-medium text-black font-body">
+                  Select Bread Types and Quantities *
+                </label>
+              </div>
+              
+              {totalBreadQuantity >= maxBreads && (
+                <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg">
+                  <p className="text-sm text-red-700 font-body">
+                    ⚠️ Maximum limit of {maxBreads} breads reached. You cannot add more breads to your order.
+                  </p>
+                </div>
+              )}
               <div className="space-y-4">
                 {BREAD_TYPES.map((bread) => (
                   <div
@@ -274,14 +291,23 @@ export default function OrderPage() {
                         </span>
                         <button
                           type="button"
-                          onClick={() => setOrderForm({
-                            ...orderForm,
-                            breadQuantities: {
-                              ...orderForm.breadQuantities,
-                              [bread.id]: orderForm.breadQuantities[bread.id] + 1
+                          onClick={() => {
+                            if (canAddMore) {
+                              setOrderForm({
+                                ...orderForm,
+                                breadQuantities: {
+                                  ...orderForm.breadQuantities,
+                                  [bread.id]: orderForm.breadQuantities[bread.id] + 1
+                                }
+                              });
                             }
-                          })}
-                          className="w-8 h-8 rounded-full border-2 border-bakery-light flex items-center justify-center hover:border-bakery-primary text-earth-brown hover:text-bakery-primary transition-colors duration-300"
+                          }}
+                          disabled={!canAddMore}
+                          className={`w-8 h-8 rounded-full border-2 flex items-center justify-center transition-colors duration-300 ${
+                            canAddMore 
+                              ? 'border-bakery-light hover:border-bakery-primary text-earth-brown hover:text-bakery-primary' 
+                              : 'border-gray-300 text-gray-400 cursor-not-allowed'
+                          }`}
                         >
                           +
                         </button>
