@@ -33,14 +33,14 @@ export default function Home() {
                 Handcrafted sourdough focaccia made with organic ingredients. 
                 Each loaf is carefully fermented and baked to perfection in our cottage bakery.
               </p>
-              <div className="flex flex-col sm:flex-row gap-4">
-                <Link href="/order">
-                  <button className="btn-bakery-secondary font-body text-lg px-8 py-4">
+              <div className="flex flex-row gap-2 sm:gap-4">
+                <Link href="/order" className="flex-1">
+                  <button className="btn-bakery-secondary font-body text-lg px-4 sm:px-8 py-4 w-full">
                     Order
                   </button>
                 </Link>
-                <Link href="/find-us">
-                  <button className="btn-bakery-secondary font-body text-lg px-8 py-4">
+                <Link href="/find-us" className="flex-1">
+                  <button className="btn-bakery-secondary font-body text-lg px-4 sm:px-8 py-4 w-full">
                     Find Us
                   </button>
                 </Link>
