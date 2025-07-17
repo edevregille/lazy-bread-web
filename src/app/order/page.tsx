@@ -12,7 +12,6 @@ import {
   ERROR_MESSAGES,
   getAvailableDeliveryDates,
   validateUSPhoneNumber,
-  formatPhoneNumber,
   formatDeliveryDate
 } from '@/config/app-config';
 
@@ -150,7 +149,7 @@ export default function OrderPage() {
         }));
 
       // Create payment intent
-      const response = await fetch('/api/stripe/payment', {
+      const response = await fetch('/api/stripe/create-payment-intent', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -224,7 +223,7 @@ export default function OrderPage() {
   ) : null;
 
   return (
-    <div className="min-h-screen bg-warm-cream py-20">
+    <div className="min-h-screen py-20 bg-gradient-to-br from-bakery-cream via-bakery-warm to-bakery-butter">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="card-bakery">
           <h1 className="text-5xl font-bakery font-bold text-bakery-primary mb-8 text-center">
@@ -407,11 +406,6 @@ export default function OrderPage() {
                     className="w-full px-4 py-3 border border-bakery-light rounded-md focus:outline-none focus:ring-2 focus:ring-bakery-primary focus:border-bakery-primary font-body text-base"
                     placeholder="(503) 555-0123"
                   />
-                  {orderForm.phone && (
-                    <p className="text-base text-black mt-1 font-accent">
-                      Formatted: {formatPhoneNumber(orderForm.phone)}
-                    </p>
-                  )}
                   {errors.phone && (
                     <p className="text-red-600 text-base mt-1">{errors.phone}</p>
                   )}
@@ -534,6 +528,34 @@ export default function OrderPage() {
             ) : null}
             {errors.captcha && (
               <p className="text-red-600 text-sm text-center">{errors.captcha}</p>
+            )}
+
+            {/* Form Error Summary */}
+            {Object.keys(errors).length > 0 && (
+              <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-6">
+                <div className="flex items-start">
+                  <div className="flex-shrink-0">
+                    <svg className="h-5 w-5 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                  </div>
+                  <div className="ml-3">
+                    <h3 className="text-sm font-medium text-red-800 mb-2">
+                      Please fix the following errors:
+                    </h3>
+                    <ul className="text-sm text-red-700 space-y-1">
+                      {errors.breadType && <li>• {errors.breadType}</li>}
+                      {errors.deliveryDate && <li>• {errors.deliveryDate}</li>}
+                      {errors.address && <li>• {errors.address}</li>}
+                      {errors.zipCode && <li>• {errors.zipCode}</li>}
+                      {errors.customerName && <li>• {errors.customerName}</li>}
+                      {errors.email && <li>• {errors.email}</li>}
+                      {errors.phone && <li>• {errors.phone}</li>}
+                      {errors.captcha && <li>• {errors.captcha}</li>}
+                    </ul>
+                  </div>
+                </div>
+              </div>
             )}
 
             {/* Submit Button */}

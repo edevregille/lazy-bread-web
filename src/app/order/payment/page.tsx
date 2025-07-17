@@ -30,7 +30,11 @@ interface OrderDetails {
   clientSecret: string;
 }
 
-function PaymentForm() {
+interface PaymentFormProps {
+  orderDetails: OrderDetails;
+}
+
+function PaymentForm({ orderDetails }: PaymentFormProps) {
   const stripe = useStripe();
   const elements = useElements();
   const [isProcessing, setIsProcessing] = useState(false);
@@ -53,7 +57,7 @@ function PaymentForm() {
       const { error, paymentIntent } = await stripe.confirmPayment({
         elements,
         confirmParams: {
-          return_url: `${window.location.origin}/order/success`,
+          return_url: `${window.location.origin}/`,
         },
         redirect: 'if_required',
       });
@@ -62,9 +66,17 @@ function PaymentForm() {
         setMessage(error.message || 'An error occurred during payment.');
         setIsProcessing(false);
       } else if (paymentIntent && paymentIntent.status === 'succeeded') {
-        setMessage('Payment successful! Redirecting...');
+        setMessage('Payment successful! Redirecting to home page...');
+        // Store success data for the modal on home page
+        sessionStorage.setItem('paymentSuccess', JSON.stringify({
+          orderDetails: orderDetails,
+          paymentIntentId: paymentIntent.id,
+          timestamp: new Date().toISOString()
+        }));
+        // Clear order details from session storage
+        sessionStorage.removeItem('orderDetails');
         setTimeout(() => {
-          router.push('/order/success');
+          router.push('/');
         }, 2000);
       } else {
         setMessage('Payment failed. Please try again.');
@@ -147,7 +159,7 @@ export default function PaymentPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 py-20">
+    <div className="min-h-screen bg-gradient-to-br from-bakery-cream via-bakery-warm to-bakery-butter py-20">
       <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="bg-white rounded-lg shadow-lg p-8">
           <h1 className="text-3xl font-bold text-gray-900 mb-8 text-center">
@@ -202,7 +214,7 @@ export default function PaymentPage() {
             <h2 className="text-xl font-semibold text-gray-900 mb-4">Payment Information</h2>
             {clientSecret ? (
               <Elements stripe={stripePromise} options={{ clientSecret }}>
-                <PaymentForm />
+                <PaymentForm orderDetails={orderDetails} />
               </Elements>
             ) : (
               <div className="text-center py-8">

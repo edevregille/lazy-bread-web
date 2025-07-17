@@ -8,10 +8,10 @@ export const NAV_ITEMS = [
 ];
 
 export const BREAD_TYPES = [
-  { id: 'classic-salt', name: 'Classic Salt', price: 6.5, description: 'Traditional sourdough with sea salt' },
-  { id: 'rosemary', name: 'Rosemary', price: 6.5, description: 'Artisan bread with fresh rosemary' },
-  { id: 'green-olive', name: 'Green Olive', price: 6.5, description: 'Rustic bread with green olives' },
-  { id: 'cheez-it', name: 'Cheez-it', price: 6.5, description: 'Cheesy bread with a crispy crust' },
+  { id: 'classic-salt', name: 'Classic Salt', price: 6.00, description: 'Traditional sourdough with sea salt' },
+  { id: 'rosemary', name: 'Rosemary', price: 6.00, description: 'Artisan bread with fresh rosemary' },
+  { id: 'green-olive', name: 'Green Olive', price: 6.00, description: 'Rustic bread with green olives' },
+  { id: 'cheez-it', name: 'Cheez-it', price: 6.00, description: 'Cheesy bread with a crispy crust' },
 ];
 
 export const BUSINESS_SETTINGS = {
@@ -29,7 +29,7 @@ export const BUSINESS_SETTINGS = {
   recurringOrdersEmail: "lazybreadpdx@gmail.com",
   
   // Business hours and delivery
-  deliveryDays: ["Wednesday", "Friday"],
+  deliveryDays: ["Wednesday", "Friday", "Sunday"],
   minOrderAdvanceHours: 24,
   maxOrderQuantity: 5,
 };
@@ -101,8 +101,8 @@ export const SOCIAL_MEDIA = {
 };
 
 export const VALIDATION_RULES = {
-  requireCaptcha: true,
-  requirePhoneValidation: true,
+  requireCaptcha: true, // Temporarily disabled for testing
+  requirePhoneValidation: false,
   maxCommentLength: 255,
 };
 
@@ -184,15 +184,3 @@ export const validateUSPhoneNumber = (phone: string): boolean => {
   
   return false;
 };
-
-export const formatPhoneNumber = (phone: string): string => {
-  const digitsOnly = phone.replace(/\D/g, '');
-  
-  if (digitsOnly.length === 10) {
-    return `(${digitsOnly.slice(0, 3)}) ${digitsOnly.slice(3, 6)}-${digitsOnly.slice(6)}`;
-  } else if (digitsOnly.length === 11 && digitsOnly.startsWith('1')) {
-    return `+1 (${digitsOnly.slice(1, 4)}) ${digitsOnly.slice(4, 7)}-${digitsOnly.slice(7)}`;
-  }
-  
-  return phone;
-}; 

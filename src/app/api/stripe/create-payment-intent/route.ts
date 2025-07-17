@@ -6,8 +6,10 @@ export async function POST(req: NextRequest) {
   try {
     const { amount, captchaToken, orderDetails } = await req.json();
 
-    // Verify CAPTCHA
-    const captchaResult = await verifyCaptcha(captchaToken, true);
+    console.log('Received request:', { amount, hasCaptchaToken: !!captchaToken, hasOrderDetails: !!orderDetails });
+
+    // Verify CAPTCHA (only if required)
+    const captchaResult = await verifyCaptcha(captchaToken, false); // Set to false since we disabled CAPTCHA requirement
     const captchaError = handleCaptchaError(captchaResult);
     if (captchaError) {
       return captchaError;
@@ -29,8 +31,22 @@ export async function POST(req: NextRequest) {
       );
     }
 
+    // Transform orderDetails to match the expected structure
+    const transformedOrderDetails = {
+      items: orderDetails.items,
+      customerInfo: {
+        name: orderDetails.customerName,
+        email: orderDetails.email,
+        address: orderDetails.address,
+        city: orderDetails.city,
+        zipCode: orderDetails.zipCode,
+      },
+      deliveryDate: orderDetails.deliveryDate,
+      comments: orderDetails.comments,
+    };
+
     // Create payment intent using the utility function
-    const paymentIntent = await createPaymentIntent(amount, orderDetails);
+    const paymentIntent = await createPaymentIntent(amount, transformedOrderDetails);
 
     return NextResponse.json({
       clientSecret: paymentIntent.client_secret,

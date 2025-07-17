@@ -6,7 +6,7 @@ import { FIND_US_LOCATIONS, SOCIAL_MEDIA } from '@/config/app-config';
 
 export default function FindUs () {
   return (
-    <section className="bg-bakery-cream py-16 bakery-pattern-bg">
+    <section className="background-gradient-warm py-16">
       <div className="max-w-6xl mx-auto px-8">
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
           {FIND_US_LOCATIONS.filter(location => location.active).map((location) => (

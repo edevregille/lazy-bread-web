@@ -79,6 +79,7 @@ export async function createPaymentIntent(
       enabled: true,
     },
     metadata: {
+      orderType:'online',
       items: JSON.stringify(orderDetails.items),
       customerName: orderDetails.customerInfo.name,
       customerEmail: orderDetails.customerInfo.email,
