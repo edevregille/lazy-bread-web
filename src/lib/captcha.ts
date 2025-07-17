@@ -15,6 +15,8 @@ export async function verifyCaptcha(
   captchaToken: string | null | undefined,
   required: boolean = true
 ): Promise<CaptchaVerificationResult> {
+  console.log('CAPTCHA verification - required:', required, 'hasToken:', !!captchaToken, 'hasSecretKey:', !!process.env.GOOGLE_CAPTCHA_SECRET_KEY);
+  
   // If CAPTCHA is not configured, skip verification
   if (!process.env.GOOGLE_CAPTCHA_SECRET_KEY) {
     if (required) {

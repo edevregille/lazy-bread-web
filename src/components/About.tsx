@@ -3,7 +3,7 @@ import Image from "next/image";
 
 export default function About() {
     return (
-        <section id="about" className="bg-bakery-cream py-16 bakery-pattern-bg">
+        <section id="about" className="background-gradient-warm py-16">
             <div className="max-w-6xl mx-auto px-8">
                 <div className="w-full">
                     <Tile title="About">

@@ -1,12 +1,62 @@
 'use client'
 
-import React from "react";
+import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import EmailSignup from "./EmailSignup";
 import Link from "next/link";
 import { BREAD_TYPES } from "@/config/app-config";
+import { PaymentSuccessModal } from "./PaymentSuccessModal";
+
+interface PaymentSuccessData {
+  orderDetails: {
+    breadQuantities: Record<string, number>;
+    deliveryDate: string;
+    address: string;
+    city: string;
+    zipCode: string;
+    customerName: string;
+    email: string;
+    phone: string;
+    comments: string;
+    orderItems: Array<{
+      id: string;
+      name: string;
+      price: number;
+      quantity: number;
+      total: number;
+    }>;
+    totalAmount: number;
+  };
+  paymentIntentId: string;
+  timestamp: string;
+}
 
 export default function Home() {
+  const [showPaymentSuccess, setShowPaymentSuccess] = useState(false);
+  const [paymentData, setPaymentData] = useState<PaymentSuccessData | null>(null);
+
+  useEffect(() => {
+    // Check for payment success data in session storage
+    const paymentSuccessData = sessionStorage.getItem('paymentSuccess');
+    if (paymentSuccessData) {
+      try {
+        const data = JSON.parse(paymentSuccessData);
+        setPaymentData(data);
+        setShowPaymentSuccess(true);
+        // Clear the data from session storage
+        sessionStorage.removeItem('paymentSuccess');
+      } catch (error) {
+        console.error('Error parsing payment success data:', error);
+        sessionStorage.removeItem('paymentSuccess');
+      }
+    }
+  }, []);
+
+  const handleClosePaymentSuccess = () => {
+    setShowPaymentSuccess(false);
+    setPaymentData(null);
+  };
+
   return (
     <>
       {/* Hero Section */}
@@ -116,6 +166,15 @@ export default function Home() {
           </div>
         </div>
       </section>
+
+      {/* Payment Success Modal */}
+      {showPaymentSuccess && paymentData && (
+        <PaymentSuccessModal
+          isOpen={showPaymentSuccess}
+          onClose={handleClosePaymentSuccess}
+          paymentData={paymentData}
+        />
+      )}
     </>
   );
 }
