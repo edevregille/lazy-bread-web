@@ -11,6 +11,27 @@ const firebaseConfig = {
   appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
 };
 
+// Debug: Log configuration (remove in production)
+if (typeof window !== 'undefined') {
+  console.log('Firebase Config Check:', {
+    apiKey: firebaseConfig.apiKey ? '✅ Set' : '❌ Missing',
+    authDomain: firebaseConfig.authDomain ? '✅ Set' : '❌ Missing',
+    projectId: firebaseConfig.projectId ? '✅ Set' : '❌ Missing',
+    storageBucket: firebaseConfig.storageBucket ? '✅ Set' : '❌ Missing',
+    messagingSenderId: firebaseConfig.messagingSenderId ? '✅ Set' : '❌ Missing',
+    appId: firebaseConfig.appId ? '✅ Set' : '❌ Missing',
+  });
+}
+
+// Validate required fields
+const requiredFields = ['apiKey', 'authDomain', 'projectId', 'storageBucket', 'messagingSenderId', 'appId'];
+const missingFields = requiredFields.filter(field => !firebaseConfig[field as keyof typeof firebaseConfig]);
+
+if (missingFields.length > 0) {
+  console.error('❌ Firebase Configuration Error: Missing required fields:', missingFields);
+  throw new Error(`Firebase configuration is missing required fields: ${missingFields.join(', ')}`);
+}
+
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 
