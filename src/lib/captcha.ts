@@ -42,16 +42,22 @@ export async function verifyCaptcha(
   }
 
   try {
-    // Verify CAPTCHA with Google
+    // Verify CAPTCHA with Google with timeout
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 second timeout
+    
     const response = await fetch(
       `https://www.google.com/recaptcha/api/siteverify?secret=${process.env.GOOGLE_CAPTCHA_SECRET_KEY}&response=${captchaToken}`,
       {
         method: 'POST',
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded'
-        }
+        },
+        signal: controller.signal
       }
     );
+    
+    clearTimeout(timeoutId);
 
     if (!response.ok) {
       return {
@@ -73,6 +79,15 @@ export async function verifyCaptcha(
 
   } catch (error) {
     console.error('CAPTCHA verification error:', error);
+    
+    // Check if it's a timeout error
+    if (error instanceof Error && error.name === 'AbortError') {
+      return {
+        success: false,
+        message: "CAPTCHA verification timed out. Please try again."
+      };
+    }
+    
     return {
       success: false,
       message: "CAPTCHA verification error"

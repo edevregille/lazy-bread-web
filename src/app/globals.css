@@ -7,7 +7,7 @@
 :root {
   --background: #FDF8F0;
   --foreground: #6B4423;
-  --primary: #8B4513;
+  --primary: #d45b04;
   --primary-light: #A0522D;
   --secondary: #D2691E;
   --accent: #F4A460;
@@ -168,7 +168,7 @@ body {
 
 /* Card Styles */
 .card-bakery {
-  background: white;
+  background: bg-warm-cream;
   border-radius: 12px;
   padding: 24px;
   box-shadow: 0 4px 20px rgba(139, 69, 19, 0.1);

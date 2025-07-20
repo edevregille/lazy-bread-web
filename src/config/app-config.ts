@@ -7,6 +7,13 @@ export const NAV_ITEMS = [
   { name: "Find Us", path: "/find-us" },
 ];
 
+export const AUTH_NAV_ITEMS = [
+  { name: "Home", path: "/" },
+  { name: "Order", path: "/order" },
+  { name: "About", path: "/about" },
+  { name: "Find Us", path: "/find-us" },
+];
+
 export const BREAD_TYPES = [
   { id: 'classic-salt', name: 'Classic Salt', price: 6.00, description: 'Traditional sourdough with sea salt' },
   { id: 'rosemary', name: 'Rosemary', price: 6.00, description: 'Artisan bread with fresh rosemary' },

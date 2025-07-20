@@ -4,7 +4,7 @@ import { createPaymentIntent } from "@/lib/stripe";
 
 export async function POST(req: NextRequest) {
   try {
-    const { amount, captchaToken, orderDetails } = await req.json();
+    const { amount, captchaToken, orderDetails, userId, savePaymentMethod } = await req.json();
 
     console.log('Received request:', { amount, hasCaptchaToken: !!captchaToken, hasOrderDetails: !!orderDetails });
 
@@ -40,13 +40,14 @@ export async function POST(req: NextRequest) {
         address: orderDetails.address,
         city: orderDetails.city,
         zipCode: orderDetails.zipCode,
+        phone: orderDetails.phone,
       },
       deliveryDate: orderDetails.deliveryDate,
       comments: orderDetails.comments,
     };
 
     // Create payment intent using the utility function
-    const paymentIntent = await createPaymentIntent(amount, transformedOrderDetails);
+    const paymentIntent = await createPaymentIntent(amount, transformedOrderDetails, userId, savePaymentMethod);
 
     return NextResponse.json({
       clientSecret: paymentIntent.client_secret,
