@@ -23,7 +23,7 @@ export const BREAD_TYPES = [
 
 export const BUSINESS_SETTINGS = {
   // Holiday mode settings
-  isHolidayMode: false, // Set to true to disable ordering
+  isHolidayMode: true, // Set to true to disable ordering
   holidayMessage: "🏖️ We're on Holiday! Taking a well-deserved break.",
   returnDate: "September, 2025",
   
