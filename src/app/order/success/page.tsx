@@ -30,17 +30,17 @@ export default function SuccessPage() {
   const router = useRouter();
 
   useEffect(() => {
-    const storedOrderDetails = sessionStorage.getItem('orderDetails');
-    if (!storedOrderDetails) {
+    const storedOrderData = sessionStorage.getItem('orderData');
+    if (!storedOrderData) {
       router.push('/order');
       return;
     }
 
     try {
-      const details = JSON.parse(storedOrderDetails);
+      const details = JSON.parse(storedOrderData);
       setOrderDetails(details);
-      // Clear the order details from session storage
-      sessionStorage.removeItem('orderDetails');
+      // Clear the order data from session storage
+      sessionStorage.removeItem('orderData');
       
       // Auto-redirect to home after 10 seconds with countdown
       const redirectTimer = setTimeout(() => {
@@ -105,7 +105,7 @@ export default function SuccessPage() {
           </h1>
           
           <p className="text-lg text-gray-600 mb-8">
-            Thank you for your order. We&apos;ll start baking your fresh bread right away!
+            Thank you for your order.
           </p>
           
           {/* Auto-redirect notice */}
@@ -173,13 +173,7 @@ export default function SuccessPage() {
                 <div className="flex-shrink-0 w-6 h-6 bg-blue-500 text-white rounded-full flex items-center justify-center text-sm font-bold mr-3 mt-0.5">
                   2
                 </div>
-                <p className="text-gray-700">Our bakers will prepare your fresh bread.</p>
-              </div>
-              <div className="flex items-start">
-                <div className="flex-shrink-0 w-6 h-6 bg-blue-500 text-white rounded-full flex items-center justify-center text-sm font-bold mr-3 mt-0.5">
-                  3
-                </div>
-                <p className="text-gray-700">We&apos;ll contact you to arrange delivery within 24-48 hours.</p>
+                <p className="text-gray-700">We will deliver your order at the address you provided and the day you selected.</p>
               </div>
             </div>
           </div>

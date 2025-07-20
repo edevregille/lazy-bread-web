@@ -107,10 +107,16 @@ const EmailSignup = () => {
                 Please complete the verification to subscribe to our newsletter.
               </p>
               <div className="flex justify-center">
-                <ReCAPTCHA
-                  sitekey="6Lfp-9AqAAAAALeF0QMRqyhsUgDvbnfjTDlzzJ5x"
-                  onChange={handleCaptchaChange}
-                />
+                {process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY ? (
+                  <ReCAPTCHA
+                    sitekey={process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY}
+                    onChange={handleCaptchaChange}
+                  />
+                ) : (
+                  <div className="text-red-500 text-sm">
+                    reCAPTCHA is not configured. Please check your environment variables.
+                  </div>
+                )}
               </div>
             </>
           ) : (

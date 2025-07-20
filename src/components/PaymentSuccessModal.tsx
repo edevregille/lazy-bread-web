@@ -42,7 +42,7 @@ export const PaymentSuccessModal: React.FC<PaymentSuccessModalProps> = ({
   onClose,
   paymentData
 }) => {
-  const { orderDetails, paymentIntentId } = paymentData;
+  const { orderDetails } = paymentData;
 
   return (
     <Modal
@@ -119,17 +119,6 @@ export const PaymentSuccessModal: React.FC<PaymentSuccessModalProps> = ({
           </div>
         </div>
 
-        {/* Payment ID */}
-        <div className="bg-blue-50 rounded-lg p-4">
-          <h3 className="text-lg font-semibold text-gray-900 mb-2">Payment Confirmation</h3>
-          <p className="text-sm text-gray-700">
-            <strong>Payment ID:</strong> {paymentIntentId}
-          </p>
-          <p className="text-sm text-gray-600 mt-1">
-            We&apos;ll send you a confirmation email with these details.
-          </p>
-        </div>
-
         {/* Next Steps */}
         <div className="bg-green-50 rounded-lg p-4">
           <h3 className="text-lg font-semibold text-gray-900 mb-2">What&apos;s Next?</h3>
@@ -144,13 +133,7 @@ export const PaymentSuccessModal: React.FC<PaymentSuccessModalProps> = ({
               <div className="flex-shrink-0 w-5 h-5 bg-green-500 text-white rounded-full flex items-center justify-center text-xs font-bold mr-2 mt-0.5">
                 2
               </div>
-              <p className="text-gray-700">Our bakers will prepare your fresh bread.</p>
-            </div>
-            <div className="flex items-start">
-              <div className="flex-shrink-0 w-5 h-5 bg-green-500 text-white rounded-full flex items-center justify-center text-xs font-bold mr-2 mt-0.5">
-                3
-              </div>
-              <p className="text-gray-700">We&apos;ll contact you to arrange delivery within 24-48 hours.</p>
+              <p className="text-gray-700">We&apos;ll deliver to your doorstep on the day you selected.</p>
             </div>
           </div>
         </div>

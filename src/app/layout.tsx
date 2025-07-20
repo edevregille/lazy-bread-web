@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import "./globals.css";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import { AuthProvider } from "@/contexts/AuthContext";
 
 export const metadata: Metadata = {
   title: "Lazy Bread PDX",
@@ -66,9 +67,9 @@ export default function RootLayout({
       <body
         className="antialiased"
       >
-        <div className="min-h-screen flex flex-col">
-          <div className="flex-grow">
-            
+        <AuthProvider>
+          <div className="min-h-screen flex flex-col">
+            <div className="flex-grow">
               <Header />
               <main className="pt-20 pb-10">
                 <div className="container mx-auto">
@@ -76,8 +77,9 @@ export default function RootLayout({
                 </div>
               </main>
               <Footer />
+            </div>
           </div>
-        </div>
+        </AuthProvider>
       </body>
     </html>
   );
