@@ -39,7 +39,7 @@ export const createStripeCustomer = async (email: string, name?: string): Promis
     
     return {
       id: customer.id,
-      email: customer.email,
+      email: customer.email ?? '',
       name: customer.name ?? undefined,
       payment_methods: paymentMethods.map(pm => ({
         id: pm.id,

@@ -271,11 +271,11 @@ export default function OrderPage() {
                         className="w-5 h-5 rounded border-gray-300 text-bakery-primary focus:ring-bakery-primary focus:ring-2 disabled:opacity-50"
                       />
                       <h3 className="text-lg font-semibold text-gray-900">
-                        🔄 Set up as Recurring Order
+                        🔄 Set up as weekly focaccias delivery
                       </h3>
                     </div>
                     <p className="text-gray-700 mb-3">
-                      Get fresh bread delivered to your door every week! Perfect for busy schedules.
+                      Get fresh focaccias delivered to your door every week!
                       {!currentUser && (
                         <span className="block mt-2 text-sm text-blue-600 font-medium">
                           💡 Sign in required for recurring orders to manage your subscription
@@ -294,12 +294,6 @@ export default function OrderPage() {
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                         </svg>
                         <span>Easy to pause or cancel anytime</span>
-                      </div>
-                      <div className="flex items-center space-x-2 text-sm text-gray-600 mt-1">
-                        <svg className="w-4 h-4 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1" />
-                        </svg>
-                        <span>Same great price, no commitment</span>
                       </div>
                     </div>
                   </div>
