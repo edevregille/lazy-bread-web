@@ -13,7 +13,7 @@ import {
 } from 'firebase/auth';
 import { auth } from '@/lib/firebase';
 import { createUserProfile, getUserProfile, UserProfile } from '@/lib/firebaseService';
-import { createStripeCustomer } from '@/lib/stripeService';
+import { createOrFindCustomer } from '@/lib/stripeApi';
 
 interface AuthContextType {
   currentUser: User | null;
@@ -49,13 +49,17 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     
     // Create user profile and Stripe customer
     try {
-      const stripeCustomer = await createStripeCustomer(email, displayName);
-      await createUserProfile({
-        uid: result.user.uid,
-        email: result.user.email!,
-        displayName: displayName,
-        stripeCustomerId: stripeCustomer.id,
-      });
+      const stripeCustomer = await createOrFindCustomer(email, displayName);
+      if (stripeCustomer.success && stripeCustomer.customer.id) {
+        await createUserProfile({
+          uid: result.user.uid,
+          email: result.user.email!,
+          displayName: displayName,
+          stripeCustomerId: stripeCustomer.customer.id,
+        });
+      } else {
+        throw new Error('Failed to create Stripe customer');
+      }
     } catch (error) {
       console.error('Error creating user profile:', error);
       // Continue even if profile creation fails

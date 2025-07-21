@@ -37,6 +37,30 @@ export default function OrderPage() {
   const [savingAddress, setSavingAddress] = useState(false);
   const [addressSaved, setAddressSaved] = useState(false);
 
+  // Phone number formatter function
+  const formatPhoneNumber = (value: string): string => {
+    // Remove all non-numeric characters
+    const phoneNumber = value.replace(/\D/g, '');
+    
+    // Limit to 10 digits
+    const trimmed = phoneNumber.slice(0, 10);
+    
+    // Format as xxx-xxx-xxxx
+    if (trimmed.length >= 6) {
+      return `${trimmed.slice(0, 3)}-${trimmed.slice(3, 6)}-${trimmed.slice(6)}`;
+    } else if (trimmed.length >= 3) {
+      return `${trimmed.slice(0, 3)}-${trimmed.slice(3)}`;
+    } else {
+      return trimmed;
+    }
+  };
+
+  // Handle phone number change
+  const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const formatted = formatPhoneNumber(e.target.value);
+    setPhone(formatted);
+  };
+
   // Pre-fill form with user profile data if available
   useEffect(() => {
     if (userProfile) {
@@ -93,16 +117,24 @@ export default function OrderPage() {
   const handleRecurringToggle = (checked: boolean) => {
     if (checked && !currentUser) {
       // User wants recurring order but is not signed in
+      // Don't check the box, just show sign-in modal
       setAuthModalMode('signin');
       setShowAuthModal(true);
       return;
     }
-    setIsRecurring(checked);
+    // Only allow checking the box if user is signed in
+    if (checked && currentUser) {
+      setIsRecurring(true);
+    } else if (!checked) {
+      // Allow unchecking regardless of auth status
+      setIsRecurring(false);
+    }
   };
 
   const handleAuthSuccess = () => {
     setShowAuthModal(false);
-    // User is now signed in, allow recurring order
+    // User is now signed in, set recurring order to true
+    // This will automatically check the box since the user is now authenticated
     setIsRecurring(true);
   };
 
@@ -133,6 +165,10 @@ export default function OrderPage() {
   const validateForm = () => {
     if (isHolidayMode) {
       setError('Orders are temporarily disabled during our holiday break');
+      return false;
+    }
+    if (isRecurring && !currentUser) {
+      setError('Please sign in to place a recurring order');
       return false;
     }
     if (!deliveryDate) {
@@ -265,7 +301,7 @@ export default function OrderPage() {
                     <div className="flex items-center space-x-3 mb-2">
                       <input
                         type="checkbox"
-                        checked={isRecurring}
+                        checked={isRecurring && !!currentUser}
                         onChange={(e) => handleRecurringToggle(e.target.checked)}
                         disabled={isHolidayMode}
                         className="w-5 h-5 rounded border-gray-300 text-bakery-primary focus:ring-bakery-primary focus:ring-2 disabled:opacity-50"
@@ -279,6 +315,11 @@ export default function OrderPage() {
                       {!currentUser && (
                         <span className="block mt-2 text-sm text-blue-600 font-medium">
                           💡 Sign in required for recurring orders to manage your subscription
+                        </span>
+                      )}
+                      {isRecurring && !currentUser && (
+                        <span className="block mt-2 text-sm text-orange-600 font-medium">
+                          ⚠️ Please sign in to activate your recurring order
                         </span>
                       )}
                     </p>
@@ -378,7 +419,7 @@ export default function OrderPage() {
                       ))}
                     </select>
                   )}
-                  {isRecurring && (
+                  {isRecurring && currentUser && (
                     <p className="text-xs text-gray-500 mt-1">
                       Your first delivery will be scheduled for the next available {deliveryDate || 'selected day'}
                     </p>
@@ -422,10 +463,11 @@ export default function OrderPage() {
                   <input
                     type="tel"
                     value={phone}
-                    onChange={(e) => setPhone(e.target.value)}
+                    onChange={handlePhoneChange}
                     disabled={isHolidayMode}
                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-bakery-primary focus:border-transparent disabled:opacity-50 disabled:cursor-not-allowed"
-                    placeholder="Enter your phone number"
+                    placeholder="555-123-4567"
+                    maxLength={12}
                   />
                 </div>
 

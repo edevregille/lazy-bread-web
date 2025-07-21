@@ -3,7 +3,6 @@ import "./globals.css";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { AuthProvider } from "@/contexts/AuthContext";
-import "../lib/firebaseTest";
 
 export const metadata: Metadata = {
   title: "Lazy Bread PDX",

@@ -6,9 +6,9 @@ import {
   getCustomerPaymentMethods, 
   deletePaymentMethod,
   createSetupIntent,
-  ensureStripeCustomer,
-  PaymentMethod 
-} from '@/lib/stripeService';
+  PaymentMethod ,
+  createOrFindCustomer
+} from '@/lib/stripeApi';
 import { loadStripe } from '@stripe/stripe-js';
 import {
   Elements,
@@ -174,15 +174,18 @@ export default function PaymentMethods({ onClose }: PaymentMethodsProps) {
       setError('');
       
       // Ensure user has a Stripe customer
-      const customer = await ensureStripeCustomer(
+      const customer = await createOrFindCustomer(
         userProfile?.email || '',
-        userProfile?.displayName || '',
-        userProfile?.uid
+        userProfile?.displayName || ''
       );
 
       // Now create setup intent with the customer
-      const { clientSecret: secret } = await createSetupIntent(customer.id);
-      setClientSecret(secret);
+      if(customer.success && customer.customer.id) {
+        const { clientSecret: secret } = await createSetupIntent(customer.customer.id);
+        setClientSecret(secret);
+      } else {
+        throw new Error('Failed to find Stripe customer');
+      }
     } catch (error) {
       console.error('Error ensuring Stripe customer:', error);
       setError('Failed to set up payment system. Please try again.');
