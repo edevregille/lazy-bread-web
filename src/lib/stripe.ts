@@ -281,10 +281,12 @@ export async function getCustomer(customerId: string): Promise<Stripe.Customer> 
  */
 export async function getCustomerPaymentMethods(customerId: string): Promise<Stripe.PaymentMethod[]> {
   const stripe = getStripe();
+  console.log('Getting payment methods for customer:', customerId);
   const paymentMethods = await stripe.paymentMethods.list({
     customer: customerId,
     type: 'card',
   });
+  console.log('Payment methods:', paymentMethods.data);
   return paymentMethods.data;
 }
 
@@ -325,50 +327,3 @@ export async function deletePaymentMethod(paymentMethodId: string): Promise<void
   const stripe = getStripe();
   await stripe.paymentMethods.detach(paymentMethodId);
 }
-
-/**
- * Ensure a customer exists (create if not found)
- * @param email - Customer email
- * @param name - Optional customer name
- * @param uid - Optional Firebase UID
- * @returns Promise<Stripe.Customer>
- */
-export async function ensureCustomer(email: string, name?: string, uid?: string): Promise<Stripe.Customer> {
-  const stripe = getStripe();
-  
-  // First, try to find existing customer
-  const existingCustomers = await stripe.customers.list({
-    email: email,
-    limit: 1,
-  });
-
-  if (existingCustomers.data.length > 0) {
-    const customer = existingCustomers.data[0];
-    
-    // Update customer with new information if provided
-    if (name || uid) {
-      const updateData: Stripe.CustomerUpdateParams = {};
-      if (name) updateData.name = name;
-      if (uid) updateData.metadata = { ...customer.metadata, firebaseUid: uid };
-      
-      return await stripe.customers.update(customer.id, updateData);
-    }
-    
-    return customer;
-  }
-
-  // If no existing customer, create a new one
-  const customerData: Stripe.CustomerCreateParams = {
-    email,
-    metadata: {
-      source: 'lazy-bread-web',
-      firebaseUid: uid || '',
-    },
-  };
-  
-  if (name) {
-    customerData.name = name;
-  }
-
-  return await stripe.customers.create(customerData);
-} 

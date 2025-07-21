@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
-import { createSetupIntent, ensureStripeCustomer } from '@/lib/stripeService';
+import { createSetupIntent, createOrFindCustomer } from '@/lib/stripeApi';
 import { loadStripe } from '@stripe/stripe-js';
 import {
   Elements,
@@ -142,18 +142,13 @@ export default function AddPaymentMethodPage() {
   }, [currentUser, loading, userProfile, router]);
 
   const createStripeCustomerForUser = async () => {
-    if (!currentUser) return;
+    if (!currentUser?.email) return;
 
     try {
-      // Ensure user has a Stripe customer
-      const customer = await ensureStripeCustomer(
-        currentUser.email || '',
-        currentUser.displayName || currentUser.email || '',
-        currentUser.uid
-      );
+      const customerResponse = await createOrFindCustomer(currentUser.email);
 
       // Now create setup intent with the customer
-      const { clientSecret } = await createSetupIntent(customer.id);
+      const { clientSecret } = await createSetupIntent(customerResponse.customer.id);
       setClientSecret(clientSecret);
     } catch (error) {
       console.error('Error ensuring Stripe customer:', error);

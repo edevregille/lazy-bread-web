@@ -6,7 +6,7 @@ import { Elements } from '@stripe/react-stripe-js';
 import { PaymentElement, useStripe, useElements } from '@stripe/react-stripe-js';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
-import { getCustomerPaymentMethods, ensureStripeCustomer, PaymentMethod } from '@/lib/stripeService';
+import { getCustomerPaymentMethods, PaymentMethod , createOrFindCustomer} from '@/lib/stripeApi';
 
 // Initialize Stripe
 const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY || '');
@@ -474,8 +474,8 @@ function RecurringOrderForm({ orderDetails }: PaymentFormProps) {
 
         if (!userProfile?.stripeCustomerId) {
           // Ensure customer exists in Stripe
-          const customer = await ensureStripeCustomer(currentUser.uid, currentUser.email || '');
-          if (customer) {
+          const customer = await createOrFindCustomer(currentUser.email || '');
+          if (customer.success && customer.customer.id) {
             // Reload user profile to get the new Stripe customer ID
             window.location.reload();
             return;

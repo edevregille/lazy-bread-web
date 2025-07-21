@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
 import { getUserOrders, getUserOrdersWithoutIndex, Order, updateUserProfile } from '@/lib/firebaseService';
-import { getCustomerPaymentMethods, PaymentMethod } from '@/lib/stripeService';
+import { getCustomerPaymentMethods, PaymentMethod } from '@/lib/stripeApi';
 import PaymentMethods from '@/components/payment/PaymentMethods';
 import { DELIVERY_ZONES } from '@/config/app-config';
 
@@ -125,6 +125,7 @@ export default function DashboardPage() {
 
     try {
       const methods = await getCustomerPaymentMethods(userProfile.stripeCustomerId);
+      console.log('Payment methods:', methods);
       setPaymentMethods(methods);
     } catch (error) {
       console.error('Error fetching payment methods:', error);
