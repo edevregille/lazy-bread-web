@@ -2,18 +2,21 @@
 
 import { useState, useEffect } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
+import { signInWithEmailAndPassword } from 'firebase/auth';
+import { auth } from '@/lib/firebase';
 
 interface SignInProps {
   onSwitchToSignUp: () => void;
+  onSwitchToForgotPassword: () => void;
   onClose: () => void;
 }
 
-export default function SignIn({ onSwitchToSignUp, onClose }: SignInProps) {
+export default function SignIn({ onSwitchToSignUp, onSwitchToForgotPassword, onClose }: SignInProps) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
-  const { signIn } = useAuth();
+  const { refreshUserProfile } = useAuth();
 
   // Handle ESC key to close modal
   useEffect(() => {
@@ -34,7 +37,7 @@ export default function SignIn({ onSwitchToSignUp, onClose }: SignInProps) {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!email || !password) {
       setError('Please fill in all fields');
       return;
@@ -43,11 +46,35 @@ export default function SignIn({ onSwitchToSignUp, onClose }: SignInProps) {
     try {
       setError('');
       setLoading(true);
-      await signIn(email, password);
+      
+      // Use client-side Firebase Auth directly to ensure proper state synchronization
+      await signInWithEmailAndPassword(auth, email, password);
+      
+      // Close the modal on successful sign-in
       onClose();
     } catch (error: unknown) {
-      setError('Failed to sign in. Please check your credentials.');
       console.error('Sign in error:', error);
+      
+      // Handle Firebase authentication errors
+      if (error && typeof error === 'object' && 'code' in error) {
+        const firebaseError = error as { code: string };
+        
+        if (firebaseError.code === 'auth/user-not-found') {
+          setError('No account found with this email address');
+        } else if (firebaseError.code === 'auth/wrong-password') {
+          setError('Incorrect password');
+        } else if (firebaseError.code === 'auth/invalid-email') {
+          setError('Invalid email address');
+        } else if (firebaseError.code === 'auth/too-many-requests') {
+          setError('Too many failed attempts. Please try again later');
+        } else if (firebaseError.code === 'auth/user-disabled') {
+          setError('This account has been disabled');
+        } else {
+          setError('Failed to sign in. Please check your credentials.');
+        }
+      } else {
+        setError('Failed to sign in. Please check your credentials.');
+      }
     } finally {
       setLoading(false);
     }
@@ -111,6 +138,15 @@ export default function SignIn({ onSwitchToSignUp, onClose }: SignInProps) {
               required
               disabled={loading}
             />
+            <div className="mt-1 text-right">
+              <button
+                type="button"
+                onClick={onSwitchToForgotPassword}
+                className="text-sm text-bakery-primary hover:text-bakery-primary-dark font-medium"
+              >
+                Forgot Password?
+              </button>
+            </div>
           </div>
 
           <button

@@ -3,7 +3,7 @@ import { verifyCaptcha, handleCaptchaError } from "@/lib/captcha";
 import { auth } from "@/lib/firebase";
 import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
 import { createUserProfile } from "@/lib/firebaseService";
-import { stripeCustomerManager } from "@/lib/stripeCustomerManager";
+import { createOrFindCustomer } from "@/lib/stripeService";
 
 export async function POST(req: NextRequest) {
   try {
@@ -49,7 +49,7 @@ export async function POST(req: NextRequest) {
     
     // Create user profile and Stripe customer
     try {
-      const stripeCustomer = await stripeCustomerManager.createOrFindCustomer(email, displayName, {
+      const stripeCustomer = await createOrFindCustomer(email, displayName, {
         source: 'lazy-bread-web',
         userId: userCredential.user.uid, // Store user ID for order linking
       });

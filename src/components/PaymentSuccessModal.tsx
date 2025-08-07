@@ -27,8 +27,11 @@ interface OrderDetails {
 
 interface PaymentSuccessData {
   orderDetails: OrderDetails;
-  paymentIntentId: string;
+  paymentIntentId?: string;
+  setupIntentId?: string;
+  isRecurring: boolean;
   timestamp: string;
+  status: 'payment_completed' | 'setup_completed';
 }
 
 interface PaymentSuccessModalProps {
@@ -42,13 +45,14 @@ export const PaymentSuccessModal: React.FC<PaymentSuccessModalProps> = ({
   onClose,
   paymentData
 }) => {
-  const { orderDetails } = paymentData;
+  const { orderDetails, isRecurring, status } = paymentData;
+  const isSetupIntent = status === 'setup_completed';
 
   return (
     <Modal
       isOpen={isOpen}
       onClose={onClose}
-      title="🎉 Payment Successful!"
+      title={isSetupIntent ? "🎉 Setup Complete!" : "🎉 Payment Successful!"}
     >
       <div className="space-y-6">
         {/* Success Message */}
@@ -69,10 +73,16 @@ export const PaymentSuccessModal: React.FC<PaymentSuccessModalProps> = ({
             </svg>
           </div>
           <h2 className="text-2xl font-bold text-gray-900 mb-2">
-            Thank you for your order!
+            {isSetupIntent 
+              ? "Weekly delivery setup complete!" 
+              : "Thank you for your order!"
+            }
           </h2>
           <p className="text-gray-600">
-            We&apos;ll start baking your fresh bread right away!
+            {isSetupIntent 
+              ? "Your payment method has been saved for future orders."
+              : ""
+            }
           </p>
         </div>
 
@@ -88,7 +98,7 @@ export const PaymentSuccessModal: React.FC<PaymentSuccessModalProps> = ({
             ))}
             <div className="border-t pt-2 mt-2">
               <div className="flex justify-between font-bold">
-                <span>Total Paid</span>
+                <span>Total Amount</span>
                 <span className="text-green-600">${orderDetails.totalAmount.toFixed(2)}</span>
               </div>
             </div>
@@ -102,7 +112,7 @@ export const PaymentSuccessModal: React.FC<PaymentSuccessModalProps> = ({
             <p><strong>Name:</strong> {orderDetails.customerName}</p>
             <p><strong>Address:</strong> {orderDetails.address}</p>
             <p><strong>City:</strong> {orderDetails.city}, {orderDetails.zipCode}</p>
-            <p><strong>Delivery Date:</strong> {new Date(orderDetails.deliveryDate).toLocaleDateString('en-US', { 
+            <p><strong>Delivery {isRecurring ? 'Day' : 'Date'}:</strong> {isRecurring ? `Every week on ${orderDetails.deliveryDate}` : new Date(orderDetails.deliveryDate).toLocaleDateString('en-US', { 
               weekday: 'long', 
               year: 'numeric', 
               month: 'long', 
@@ -123,18 +133,37 @@ export const PaymentSuccessModal: React.FC<PaymentSuccessModalProps> = ({
         <div className="bg-green-50 rounded-lg p-4">
           <h3 className="text-lg font-semibold text-gray-900 mb-2">What&apos;s Next?</h3>
           <div className="space-y-2 text-sm">
-            <div className="flex items-start">
-              <div className="flex-shrink-0 w-5 h-5 bg-green-500 text-white rounded-full flex items-center justify-center text-xs font-bold mr-2 mt-0.5">
-                1
-              </div>
-              <p className="text-gray-700">We&apos;ll send you a confirmation email with your order details.</p>
-            </div>
-            <div className="flex items-start">
-              <div className="flex-shrink-0 w-5 h-5 bg-green-500 text-white rounded-full flex items-center justify-center text-xs font-bold mr-2 mt-0.5">
-                2
-              </div>
-              <p className="text-gray-700">We&apos;ll deliver to your doorstep on the day you selected.</p>
-            </div>
+            {isSetupIntent ? (
+              <>
+                <div className="flex items-start">
+                  <div className="flex-shrink-0 w-5 h-5 bg-green-500 text-white rounded-full flex items-center justify-center text-xs font-bold mr-2 mt-0.5">
+                    1
+                  </div>
+                  <p className="text-gray-700">Your payment method has been securely saved for future orders.</p>
+                </div>
+                <div className="flex items-start">
+                  <div className="flex-shrink-0 w-5 h-5 bg-green-500 text-white rounded-full flex items-center justify-center text-xs font-bold mr-2 mt-0.5">
+                    2
+                  </div>
+                  <p className="text-gray-700">Manage your weekly delivery from your dashboard if you want to pause it or cancel it</p>
+                </div>
+              </>
+            ) : (
+              <>
+                <div className="flex items-start">
+                  <div className="flex-shrink-0 w-5 h-5 bg-green-500 text-white rounded-full flex items-center justify-center text-xs font-bold mr-2 mt-0.5">
+                    1
+                  </div>
+                  <p className="text-gray-700">We&apos;ll send you a confirmation email with your order details.</p>
+                </div>
+                <div className="flex items-start">
+                  <div className="flex-shrink-0 w-5 h-5 bg-green-500 text-white rounded-full flex items-center justify-center text-xs font-bold mr-2 mt-0.5">
+                    2
+                  </div>
+                  <p className="text-gray-700">We&apos;ll deliver to your doorstep on the day you selected.</p>
+                </div>
+              </>
+            )}
           </div>
         </div>
 
@@ -144,7 +173,7 @@ export const PaymentSuccessModal: React.FC<PaymentSuccessModalProps> = ({
             onClick={onClose}
             className="px-6 py-3 bg-indigo-600 text-white font-semibold rounded-lg hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition-colors"
           >
-            Got it! 🎉
+            Continue
           </button>
         </div>
       </div>

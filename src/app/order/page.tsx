@@ -32,7 +32,7 @@ export default function OrderPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [showAuthModal, setShowAuthModal] = useState(false);
-  const [authModalMode, setAuthModalMode] = useState<'signin' | 'signup'>('signin');
+  const [authModalMode, setAuthModalMode] = useState<'signin' | 'signup' | 'forgot-password'>('signin');
   const [showSaveAddressPrompt, setShowSaveAddressPrompt] = useState(false);
   const [savingAddress, setSavingAddress] = useState(false);
   const [addressSaved, setAddressSaved] = useState(false);
@@ -122,23 +122,15 @@ export default function OrderPage() {
       setShowAuthModal(true);
       return;
     }
-    // Only allow checking the box if user is signed in
-    if (checked && currentUser) {
-      setIsRecurring(true);
-    } else if (!checked) {
-      // Allow unchecking regardless of auth status
-      setIsRecurring(false);
-    }
+    // Allow checking/unchecking the box if user is signed in
+    setIsRecurring(checked);
   };
 
   const handleAuthSuccess = () => {
     setShowAuthModal(false);
-    // User is now signed in, set recurring order to true
-    // This will automatically check the box since the user is now authenticated
-    setIsRecurring(true);
+    // Don't automatically set recurring order to true
+    // Let the user decide if they want a recurring order
   };
-
-
 
   const calculateTotal = () => {
     return Object.entries(breadQuantities).reduce((total, [breadType, quantity]) => {
@@ -255,11 +247,12 @@ export default function OrderPage() {
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="card-bakery ">
           <div className="mb-8">
-            <h1 className="text-4xl font-bakery font-bold text-bakery-primary mb-4">
-              Place Your Order
-            </h1>
+            <h2 className="text-4xl font-semibold text-bakery-primary mb-6">
+              Place your order or set up a weekly delivery
+            </h2>
             <p className="text-lg text-earth-brown">
-              Select your favorite focaccias and choose your delivery date, we will bring it to you.
+              Select your favorite focaccias and choose your delivery date, we will bring it to you. 
+              <br/>For specific orders or any question, send us an email or reach out via instagram.
             </p>
           </div>
 
@@ -285,62 +278,6 @@ export default function OrderPage() {
           )}
 
           <form onSubmit={handleSubmit} className="space-y-8">
-            {/* Order Type Selection - Moved to top */}
-            <div>
-              <h2 className="text-2xl font-semibold text-bakery-primary mb-6">Order Type</h2>
-              <div className="bg-gradient-to-r from-yellow-50 to-orange-50 border-2 border-yellow-200 rounded-lg p-6 hover:border-yellow-300 transition-colors">
-                <div className="flex items-start space-x-4">
-                  <div className="flex-shrink-0">
-                    <div className="w-10 h-10 bg-yellow-100 rounded-full flex items-center justify-center">
-                      <svg className="w-6 h-6 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-                      </svg>
-                    </div>
-                  </div>
-                  <div className="flex-1">
-                    <div className="flex items-center space-x-3 mb-2">
-                      <input
-                        type="checkbox"
-                        checked={isRecurring && !!currentUser}
-                        onChange={(e) => handleRecurringToggle(e.target.checked)}
-                        disabled={isHolidayMode}
-                        className="w-5 h-5 rounded border-gray-300 text-bakery-primary focus:ring-bakery-primary focus:ring-2 disabled:opacity-50"
-                      />
-                      <h3 className="text-lg font-semibold text-gray-900">
-                        🔄 Set up as weekly focaccias delivery
-                      </h3>
-                    </div>
-                    <p className="text-gray-700 mb-3">
-                      Get fresh focaccias delivered to your door every week!
-                      {!currentUser && (
-                        <span className="block mt-2 text-sm text-blue-600 font-medium">
-                          💡 Sign in required for recurring orders to manage your subscription
-                        </span>
-                      )}
-                      {isRecurring && !currentUser && (
-                        <span className="block mt-2 text-sm text-orange-600 font-medium">
-                          ⚠️ Please sign in to activate your recurring order
-                        </span>
-                      )}
-                    </p>
-                    <div className="bg-white rounded-lg p-3 border border-yellow-200">
-                      <div className="flex items-center space-x-2 text-sm text-gray-600">
-                        <svg className="w-4 h-4 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                        </svg>
-                        <span>Weekly delivery on your chosen day</span>
-                      </div>
-                      <div className="flex items-center space-x-2 text-sm text-gray-600 mt-1">
-                        <svg className="w-4 h-4 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                        </svg>
-                        <span>Easy to pause or cancel anytime</span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
 
             {/* Bread Selection */}
             <div>
@@ -379,6 +316,63 @@ export default function OrderPage() {
                     </div>
                   </div>
                 ))}
+              </div>
+            </div>
+
+            {/* Order Type Selection */}
+            <div>
+              {/* <h2 className="text-2xl font-semibold text-bakery-primary mb-6">Order Type</h2> */}
+              <div className="bg-gradient-to-r from-yellow-50 to-orange-50 border-2 border-yellow-200 rounded-lg p-6 hover:border-yellow-300 transition-colors">
+                <div className="flex items-start space-x-4">
+                  <div className="flex-shrink-0">
+                    <div className="w-10 h-10 bg-yellow-100 rounded-full flex items-center justify-center">
+                      <svg className="w-6 h-6 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                      </svg>
+                    </div>
+                  </div>
+                  <div className="flex-1">
+                    <div className="flex items-center space-x-3 mb-2">
+                      <input
+                        type="checkbox"
+                        checked={isRecurring && !!currentUser}
+                        onChange={(e) => handleRecurringToggle(e.target.checked)}
+                        disabled={isHolidayMode}
+                        className="w-5 h-5 rounded border-gray-300 text-bakery-primary focus:ring-bakery-primary focus:ring-2 disabled:opacity-50"
+                      />
+                      <h3 className="text-lg font-semibold text-gray-900">
+                        Set up as weekly focaccias delivery
+                      </h3>
+                    </div>
+                    <p className="text-gray-700 mb-3">
+                      Get fresh focaccias delivered to your door every week!
+                      {!currentUser && (
+                        <span className="block mt-2 text-sm text-blue-600 font-medium">
+                          💡 Sign in required for recurring orders to manage your subscription
+                        </span>
+                      )}
+                      {isRecurring && !currentUser && (
+                        <span className="block mt-2 text-sm text-orange-600 font-medium">
+                          ⚠️ Please sign in to activate your recurring order
+                        </span>
+                      )}
+                    </p>
+                    <div className="bg-white rounded-lg p-3 border border-yellow-200">
+                      <div className="flex items-center space-x-2 text-sm text-gray-600">
+                        <svg className="w-4 h-4 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                        <span>Weekly delivery on your chosen day</span>
+                      </div>
+                      <div className="flex items-center space-x-2 text-sm text-gray-600 mt-1">
+                        <svg className="w-4 h-4 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                        <span>Easy to pause or cancel anytime</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
 

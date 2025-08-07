@@ -13,7 +13,7 @@ import {
 } from 'firebase/auth';
 import { auth } from '@/lib/firebase';
 import { createUserProfile, getUserProfile, UserProfile } from '@/lib/firebaseService';
-import { createOrFindCustomer } from '@/lib/stripeApi';
+import { createOrFindCustomer } from '@/lib/stripeService';
 
 interface AuthContextType {
   currentUser: User | null;
@@ -50,12 +50,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     // Create user profile and Stripe customer
     try {
       const stripeCustomer = await createOrFindCustomer(email, displayName);
-      if (stripeCustomer.success && stripeCustomer.customer.id) {
+      if (stripeCustomer.id) {
         await createUserProfile({
           uid: result.user.uid,
           email: result.user.email!,
           displayName: displayName,
-          stripeCustomerId: stripeCustomer.customer.id,
+          stripeCustomerId: stripeCustomer.id,
         });
       } else {
         throw new Error('Failed to create Stripe customer');
@@ -77,8 +77,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     return signOut(auth);
   }
 
-  function resetPassword(email: string) {
-    return sendPasswordResetEmail(auth, email);
+  async function resetPassword(email: string) {
+    console.log('Resetting password for:', email);
+    const response = await sendPasswordResetEmail(auth, email);
+    console.log('Password reset email sent:', response);
+    return ;
   }
 
   async function refreshUserProfile() {
