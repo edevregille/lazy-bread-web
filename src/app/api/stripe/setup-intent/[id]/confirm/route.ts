@@ -3,10 +3,10 @@ import { confirmSetupIntent } from '@/lib/stripeService';
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const setupIntentId = params.id;
+    const { id: setupIntentId } = await params;
     const setupIntent = await confirmSetupIntent(setupIntentId);
 
     return NextResponse.json({

@@ -3,10 +3,10 @@ import { updateSetupIntent } from '@/lib/stripeService';
 
 export async function POST(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const setupIntentId = params.id;
+    const { id: setupIntentId } = await params;
     const body = await request.json();
     const { paymentMethodId } = body;
 

@@ -3,10 +3,10 @@ import { confirmPaymentIntent } from '@/lib/stripeService';
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const paymentIntentId = params.id;
+    const { id: paymentIntentId } = await params;
     const paymentIntent = await confirmPaymentIntent(paymentIntentId);
 
     return NextResponse.json({

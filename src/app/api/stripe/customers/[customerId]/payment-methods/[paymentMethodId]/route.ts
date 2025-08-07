@@ -3,10 +3,10 @@ import { deletePaymentMethod } from '@/lib/stripeService';
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { customerId: string, paymentMethodId: string } }
+  { params }: { params: Promise<{ customerId: string, paymentMethodId: string }> }
 ) {
   try {
-    const { paymentMethodId } = params;
+    const { paymentMethodId } = await params;
     await deletePaymentMethod(paymentMethodId);
 
     return NextResponse.json({ success: true });
