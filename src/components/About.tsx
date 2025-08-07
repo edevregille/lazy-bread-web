@@ -1,4 +1,4 @@
-import { Tile } from "./ui/Tile";
+import { Title } from "./ui/Title";
 import Image from "next/image";
 
 export default function About() {
@@ -6,7 +6,7 @@ export default function About() {
         <section id="about" className="background-gradient-warm py-16">
             <div className="max-w-6xl mx-auto px-8">
                 <div className="w-full">
-                    <Tile title="About">
+                    <Title title="About">
                         <div className="flex sm:gap-x-20">               
                             <div className="flex-[1]">
                                 <p className="text-black rustic-text leading-relaxed">
@@ -31,7 +31,7 @@ export default function About() {
                                 />
                             </div>
                         </div>
-                    </Tile>
+                    </Title>
                 </div>
             </div>
         </section>);

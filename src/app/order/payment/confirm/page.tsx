@@ -1,71 +1,21 @@
 "use client";
 
-import { useEffect, useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import { Elements, PaymentElement } from '@stripe/react-stripe-js';
 import { loadStripe } from '@stripe/stripe-js';
-import {
-  Elements,
-  PaymentElement,
-  useStripe,
-  useElements,
-} from '@stripe/react-stripe-js';
+import { useStripePayment } from '@/hooks/useStripePayment';
 
-// Load Stripe outside of component to avoid recreating on every render
+// Load Stripe
 const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!);
 
 function PaymentConfirmationForm() {
-  const stripe = useStripe();
-  const elements = useElements();
-  const [isProcessing, setIsProcessing] = useState(false);
-  const [message, setMessage] = useState('');
   const [isReady, setIsReady] = useState(false);
-  const router = useRouter();
+  const { isProcessing, message, handlePayment } = useStripePayment();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
-    if (!stripe || !elements || !isReady) {
-      setMessage('Payment form is not ready. Please wait a moment and try again.');
-      return;
-    }
-
-    setIsProcessing(true);
-    setMessage('');
-
-    try {
-      const { error, paymentIntent } = await stripe.confirmPayment({
-        elements,
-        confirmParams: {
-          return_url: `${window.location.origin}/`,
-        },
-        redirect: 'if_required',
-      });
-
-      if (error) {
-        setMessage(error.message || 'An error occurred during payment.');
-        setIsProcessing(false);
-      } else if (paymentIntent && paymentIntent.status === 'succeeded') {
-        setMessage('Payment successful! Redirecting to home page...');
-        // Store success data for the modal on home page
-        sessionStorage.setItem('paymentSuccess', JSON.stringify({
-          paymentIntentId: paymentIntent.id,
-          timestamp: new Date().toISOString()
-        }));
-        // Clear order data from session storage
-        sessionStorage.removeItem('orderData');
-        sessionStorage.removeItem('paymentIntentClientSecret');
-        setTimeout(() => {
-          router.push('/');
-        }, 2000);
-      } else {
-        setMessage('Payment failed. Please try again.');
-        setIsProcessing(false);
-      }
-    } catch (err) {
-      console.error('Payment error:', err);
-      setMessage('An unexpected error occurred. Please try again.');
-      setIsProcessing(false);
-    }
+    await handlePayment();
   };
 
   return (
@@ -74,14 +24,14 @@ function PaymentConfirmationForm() {
       
       <button
         type="submit"
-        disabled={!stripe || !isReady || isProcessing}
+        disabled={!isReady || isProcessing}
         className="w-full px-6 py-3 bg-indigo-600 text-white font-semibold rounded-lg hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed"
       >
         {!isReady ? 'Loading Payment Form...' : isProcessing ? 'Processing Payment...' : 'Complete Payment'}
       </button>
       {message && (
         <div className={`p-4 rounded-lg ${
-          message.includes('successful') 
+          message.includes('successful') || message.includes('authorized') || message.includes('Redirecting')
             ? 'bg-green-100 text-green-700' 
             : 'bg-red-100 text-red-700'
         }`}>

@@ -39,7 +39,7 @@ export const Modal: React.FC<ModalProps> = ({ isOpen, onClose, title, children }
       />
       
       {/* Modal */}
-      <div className="relative bg-white rounded-lg shadow-xl max-w-md w-full mx-4 max-h-[90vh] overflow-y-auto">
+      <div className="relative bg-white rounded-lg shadow-xl w-[95vw] max-w-none mx-4 max-h-[90vh] overflow-y-auto">
         {/* Header */}
         {title && (
           <div className="flex items-center justify-between p-6 border-b border-gray-200">

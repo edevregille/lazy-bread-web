@@ -1,6 +1,6 @@
 import { NextResponse, NextRequest } from "next/server";
 import { verifyCaptcha, handleCaptchaError } from "@/lib/captcha";
-import { createOrFindCustomer } from "@/lib/stripe";
+import { createOrFindCustomer } from "@/lib/stripeService";
 
 export async function POST(req: NextRequest) {
   try {

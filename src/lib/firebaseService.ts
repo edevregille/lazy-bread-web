@@ -1,14 +1,8 @@
-import { collection, addDoc, serverTimestamp, query, where, getDocs, orderBy, updateDoc } from 'firebase/firestore';
+import { collection, addDoc, serverTimestamp, query, where, getDocs, orderBy, updateDoc, doc, getDoc } from 'firebase/firestore';
 import { db } from './firebase';
+import { OrderItem, UserProfile as BaseUserProfile } from '@/lib/types';
 
-export interface OrderItem {
-  id: string;
-  name: string;
-  price: number;
-  quantity: number;
-  total: number;
-}
-
+// Firebase-specific Order interface (different from OrderDetails)
 export interface Order {
   id?: string;
   items: OrderItem[];
@@ -33,21 +27,39 @@ export interface Order {
   stripePaymentMethodId?: string;
 }
 
-export interface UserProfile {
+// Firebase-specific Subscription interface
+export interface Subscription {
   id?: string;
-  uid: string;
+  userId: string;
+  customerName: string;
   email: string;
-  displayName: string;
-  stripeCustomerId?: string;
-  defaultPaymentMethodId?: string;
-  // Delivery address fields
-  deliveryAddress?: string;
-  deliveryCity?: string;
-  deliveryZipCode?: string;
-  deliveryState?: string;
-  phone?: string;
+  phone: string;
+  address: string;
+  city: string;
+  zipCode: string;
+  items: OrderItem[];
+  totalAmount: number;
+  comments?: string;
+  status: 'active' | 'paused' | 'cancelled';
+  frequency?: 'weekly';
+  dayOfWeek: number; // 0-6 (Sunday-Saturday)
+  startDate: string;
+  nextDeliveryDate?: string;
+  stripeCustomerId: string;
+  stripePaymentMethodId: string;
   createdAt?: Date;
   updatedAt?: Date;
+  lastOrderDate?: string;
+  totalOrders?: number;
+}
+
+// Extend the base UserProfile for Firebase-specific fields
+export interface UserProfile extends BaseUserProfile {
+  id?: string;
+  displayName: string;
+  defaultPaymentMethodId?: string;
+  deliveryCity?: string;
+  deliveryState?: string;
 }
 
 export const getUserOrders = async (email: string): Promise<Order[]> => {
@@ -177,4 +189,122 @@ export const updateUserProfile = async (uid: string, updates: Partial<UserProfil
     console.error('Error updating user profile:', error);
     throw new Error('Failed to update user profile');
   }
-}; 
+};
+
+// Subscription functions
+export const createSubscription = async (subscriptionData: Omit<Subscription, 'id' | 'createdAt' | 'updatedAt' | 'totalOrders'>): Promise<string> => {
+  try {
+    console.log('Creating subscription with data:', subscriptionData);
+    
+    const subscriptionToSave = {
+      ...subscriptionData,
+      totalOrders: 0,
+      createdAt: serverTimestamp(),
+      updatedAt: serverTimestamp(),
+    };
+
+    console.log('Saving subscription to Firestore with data:', subscriptionToSave);
+    const docRef = await addDoc(collection(db, 'subscriptions'), subscriptionToSave);
+    console.log('Subscription document created with ID:', docRef.id);
+    return docRef.id;
+  } catch (error) {
+    console.error('Error creating subscription:', error);
+    throw new Error('Failed to create subscription');
+  }
+};
+
+export const getUserSubscriptions = async (userId: string): Promise<Subscription[]> => {
+  try {
+    const subscriptionsRef = collection(db, 'subscriptions');
+    const q = query(
+      subscriptionsRef,
+      where('userId', '==', userId)
+    );
+    
+    const querySnapshot = await getDocs(q);
+    const subscriptions: Subscription[] = [];
+    console.log('Query snapshot:', querySnapshot);
+    querySnapshot.forEach((doc) => {
+      const data = doc.data();
+      subscriptions.push({
+        id: doc.id,
+        ...data,
+        createdAt: data.createdAt?.toDate() || new Date(),
+        updatedAt: data.updatedAt?.toDate() || new Date(),
+      } as Subscription);
+    });
+    console.log('Subscriptions:', subscriptions);
+    return subscriptions;
+  } catch (error) {
+    console.error('Error fetching user subscriptions:', error);
+    throw new Error('Failed to fetch subscriptions');
+  }
+};
+
+export const getSubscription = async (subscriptionId: string): Promise<Subscription | null> => {
+  try {
+    const subscriptionRef = doc(db, 'subscriptions', subscriptionId);
+    const subscriptionDoc = await getDoc(subscriptionRef);
+    
+    if (!subscriptionDoc.exists()) {
+      return null;
+    }
+    
+    const data = subscriptionDoc.data();
+    return {
+      id: subscriptionDoc.id,
+      ...data,
+      createdAt: data.createdAt?.toDate() || new Date(),
+      updatedAt: data.updatedAt?.toDate() || new Date(),
+    } as Subscription;
+  } catch (error) {
+    console.error('Error fetching subscription:', error);
+    throw new Error('Failed to fetch subscription');
+  }
+};
+
+export const updateSubscription = async (subscriptionId: string, updates: Partial<Subscription>): Promise<void> => {
+  try {
+    const subscriptionRef = doc(db, 'subscriptions', subscriptionId);
+    await updateDoc(subscriptionRef, {
+      ...updates,
+      updatedAt: serverTimestamp(),
+    });
+  } catch (error) {
+    console.error('Error updating subscription:', error);
+    throw new Error('Failed to update subscription');
+  }
+};
+
+export const pauseSubscription = async (subscriptionId: string): Promise<void> => {
+  await updateSubscription(subscriptionId, { status: 'paused' });
+};
+
+export const resumeSubscription = async (subscriptionId: string): Promise<void> => {
+  await updateSubscription(subscriptionId, { status: 'active' });
+};
+
+export const cancelSubscription = async (subscriptionId: string): Promise<void> => {
+  await updateSubscription(subscriptionId, { status: 'cancelled' });
+};
+
+export const updateSubscriptionDeliveryAddress = async (
+  subscriptionId: string, 
+  addressData: {
+    address: string;
+    city: string;
+    zipCode: string;
+    phone: string;
+  }
+): Promise<void> => {
+  try {
+    const subscriptionRef = doc(db, 'subscriptions', subscriptionId);
+    await updateDoc(subscriptionRef, {
+      ...addressData,
+      updatedAt: serverTimestamp(),
+    });
+  } catch (error) {
+    console.error('Error updating subscription delivery address:', error);
+    throw new Error('Failed to update subscription delivery address');
+  }
+};

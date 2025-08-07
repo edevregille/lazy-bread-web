@@ -1,5 +1,5 @@
 import React from 'react';
-import { Tile } from './ui/Tile';
+import { Title } from './ui/Title';
 import Image from 'next/image';
 import EmailSignup from "./EmailSignup";
 import { FIND_US_LOCATIONS, SOCIAL_MEDIA } from '@/config/app-config';
@@ -10,7 +10,7 @@ export default function FindUs () {
       <div className="max-w-6xl mx-auto px-8">
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
           {FIND_US_LOCATIONS.filter(location => location.active).map((location) => (
-            <Tile key={location.id} title="">
+            <Title key={location.id} title="">
               <div className='flex justify-center'>
                 <Image
                   src={location.image}
@@ -25,10 +25,10 @@ export default function FindUs () {
                   {location.name} <br/> {location.address} <br/> {location.schedule}
                 </p>
               </div>
-            </Tile>
+            </Title>
           ))}
 
-          <Tile title="Follow us!">
+          <Title title="Follow us!">
             <h3 className="text-black font-body mb-6">Lazy Bread is just launching: subscribe now to receive updates!</h3>
             <EmailSignup />
             {SOCIAL_MEDIA.instagram.active && (
@@ -43,7 +43,7 @@ export default function FindUs () {
                 </a>
               </div>
             )}
-          </Tile>
+          </Title>
         </div>
       </div>
     </section>

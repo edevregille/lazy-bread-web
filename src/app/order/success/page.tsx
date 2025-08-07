@@ -79,6 +79,8 @@ export default function SuccessPage() {
     );
   }
 
+  console.log('orderDetails', orderDetails);
+
   return (
     <div className="min-h-screen bg-gray-50 py-20">
       <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -120,7 +122,7 @@ export default function SuccessPage() {
           <div className="bg-gray-50 rounded-lg p-6 mb-8 text-left">
             <h2 className="text-xl font-semibold text-gray-900 mb-4">Order Details</h2>
             <div className="space-y-3">
-              {orderDetails.orderItems.map((item) => (
+              {orderDetails?.orderItems?.map((item) => (
                 <div key={item.id} className="flex justify-between">
                   <span className="text-gray-700">{item.name} × {item.quantity}</span>
                   <span className="font-semibold">${item.total.toFixed(2)}</span>

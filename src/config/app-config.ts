@@ -15,7 +15,12 @@ export const AUTH_NAV_ITEMS = [
 ];
 
 export const BREAD_TYPES = [
-  { id: 'classic-salt', name: 'Classic Salt', price: 6.00, description: 'Traditional sourdough with sea salt' },
+  { 
+    id: 'classic-salt', 
+    name: 'Classic Salt', 
+    price: 6.00, 
+    description: 'Traditional sourdough with sea salt' 
+  },
   { id: 'rosemary', name: 'Rosemary', price: 6.00, description: 'Artisan bread with fresh rosemary' },
   { id: 'green-olive', name: 'Green Olive', price: 6.00, description: 'Rustic bread with green olives' },
   { id: 'cheez-it', name: 'Cheez-it', price: 6.00, description: 'Cheesy bread with a crispy crust' },
@@ -23,7 +28,7 @@ export const BREAD_TYPES = [
 
 export const BUSINESS_SETTINGS = {
   // Holiday mode settings
-  isHolidayMode: false, // Set to true to disable ordering
+  isHolidayMode: true, // Set to true to disable ordering
   holidayMessage: "🏖️ We're on Holiday! Taking a well-deserved break.",
   returnDate: "September, 2025",
   

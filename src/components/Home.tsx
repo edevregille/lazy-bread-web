@@ -27,8 +27,11 @@ interface PaymentSuccessData {
     }>;
     totalAmount: number;
   };
-  paymentIntentId: string;
+  paymentIntentId?: string;
+  setupIntentId?: string;
+  isRecurring: boolean;
   timestamp: string;
+  status: 'payment_completed' | 'setup_completed';
 }
 
 export default function Home() {
@@ -76,9 +79,9 @@ export default function Home() {
               </div>
             </div>
             <div className="md:w-2/3 p-8 md:p-12">
-              <h1 className="text-3xl md:text-5xl font-bakery font-bold text-bakery-primary mb-6">
+              <h2 className="text-4xl font-semibold text-bakery-primary mb-6">
                 Organic Sourdough Cottage Bakery
-              </h1>
+              </h2>
               <p className="text-xl md:text-2xl font-body text-earth-brown mb-8 leading-relaxed">
                 Handcrafted sourdough focaccia made with organic ingredients. 
                 Each loaf is carefully fermented and baked to perfection in our cottage bakery.
@@ -104,10 +107,10 @@ export default function Home() {
       <section className="py-8 px-8 bg-warm-cream">
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bakery font-bold text-bakery-primary mb-4">
-              Our Artisanal Varieties
+            <h2 className="text-4xl font-semibold text-bakery-primary mb-6">
+              Our Varieties
             </h2>
-            <p className="text-lg font-body text-earth-brown max-w-2xl mx-auto">
+            <p className="text-xl md:text-2xl font-body text-earth-brown mb-8 leading-relaxed">
               Each focaccia is crafted with our signature sourdough starter and organic ingredients, 
               creating unique flavors that celebrate local, seasonal produce.
             </p>
@@ -155,12 +158,11 @@ export default function Home() {
       <section className="py-16 px-8 background-gradient-warm">
         <div className="max-w-4xl mx-auto text-center">
           <div className="card-bakery">
-            <h2 className="text-3xl md:text-4xl font-bakery font-bold text-bakery-primary mb-4">
-              Join Our Community
+            <h2 className="text-4xl font-semibold text-bakery-primary mb-6">
+              Follow Us
             </h2>
             <p className="text-lg font-body text-earth-brown mb-8">
-              Be the first to know about new flavors, market locations, and special orders. 
-              Subscribe to receive updates from our local artisanal bakery.
+              Subscribe to receive updates from Lazy Bread.
             </p>
             <EmailSignup />
           </div>
