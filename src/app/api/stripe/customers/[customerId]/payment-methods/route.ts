@@ -3,10 +3,10 @@ import { getCustomerPaymentMethods } from '@/lib/stripeService';
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { customerId: string } }
+  { params }: { params: Promise <{ customerId: string }> }
 ) {
   try {
-    const { customerId } = params;
+    const { customerId } = await params;
 
     if (!customerId) {
       return NextResponse.json(
