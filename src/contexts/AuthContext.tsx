@@ -13,6 +13,7 @@ import {
 } from 'firebase/auth';
 import { auth } from '@/lib/firebase';
 import { createUserProfile, getUserProfile, UserProfile } from '@/lib/firebaseService';
+import { createOrFindCustomer } from '@/lib/stripeService';
 
 interface AuthContextType {
   currentUser: User | null;
@@ -48,35 +49,17 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     
     // Create user profile and Stripe customer
     try {
-      // Create Stripe customer via API
-      const customerResponse = await fetch('/api/stripe/customers/create', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          email: email,
-          name: displayName,
-          metadata: {
-            source: 'lazy-bread-web',
-            userId: result.user.uid,
-          }
-        })
-      });
-
-      if (!customerResponse.ok) {
+      const stripeCustomer = await createOrFindCustomer(email, displayName);
+      if (stripeCustomer.id) {
+        await createUserProfile({
+          uid: result.user.uid,
+          email: result.user.email!,
+          displayName: displayName,
+          stripeCustomerId: stripeCustomer.id,
+        });
+      } else {
         throw new Error('Failed to create Stripe customer');
       }
-
-      const customerData = await customerResponse.json();
-      const stripeCustomer = customerData.customer;
-
-      await createUserProfile({
-        uid: result.user.uid,
-        email: result.user.email!,
-        displayName: displayName,
-        stripeCustomerId: stripeCustomer.id,
-      });
     } catch (error) {
       console.error('Error creating user profile:', error);
       // Continue even if profile creation fails

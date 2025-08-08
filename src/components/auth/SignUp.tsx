@@ -10,13 +10,13 @@ interface SignUpProps {
 }
 
 export default function SignUp({ onSwitchToSignIn, onClose, onSuccess }: SignUpProps) {
-  const { signUp } = useAuth();
   const [displayName, setDisplayName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const { signUp } = useAuth();
 
 
 
@@ -69,31 +69,28 @@ export default function SignUp({ onSwitchToSignIn, onClose, onSuccess }: SignUpP
     setError('');
 
     try {
-      // Use the AuthContext's signUp method which handles everything
       await signUp(email, password, displayName);
-
-      // Close modal and show success
       onClose();
       if (onSuccess) {
         onSuccess();
       }
-              } catch (error: unknown) {
-       console.error('Signup error:', error);
-       
-       if (error && typeof error === 'object' && 'code' in error) {
-         const firebaseError = error as { code: string };
-         if (firebaseError.code === 'auth/email-already-in-use') {
-           setError('An account with this email already exists');
-         } else if (firebaseError.code === 'auth/weak-password') {
-           setError('Password is too weak');
-         } else if (firebaseError.code === 'auth/invalid-email') {
-           setError('Invalid email address');
-         } else {
-           setError('Failed to create account. Please try again.');
-         }
-       } else {
-         setError('Failed to create account. Please try again.');
-       }
+    } catch (error: unknown) {
+      console.error('Signup error:', error);
+      
+      if (error && typeof error === 'object' && 'code' in error) {
+        const firebaseError = error as { code: string };
+        if (firebaseError.code === 'auth/email-already-in-use') {
+          setError('An account with this email already exists');
+        } else if (firebaseError.code === 'auth/weak-password') {
+          setError('Password is too weak');
+        } else if (firebaseError.code === 'auth/invalid-email') {
+          setError('Invalid email address');
+        } else {
+          setError('Failed to create account. Please try again.');
+        }
+      } else {
+        setError('Failed to create account. Please try again.');
+      }
     } finally {
       setLoading(false);
     }
