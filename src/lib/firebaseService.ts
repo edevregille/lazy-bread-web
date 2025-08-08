@@ -166,7 +166,23 @@ export const createUserProfile = async (userData: Omit<UserProfile, 'id' | 'crea
     return docRef.id;
   } catch (error) {
     console.error('Error creating user profile:', error);
-    throw new Error('Failed to create user profile');
+    
+    // Log more specific error information
+    if (error instanceof Error) {
+      console.error('Error name:', error.name);
+      console.error('Error message:', error.message);
+      console.error('Error stack:', error.stack);
+      
+      // Check for specific Firebase error codes
+      if (error.message.includes('permission-denied')) {
+        throw new Error('Permission denied: Check Firestore security rules');
+      }
+      if (error.message.includes('unauthenticated')) {
+        throw new Error('User not authenticated: Check authentication state');
+      }
+    }
+    
+    throw new Error('Failed to create user profile: ' + (error instanceof Error ? error.message : 'Unknown error'));
   }
 };
 
