@@ -1,10 +1,7 @@
 "use client";
 
 import { useState, useEffect } from 'react';
-import { createUserWithEmailAndPassword, updateProfile } from 'firebase/auth';
-import { auth } from '@/lib/firebase';
-
-import { createUserProfile } from '@/lib/firebaseService';
+import { useAuth } from '@/contexts/AuthContext';
 
 interface SignUpProps {
   onSwitchToSignIn: () => void;
@@ -13,6 +10,7 @@ interface SignUpProps {
 }
 
 export default function SignUp({ onSwitchToSignIn, onClose, onSuccess }: SignUpProps) {
+  const { signUp } = useAuth();
   const [displayName, setDisplayName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -71,42 +69,8 @@ export default function SignUp({ onSwitchToSignIn, onClose, onSuccess }: SignUpP
     setError('');
 
     try {
-      // Create user with Firebase Auth
-      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-      
-      // Update display name
-      await updateProfile(userCredential.user, { displayName });
-      
-      // Create Stripe customer via API
-      const customerResponse = await fetch('/api/stripe/customers/create', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          email: email,
-          name: displayName,
-          metadata: {
-            source: 'lazy-bread-web',
-            userId: userCredential.user.uid,
-          }
-        })
-      });
-
-      if (!customerResponse.ok) {
-        throw new Error('Failed to create Stripe customer');
-      }
-
-      const customerData = await customerResponse.json();
-      const stripeCustomer = customerData.customer;
-      
-      // Create user profile in Firestore (now on client side with proper auth context)
-      await createUserProfile({
-        uid: userCredential.user.uid,
-        email: userCredential.user.email!,
-        displayName: displayName,
-        stripeCustomerId: stripeCustomer.id,
-      });
+      // Use the AuthContext's signUp method which handles everything
+      await signUp(email, password, displayName);
 
       // Close modal and show success
       onClose();
