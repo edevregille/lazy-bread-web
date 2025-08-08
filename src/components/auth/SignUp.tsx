@@ -1,15 +1,18 @@
 "use client";
 
 import { useState, useEffect } from 'react';
-import { useAuth } from '@/contexts/AuthContext';
-import ReCAPTCHA from 'react-google-recaptcha';
+import { createUserWithEmailAndPassword, updateProfile } from 'firebase/auth';
+import { auth } from '@/lib/firebase';
+
+import { createUserProfile } from '@/lib/firebaseService';
 
 interface SignUpProps {
   onSwitchToSignIn: () => void;
   onClose: () => void;
+  onSuccess?: () => void;
 }
 
-export default function SignUp({ onSwitchToSignIn, onClose }: SignUpProps) {
+export default function SignUp({ onSwitchToSignIn, onClose, onSuccess }: SignUpProps) {
   const [displayName, setDisplayName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -17,8 +20,7 @@ export default function SignUp({ onSwitchToSignIn, onClose }: SignUpProps) {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
-  const [showCaptcha, setShowCaptcha] = useState(false);
-  const { signIn, currentUser } = useAuth();
+
 
 
 
@@ -39,74 +41,98 @@ export default function SignUp({ onSwitchToSignIn, onClose }: SignUpProps) {
     };
   }, [onClose]);
 
-  const handleCaptchaChange = async (value: string | null) => {
-    
-    if (value) {
-      try {
-        setError('');
-        setLoading(true);
-        
-        const response = await fetch('/api/auth/signup', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            email,
-            password,
-            displayName,
-            captchaToken: value,
-          }),
-        });
 
-        const data = await response.json();
 
-        if (data.error) {
-          setError(data.message || 'Failed to create account. Please try again.');
-        } else {
-          // Check if user is already signed in (server-side signup might have done this)
-          if (!currentUser) {
-            // If not signed in, try to sign in manually
-            try {
-              await signIn(email, password);
-            } catch (signInError) {
-              console.error('Error signing in after signup:', signInError);
-              setError('Account created successfully, but there was an issue signing you in. Please try signing in manually.');
-              return;
-            }
-          }
-          onClose();
-        }
-      } catch (error: unknown) {
-        setError('Failed to create account. Please try again.');
-        console.error('Sign up error:', error);
-      } finally {
-        setLoading(false);
-        setShowCaptcha(false);
-      }
+  const validateForm = () => {
+    if (!displayName || !email || !password || !confirmPassword) {
+      setError('Please fill in all fields');
+      return false;
     }
+
+    if (password !== confirmPassword) {
+      setError('Passwords do not match');
+      return false;
+    }
+
+    if (password.length < 6) {
+      setError('Password must be at least 6 characters long');
+      return false;
+    }
+
+    return true;
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!displayName || !email || !password || !confirmPassword) {
-      setError('Please fill in all fields');
-      return;
-    }
+    if (!validateForm()) return;
 
-    if (password !== confirmPassword) {
-      setError('Passwords do not match');
-      return;
-    }
+    setLoading(true);
+    setError('');
 
-    if (password.length < 6) {
-      setError('Password must be at least 6 characters long');
-      return;
-    }
+    try {
+      // Create user with Firebase Auth
+      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+      
+      // Update display name
+      await updateProfile(userCredential.user, { displayName });
+      
+      // Create Stripe customer via API
+      const customerResponse = await fetch('/api/stripe/customers/create', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          email: email,
+          name: displayName,
+          metadata: {
+            source: 'lazy-bread-web',
+            userId: userCredential.user.uid,
+          }
+        })
+      });
 
-    // Show CAPTCHA instead of directly submitting
-    setShowCaptcha(true);
+      if (!customerResponse.ok) {
+        throw new Error('Failed to create Stripe customer');
+      }
+
+      const customerData = await customerResponse.json();
+      const stripeCustomer = customerData.customer;
+      
+      // Create user profile in Firestore (now on client side with proper auth context)
+      await createUserProfile({
+        uid: userCredential.user.uid,
+        email: userCredential.user.email!,
+        displayName: displayName,
+        stripeCustomerId: stripeCustomer.id,
+      });
+
+      // Close modal and show success
+      onClose();
+      if (onSuccess) {
+        onSuccess();
+      }
+              } catch (error: unknown) {
+       console.error('Signup error:', error);
+       
+       if (error && typeof error === 'object' && 'code' in error) {
+         const firebaseError = error as { code: string };
+         if (firebaseError.code === 'auth/email-already-in-use') {
+           setError('An account with this email already exists');
+         } else if (firebaseError.code === 'auth/weak-password') {
+           setError('Password is too weak');
+         } else if (firebaseError.code === 'auth/invalid-email') {
+           setError('Invalid email address');
+         } else {
+           setError('Failed to create account. Please try again.');
+         }
+       } else {
+         setError('Failed to create account. Please try again.');
+       }
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -206,45 +232,7 @@ export default function SignUp({ onSwitchToSignIn, onClose }: SignUpProps) {
           </button>
         </form>
 
-        {/* CAPTCHA Modal */}
-        {showCaptcha && !loading && (
-          <div 
-            className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4"
-            onClick={() => setShowCaptcha(false)}
-          >
-            <div 
-              className="bg-white rounded-lg shadow-xl max-w-md w-full p-6"
-              onClick={(e) => e.stopPropagation()}
-            >
-              <div className="text-center mb-6">
-                <h3 className="text-lg font-semibold text-gray-900 mb-2">Verify You&apos;re Human</h3>
-                <p className="text-sm text-gray-600">Please complete the CAPTCHA to create your account</p>
-              </div>
-              
-              <div className="flex justify-center mb-4">
-                {process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY ? (
-                  <ReCAPTCHA
-                    sitekey={process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY}
-                    onChange={handleCaptchaChange}
-                  />
-                ) : (
-                  <div className="text-red-500 text-sm">
-                    reCAPTCHA is not configured. Please check your environment variables.
-                  </div>
-                )}
-              </div>
-              
-              <div className="flex justify-center">
-                <button
-                  onClick={() => setShowCaptcha(false)}
-                  className="text-gray-500 hover:text-gray-700 text-sm"
-                >
-                  Cancel
-                </button>
-              </div>
-            </div>
-          </div>
-        )}
+
 
         {/* Loading Modal */}
         {loading && (
