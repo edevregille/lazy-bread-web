@@ -24,8 +24,9 @@ export interface OrderDetails {
 
 // Firebase-specific Order interface (different from OrderDetails)
 export interface Order {
-  id?: string;
+  id: string;
   items: OrderItem[];
+  orderType: 'online' | 'subscription' | 'in-person';
   deliveryDate: string;
   address: string;
   city: string;
@@ -36,15 +37,11 @@ export interface Order {
   comments: string;
   totalAmount: number;
   status: 'pending' | 'confirmed' | 'delivered' | 'cancelled';
-  createdAt?: Date;
+  createdAt: Date;
   userId?: string;
-  // Recurring order metadata
-  isRecurring?: boolean;
-  recurringFrequency?: 'weekly' | 'biweekly' | 'monthly';
-  recurringDayOfWeek?: number; // 0-6 (Sunday-Saturday)
-  recurringStartDate?: string;
-  stripeCustomerId?: string;
-  stripePaymentMethodId?: string;
+  stripeCustomerId: string;
+  stripePaymentIntentId: string;
+  stripePaymentStatus: string;
 }
 
 // Payment-related interfaces
@@ -102,7 +99,7 @@ export interface Subscription {
   city: string;
   comments?: string;
   id?: string;
-  created: object;
+  createdAt: Date;
   userId: string;
   customerName: string;
   zipCode: string;
@@ -115,7 +112,8 @@ export interface Subscription {
   totalAmount?: number;
   stripeCustomerId: string;
   stripePaymentMethodId: string;
-  updatedAt?: object;
+  stripeSetupIntentId: string;
+  updatedAt?: Date;
 }
 
 // Auth modal types

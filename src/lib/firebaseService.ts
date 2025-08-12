@@ -104,18 +104,14 @@ export const getUserProfile = async (uid: string): Promise<UserProfile | null> =
 };
 
 export const createUserProfile = async (userData: Omit<UserProfile, 'id' | 'createdAt' | 'updatedAt'>): Promise<string> => {
-  try {
-    console.log('Creating user profile with data:', userData);
-    
+  try {    
     const userToSave = {
       ...userData,
       createdAt: serverTimestamp(),
       updatedAt: serverTimestamp(),
     };
 
-    console.log('Saving to Firestore with data:', userToSave);
     const docRef = await addDoc(collection(db, 'users'), userToSave);
-    console.log('User profile document created with ID:', docRef.id);
     return docRef.id;
   } catch (error) {
     console.error('Error creating user profile:', error);
@@ -157,27 +153,6 @@ export const updateUserProfile = async (uid: string, updates: Partial<UserProfil
   } catch (error) {
     console.error('Error updating user profile:', error);
     throw new Error('Failed to update user profile');
-  }
-};
-
-// Subscription functions
-export const createSubscription = async (subscriptionData: Omit<Subscription, 'id' |  'updatedAt' | 'totalAmount'>): Promise<string> => {
-  try {
-    console.log('Creating subscription with data:', subscriptionData);
-    
-    const subscriptionToSave = {
-      ...subscriptionData,
-      totalAmount: subscriptionData.items.reduce((acc, item) => acc + item.total, 0),
-      updatedAt: serverTimestamp(),
-    };
-
-    console.log('Saving subscription to Firestore with data:', subscriptionToSave);
-    const docRef = await addDoc(collection(db, 'subscriptions'), subscriptionToSave);
-    console.log('Subscription document created with ID:', docRef.id);
-    return docRef.id;
-  } catch (error) {
-    console.error('Error creating subscription:', error);
-    throw new Error('Failed to create subscription');
   }
 };
 

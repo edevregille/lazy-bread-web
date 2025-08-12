@@ -88,7 +88,7 @@ export default function Header() {
                             })}
                             
                             {/* Authentication */}
-                            <div className="flex items-center space-x-4">
+                            {/* <div className="flex items-center space-x-4">
                                 {currentUser ? (
                                     <div className="relative" ref={userDropdownRef}>
                                         <button
@@ -117,9 +117,9 @@ export default function Header() {
                                         </button>
                                     </>
                                 )}
-                            </div>
+                            </div>*/}
                         </div>
-                    </nav>
+                    </nav> 
 
                     {/* Mobile menu button */}
                     <div className="md:hidden">
@@ -161,7 +161,7 @@ export default function Header() {
                         })}
                         
                         {/* Mobile Authentication */}
-                        <div className="border-t pt-3 mt-3">
+                        {/* <div className="border-t pt-3 mt-3">
                             {currentUser ? (
                                 <div className="space-y-2">
                                     <button
@@ -212,7 +212,7 @@ export default function Header() {
                                     </button>
                                 </div>
                             )}
-                        </div>
+                        </div> */}
                     </div>
                 </div>
             </div>
