@@ -78,12 +78,6 @@ export const PaymentSuccessModal: React.FC<PaymentSuccessModalProps> = ({
               : "Thank you for your order!"
             }
           </h2>
-          <p className="text-gray-600">
-            {isSetupIntent 
-              ? "Your payment method has been saved for future orders."
-              : ""
-            }
-          </p>
         </div>
 
         {/* Order Summary */}

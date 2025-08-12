@@ -2,8 +2,9 @@
 
 import { useState } from 'react';
 import { Modal } from '@/components/ui/Modal';
-import { updateSubscriptionDeliveryAddress, Subscription } from '@/lib/firebaseService';
+import { updateSubscriptionDeliveryAddress, } from '@/lib/firebaseService';
 import { DELIVERY_ZONES } from '@/config/app-config';
+import { Subscription } from '@/lib/types';
 
 interface SubscriptionAddressEditModalProps {
   isOpen: boolean;

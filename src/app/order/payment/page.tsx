@@ -382,9 +382,9 @@ export default function PaymentPage() {
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="card-bakery ">
           <div className="mb-8">
-            <h1 className="text-4xl font-bakery font-bold text-bakery-primary mb-4">
+            <h2 className="text-4xl font-semibold text-bakery-primary mb-6">
               Complete Your Order
-            </h1>
+            </h2>
 
             {/* Order Summary */}
             <div className="bg-white rounded-lg shadow-md p-6 mb-8 border border-bakery-light">
@@ -414,7 +414,7 @@ export default function PaymentPage() {
                   </div>
                   {orderDetails.isRecurring && (
                     <div className="mt-2 text-sm text-gray-600">
-                      This amount will be charged weekly
+                      This amount will be charged at delivery time every week.
                     </div>
                   )}
                 </div>

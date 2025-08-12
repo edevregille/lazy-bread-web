@@ -22,6 +22,31 @@ export interface OrderDetails {
   isRecurring?: boolean;
 }
 
+// Firebase-specific Order interface (different from OrderDetails)
+export interface Order {
+  id?: string;
+  items: OrderItem[];
+  deliveryDate: string;
+  address: string;
+  city: string;
+  zipCode: string;
+  customerName: string;
+  email: string;
+  phone: string;
+  comments: string;
+  totalAmount: number;
+  status: 'pending' | 'confirmed' | 'delivered' | 'cancelled';
+  createdAt?: Date;
+  userId?: string;
+  // Recurring order metadata
+  isRecurring?: boolean;
+  recurringFrequency?: 'weekly' | 'biweekly' | 'monthly';
+  recurringDayOfWeek?: number; // 0-6 (Sunday-Saturday)
+  recurringStartDate?: string;
+  stripeCustomerId?: string;
+  stripePaymentMethodId?: string;
+}
+
 // Payment-related interfaces
 export interface PaymentSuccessData {
   orderDetails: OrderDetails;
@@ -71,23 +96,26 @@ export interface PaymentMethod {
   };
 }
 
-// Subscription interface
+// Firebase-specific Subscription interface
 export interface Subscription {
-  id: string;
+  address: string;
+  city: string;
+  comments?: string;
+  id?: string;
+  created: object;
+  userId: string;
+  customerName: string;
+  zipCode: string;
+  dayOfWeek: number; // 0-6 (Sunday-Saturday)
   status: 'active' | 'paused' | 'cancelled';
-  current_period_start: Date;
-  current_period_end: Date;
-  items: Array<{
-    id: string;
-    quantity: number;
-    price: {
-      id: string;
-      unit_amount: number;
-      currency: string;
-    };
-  }>;
-  metadata?: Record<string, string>;
-  created: Date;
+  frequency?: 'weekly';
+  email: string;
+  phone: string;
+  items: OrderItem[];
+  totalAmount?: number;
+  stripeCustomerId: string;
+  stripePaymentMethodId: string;
+  updatedAt?: object;
 }
 
 // Auth modal types
