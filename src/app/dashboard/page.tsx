@@ -320,7 +320,7 @@ export default function DashboardPage() {
     return null; // Will redirect to home
   }
 
-  console.log(subscriptions, typeof subscriptions?.[0]?.created);
+  console.log(subscriptions?.[0]?.createdAt as Date);
 
   return (
     <div className="min-h-screen py-20">
@@ -588,7 +588,7 @@ export default function DashboardPage() {
                           <h4 className="font-medium text-gray-900 mb-2">Delivery Schedule</h4>
                           <div className="text-sm space-y-1">
                             <p><strong>Delivery Day:</strong> {subscription.dayOfWeek}</p>
-                            <p><strong>Started on:</strong> {(subscription.created as import('firebase/firestore').Timestamp)?.toDate()?.toLocaleDateString() || 'Unknown'}</p>
+                            <p><strong>Started on:</strong> {subscription.createdAt ? subscription.createdAt.toLocaleDateString() : 'Unknown'}</p>
                           </div>
                         </div>
                       </div>
@@ -662,7 +662,7 @@ export default function DashboardPage() {
                             Order #{order.id?.slice(-8) || 'Unknown'}
                           </h3>
                           <p className="text-gray-600">
-                            Placed on {formatDate(order.createdAt || new Date())}
+                            Placed on {order.createdAt ? order.createdAt.toLocaleDateString() : 'Unknown'}
                           </p>
                         </div>
                         <span className={`px-3 py-1 rounded-full text-sm font-medium ${getStatusColor(order.status)}`}>
