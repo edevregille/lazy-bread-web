@@ -6,10 +6,8 @@ import { useAuth } from '@/contexts/AuthContext';
 import { 
   getUserOrders, 
   getUserOrdersWithoutIndex, 
-  Order, 
   updateUserProfile, 
   getUserSubscriptions, 
-  Subscription, 
   pauseSubscription, 
   resumeSubscription, 
   cancelSubscription,
@@ -18,7 +16,7 @@ import SubscriptionAddressEditModal from '@/components/payment/SubscriptionAddre
 import ConfirmationModal from '@/components/ui/ConfirmationModal';
 import ShowSavedPaymentMethod from '@/components/payment/ShowSavedPaymentMethod';
 import { DELIVERY_ZONES } from '@/config/app-config';
-import { PaymentMethod } from '@/lib/types';
+import { PaymentMethod, Subscription, Order } from '@/lib/types';
 
 export default function DashboardPage() {
   const { currentUser, loading, userProfile, refreshUserProfile } = useAuth();
@@ -322,8 +320,10 @@ export default function DashboardPage() {
     return null; // Will redirect to home
   }
 
+  console.log(subscriptions, typeof subscriptions?.[0]?.created);
+
   return (
-    <div className="min-h-screen py-20 bg-gradient-to-br from-bakery-cream via-bakery-warm to-bakery-butter">
+    <div className="min-h-screen py-20">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="card-bakery mb-8">
@@ -514,9 +514,7 @@ export default function DashboardPage() {
                             <h3 className="text-lg font-semibold text-bakery-primary">
                               Subscription #{subscription.id?.slice(-8) || 'Unknown'}
                             </h3>
-                            <p className="text-gray-600">
-                              Started on {subscription.createdAt ? formatDate(subscription.createdAt) : ''}
-                            </p>
+                           
                           </div>
                           
                           {/* Action buttons for active subscriptions */}
@@ -581,8 +579,7 @@ export default function DashboardPage() {
                           </div>
                           <div className="border-t pt-2 mt-2">
                             <div className="flex justify-between font-semibold">
-                              <span>Total per delivery</span>
-                              {/* <span>${subscription.totalAmount.toFixed(2)}</span> */}
+                            {subscription.totalAmount && <><span>Total</span> <span>${subscription.totalAmount.toFixed(2)}</span></>}
                             </div>
                           </div>
                         </div>
@@ -591,8 +588,7 @@ export default function DashboardPage() {
                           <h4 className="font-medium text-gray-900 mb-2">Delivery Schedule</h4>
                           <div className="text-sm space-y-1">
                             <p><strong>Delivery Day:</strong> {subscription.dayOfWeek}</p>
-                            <p><strong>Started:</strong> {formatDate(new Date(subscription.startDate))}</p>
-                            {subscription.totalOrders && <p><strong>Total Orders:</strong> {subscription.totalOrders}</p>}
+                            <p><strong>Started on:</strong> {(subscription.created as import('firebase/firestore').Timestamp)?.toDate()?.toLocaleDateString() || 'Unknown'}</p>
                           </div>
                         </div>
                       </div>
@@ -639,7 +635,7 @@ export default function DashboardPage() {
             {/* Orders */}
             <div className="card-bakery">
               <h2 className="text-2xl font-semibold text-bakery-primary mb-6">
-                📋 Last 30 days orders history
+                📋 Last 30 days history
               </h2>
               
               {ordersLoading ? (

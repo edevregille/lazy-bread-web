@@ -1,57 +1,10 @@
 import { collection, addDoc, serverTimestamp, query, where, getDocs, orderBy, updateDoc, doc, getDoc } from 'firebase/firestore';
 import { db } from './firebase';
-import { OrderItem, UserProfile as BaseUserProfile } from '@/lib/types';
-
-// Firebase-specific Order interface (different from OrderDetails)
-export interface Order {
-  id?: string;
-  items: OrderItem[];
-  deliveryDate: string;
-  address: string;
-  city: string;
-  zipCode: string;
-  customerName: string;
-  email: string;
-  phone: string;
-  comments: string;
-  totalAmount: number;
-  status: 'pending' | 'confirmed' | 'delivered' | 'cancelled';
-  createdAt?: Date;
-  userId?: string;
-  // Recurring order metadata
-  isRecurring?: boolean;
-  recurringFrequency?: 'weekly' | 'biweekly' | 'monthly';
-  recurringDayOfWeek?: number; // 0-6 (Sunday-Saturday)
-  recurringStartDate?: string;
-  stripeCustomerId?: string;
-  stripePaymentMethodId?: string;
-}
-
-// Firebase-specific Subscription interface
-export interface Subscription {
-  id?: string;
-  userId: string;
-  customerName: string;
-  email: string;
-  phone: string;
-  address: string;
-  city: string;
-  zipCode: string;
-  items: OrderItem[];
-  totalAmount: number;
-  comments?: string;
-  status: 'active' | 'paused' | 'cancelled';
-  frequency?: 'weekly';
-  dayOfWeek: number; // 0-6 (Sunday-Saturday)
-  startDate: string;
-  nextDeliveryDate?: string;
-  stripeCustomerId: string;
-  stripePaymentMethodId: string;
-  createdAt?: Date;
-  updatedAt?: Date;
-  lastOrderDate?: string;
-  totalOrders?: number;
-}
+import { 
+  Subscription, 
+  Order, 
+  UserProfile as BaseUserProfile 
+} from '@/lib/types';
 
 // Extend the base UserProfile for Firebase-specific fields
 export interface UserProfile extends BaseUserProfile {
@@ -208,14 +161,13 @@ export const updateUserProfile = async (uid: string, updates: Partial<UserProfil
 };
 
 // Subscription functions
-export const createSubscription = async (subscriptionData: Omit<Subscription, 'id' | 'createdAt' | 'updatedAt' | 'totalOrders'>): Promise<string> => {
+export const createSubscription = async (subscriptionData: Omit<Subscription, 'id' |  'updatedAt' | 'totalAmount'>): Promise<string> => {
   try {
     console.log('Creating subscription with data:', subscriptionData);
     
     const subscriptionToSave = {
       ...subscriptionData,
-      totalOrders: 0,
-      createdAt: serverTimestamp(),
+      totalAmount: subscriptionData.items.reduce((acc, item) => acc + item.total, 0),
       updatedAt: serverTimestamp(),
     };
 
@@ -247,7 +199,7 @@ export const getUserSubscriptions = async (userId: string): Promise<Subscription
         ...data,
         createdAt: data.createdAt?.toDate() || new Date(),
         updatedAt: data.updatedAt?.toDate() || new Date(),
-      } as Subscription);
+      } as unknown as Subscription);
     });
     console.log('Subscriptions:', subscriptions);
     return subscriptions;
@@ -272,7 +224,7 @@ export const getSubscription = async (subscriptionId: string): Promise<Subscript
       ...data,
       createdAt: data.createdAt?.toDate() || new Date(),
       updatedAt: data.updatedAt?.toDate() || new Date(),
-    } as Subscription;
+    } as unknown as Subscription;
   } catch (error) {
     console.error('Error fetching subscription:', error);
     throw new Error('Failed to fetch subscription');
