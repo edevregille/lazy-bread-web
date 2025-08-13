@@ -17,6 +17,7 @@ import ConfirmationModal from '@/components/ui/ConfirmationModal';
 import ShowSavedPaymentMethod from '@/components/payment/ShowSavedPaymentMethod';
 import { DELIVERY_ZONES } from '@/config/app-config';
 import { PaymentMethod, Subscription, Order } from '@/lib/types';
+import { trackSubscriptionAction } from '@/lib/gtag';
 
 export default function DashboardPage() {
   const { currentUser, loading, userProfile, refreshUserProfile, signingOut } = useAuth();
@@ -163,12 +164,15 @@ export default function DashboardPage() {
       switch (action) {
         case 'pause':
           await pauseSubscription(subscriptionId);
+          trackSubscriptionAction('pause');
           break;
         case 'resume':
           await resumeSubscription(subscriptionId);
+          trackSubscriptionAction('resume');
           break;
         case 'cancel':
           await cancelSubscription(subscriptionId);
+          trackSubscriptionAction('cancel');
           break;
       }
       
@@ -199,9 +203,11 @@ export default function DashboardPage() {
       switch (confirmationModal.action) {
         case 'pause':
           await pauseSubscription(confirmationModal.subscription.id);
+          trackSubscriptionAction('pause');
           break;
         case 'cancel':
           await cancelSubscription(confirmationModal.subscription.id);
+          trackSubscriptionAction('cancel');
           break;
       }
       
