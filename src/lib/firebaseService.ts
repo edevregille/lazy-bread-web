@@ -5,6 +5,7 @@ import {
   Order, 
   UserProfile as BaseUserProfile 
 } from '@/lib/types';
+import { auth } from './firebase'; // Added missing import for auth
 
 // Extend the base UserProfile for Firebase-specific fields
 export interface UserProfile extends BaseUserProfile {
@@ -47,6 +48,13 @@ export const getUserOrders = async (email: string): Promise<Order[]> => {
 // Alternative function that doesn't require a composite index
 export const getUserOrdersWithoutIndex = async (email: string): Promise<Order[]> => {
   try {
+    // Check if user is authenticated before making the request
+    const currentUser = auth.currentUser;
+    if (!currentUser) {
+      console.log('User not authenticated, skipping orders fetch');
+      return [];
+    }
+
     const ordersRef = collection(db, 'orders');
     const q = query(
       ordersRef,
@@ -75,12 +83,33 @@ export const getUserOrdersWithoutIndex = async (email: string): Promise<Order[]>
     return orders;
   } catch (error) {
     console.error('Error fetching user orders:', error);
+    
+    // Handle specific Firebase permission errors gracefully
+    if (error instanceof Error) {
+      if (error.message.includes('permission-denied') || 
+          error.message.includes('Missing or insufficient permissions')) {
+        console.log('Permission denied - user may not be authenticated');
+        return [];
+      }
+      if (error.message.includes('unauthenticated')) {
+        console.log('User not authenticated');
+        return [];
+      }
+    }
+    
     throw new Error('Failed to fetch orders');
   }
 };
 
 export const getUserProfile = async (uid: string): Promise<UserProfile | null> => {
   try {
+    // Check if user is authenticated before making the request
+    const currentUser = auth.currentUser;
+    if (!currentUser) {
+      console.log('User not authenticated, skipping profile fetch');
+      return null;
+    }
+
     const userRef = collection(db, 'users');
     const q = query(userRef, where('uid', '==', uid));
     const querySnapshot = await getDocs(q);
@@ -99,6 +128,21 @@ export const getUserProfile = async (uid: string): Promise<UserProfile | null> =
     } as UserProfile;
   } catch (error) {
     console.error('Error fetching user profile:', error);
+    
+    // Handle specific Firebase permission errors gracefully
+    if (error instanceof Error) {
+      if (error.message.includes('permission-denied') || 
+          error.message.includes('Missing or insufficient permissions')) {
+        console.log('Permission denied - user may not be authenticated');
+        return null;
+      }
+      if (error.message.includes('unauthenticated')) {
+        console.log('User not authenticated');
+        return null;
+      }
+    }
+    
+    // For other errors, still throw to maintain existing behavior
     throw new Error('Failed to fetch user profile');
   }
 };
@@ -158,6 +202,13 @@ export const updateUserProfile = async (uid: string, updates: Partial<UserProfil
 
 export const getUserSubscriptions = async (userId: string): Promise<Subscription[]> => {
   try {
+    // Check if user is authenticated before making the request
+    const currentUser = auth.currentUser;
+    if (!currentUser) {
+      console.log('User not authenticated, skipping subscriptions fetch');
+      return [];
+    }
+
     const subscriptionsRef = collection(db, 'subscriptions');
     const q = query(
       subscriptionsRef,
@@ -166,7 +217,6 @@ export const getUserSubscriptions = async (userId: string): Promise<Subscription
     
     const querySnapshot = await getDocs(q);
     const subscriptions: Subscription[] = [];
-    console.log('Query snapshot:', querySnapshot);
     querySnapshot.forEach((doc) => {
       const data = doc.data();
       subscriptions.push({
@@ -176,16 +226,36 @@ export const getUserSubscriptions = async (userId: string): Promise<Subscription
         updatedAt: data.updatedAt?.toDate() || new Date(),
       } as unknown as Subscription);
     });
-    console.log('Subscriptions:', subscriptions);
     return subscriptions;
   } catch (error) {
     console.error('Error fetching user subscriptions:', error);
+    
+    // Handle specific Firebase permission errors gracefully
+    if (error instanceof Error) {
+      if (error.message.includes('permission-denied') || 
+          error.message.includes('Missing or insufficient permissions')) {
+        console.log('Permission denied - user may not be authenticated');
+        return [];
+      }
+      if (error.message.includes('unauthenticated')) {
+        console.log('User not authenticated');
+        return [];
+      }
+    }
+    
     throw new Error('Failed to fetch subscriptions');
   }
 };
 
 export const getSubscription = async (subscriptionId: string): Promise<Subscription | null> => {
   try {
+    // Check if user is authenticated before making the request
+    const currentUser = auth.currentUser;
+    if (!currentUser) {
+      console.log('User not authenticated, skipping subscription fetch');
+      return null;
+    }
+
     const subscriptionRef = doc(db, 'subscriptions', subscriptionId);
     const subscriptionDoc = await getDoc(subscriptionRef);
     
@@ -202,6 +272,20 @@ export const getSubscription = async (subscriptionId: string): Promise<Subscript
     } as unknown as Subscription;
   } catch (error) {
     console.error('Error fetching subscription:', error);
+    
+    // Handle specific Firebase permission errors gracefully
+    if (error instanceof Error) {
+      if (error.message.includes('permission-denied') || 
+          error.message.includes('Missing or insufficient permissions')) {
+        console.log('Permission denied - user may not be authenticated');
+        return null;
+      }
+      if (error.message.includes('unauthenticated')) {
+        console.log('User not authenticated');
+        return null;
+      }
+    }
+    
     throw new Error('Failed to fetch subscription');
   }
 };

@@ -524,7 +524,7 @@ export default function PaymentPage() {
                   <button
                     onClick={handleConfirmOrder}
                     disabled={isProcessing}
-                    className="w-full px-6 py-3 bg-indigo-600 text-white font-semibold rounded-lg hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="w-full bg-bakery-primary text-white px-6 py-3 rounded-md hover:bg-bakery-primary-dark transition-colors font-medium disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     {isProcessing ? 'Processing Payment...' : 'Confirm Payment'}
                   </button>

@@ -632,7 +632,7 @@ export default function OrderPage() {
               <button
                 type="submit"
                 disabled={loading || calculateTotal() === 0 || isHolidayMode}
-                className="btn-bakery-secondary font-body font-bold text-lg px-8 py-4 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="bg-bakery-primary text-white px-6 py-3 rounded-md hover:bg-bakery-primary-dark transition-colors font-medium disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {isHolidayMode ? 'Orders Temporarily Disabled' : loading ? 'Processing...' : 'Proceed to Payment'}
               </button>

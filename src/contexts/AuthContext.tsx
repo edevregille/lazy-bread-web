@@ -19,6 +19,7 @@ interface AuthContextType {
   currentUser: User | null;
   userProfile: UserProfile | null;
   loading: boolean;
+  signingOut: boolean;
   signIn: (email: string, password: string) => Promise<UserCredential>;
   signUp: (email: string, password: string, displayName: string) => Promise<UserCredential>;
   logout: () => Promise<void>;
@@ -40,6 +41,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [currentUser, setCurrentUser] = useState<User | null>(null);
   const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
   const [loading, setLoading] = useState(true);
+  const [signingOut, setSigningOut] = useState(false);
 
   async function signUp(email: string, password: string, displayName: string) {
     const result = await createUserWithEmailAndPassword(auth, email, password);
@@ -72,9 +74,20 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     return signInWithEmailAndPassword(auth, email, password);
   }
 
-  function logout() {
+  async function logout() {
+    // Set signing out flag to prevent race conditions
+    setSigningOut(true);
+    
+    // Clear user profile immediately to prevent race conditions
     setUserProfile(null);
-    return signOut(auth);
+    setCurrentUser(null);
+    
+    try {
+      await signOut(auth);
+    } finally {
+      // Reset signing out flag after a short delay
+      setTimeout(() => setSigningOut(false), 1000);
+    }
   }
 
   async function resetPassword(email: string) {
@@ -85,7 +98,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }
 
   async function refreshUserProfile() {
-    if (!currentUser) {
+    if (!currentUser || signingOut) {
       setUserProfile(null);
       return;
     }
@@ -101,20 +114,18 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
-      console.log('Auth state changed:', user?.email, user?.uid);
       setCurrentUser(user);
       
-      if (user) {
+      if (user && !signingOut) {
         try {
-          console.log('Fetching user profile for:', user.uid);
           const profile = await getUserProfile(user.uid);
-          console.log('User profile fetched:', profile);
           setUserProfile(profile);
         } catch (error) {
           console.error('Error fetching user profile:', error);
           setUserProfile(null);
         }
       } else {
+        // User is signed out, clear profile immediately
         setUserProfile(null);
       }
       
@@ -122,12 +133,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     });
 
     return unsubscribe;
-  }, []);
+  }, [signingOut]);
 
   const value = {
     currentUser,
     userProfile,
     loading,
+    signingOut,
     signIn,
     signUp,
     logout,
