@@ -248,7 +248,7 @@ export default function OrderPage() {
         <div className="card-bakery ">
           <div className="mb-8">
             <h2 className="text-4xl font-semibold text-bakery-primary mb-6">
-              Place your order or a weekly delivery
+              Place your order 
             </h2>
             <p className="text-lg text-earth-brown">
               Select your favorite focaccias and choose your delivery date, we will bring it to you. 
