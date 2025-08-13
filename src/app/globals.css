@@ -17,6 +17,7 @@
   --golden-wheat: #DAA520;
   --sage-green: #9DC183;
   --rust-orange: #CD853F;
+  --black: #000000;
 }
 
 body {
@@ -41,7 +42,7 @@ body {
 
 /* Warm, Organic Color Palette */
 .text-bakery-primary {
-  color: var(--primary);
+  color: var(--earth-brown);
 }
 
 .text-bakery-secondary {

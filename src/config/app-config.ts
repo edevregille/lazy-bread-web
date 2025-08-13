@@ -2,14 +2,14 @@
 
 export const NAV_ITEMS = [
   { name: "Home", path: "/" },
-  // { name: "Order", path: "/order" },
+  { name: "Order", path: "/order" },
   { name: "About", path: "/about" },
   { name: "Find Us", path: "/find-us" },
 ];
 
 export const AUTH_NAV_ITEMS = [
   { name: "Home", path: "/" },
-  // { name: "Order", path: "/order" },
+  { name: "Order", path: "/order" },
   { name: "About", path: "/about" },
   { name: "Find Us", path: "/find-us" },
 ];
@@ -28,7 +28,7 @@ export const BREAD_TYPES = [
 
 export const BUSINESS_SETTINGS = {
   // Holiday mode settings
-  isHolidayMode: false, // Set to true to disable ordering
+  isHolidayMode: true, // Set to true to disable ordering
   holidayMessage: "🏖️ We're on Holiday! Taking a well-deserved break.",
   returnDate: "September, 2025",
   
