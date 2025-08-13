@@ -19,7 +19,7 @@ import { DELIVERY_ZONES } from '@/config/app-config';
 import { PaymentMethod, Subscription, Order } from '@/lib/types';
 
 export default function DashboardPage() {
-  const { currentUser, loading, userProfile, refreshUserProfile } = useAuth();
+  const { currentUser, loading, userProfile, refreshUserProfile, signingOut } = useAuth();
   const [orders, setOrders] = useState<Order[]>([]);
   const [subscriptions, setSubscriptions] = useState<Subscription[]>([]);
   const [paymentMethods, setPaymentMethods] = useState<PaymentMethod[]>([]);
@@ -57,29 +57,29 @@ export default function DashboardPage() {
       return;
     }
 
-    if (currentUser) {
+    if (currentUser && !signingOut) {
       // Only fetch orders, subscriptions and payment methods once when user is available
       fetchUserOrders();
       fetchUserSubscriptions();
       // Don't call refreshUserProfile here as it causes infinite loops
     }
-  }, [currentUser, loading, router]); // Removed userProfile and refreshUserProfile from dependencies
+  }, [currentUser, loading, router, signingOut]); // Added signingOut to dependencies
 
   // Separate effect for user profile refresh
   useEffect(() => {
-    if (currentUser && !userProfile) {
-      // Only refresh profile if we don't have one yet
+    if (currentUser && !userProfile && !signingOut) {
+      // Only refresh profile if we don't have one yet and not signing out
       refreshUserProfile();
     }
-  }, [currentUser, userProfile, refreshUserProfile]);
+  }, [currentUser, userProfile, refreshUserProfile, signingOut]);
 
   // Separate effect for payment methods when userProfile becomes available
   useEffect(() => {
-    if (userProfile?.stripeCustomerId && paymentMethods.length === 0) {
+    if (userProfile?.stripeCustomerId && paymentMethods.length === 0 && !signingOut) {
       // Only fetch payment methods if we have a customer ID and no methods yet
       fetchPaymentMethods();
     }
-  }, [userProfile?.stripeCustomerId, paymentMethods.length]);
+  }, [userProfile?.stripeCustomerId, paymentMethods.length, signingOut]);
 
   // Effect to update address form when userProfile changes
   useEffect(() => {
@@ -319,8 +319,6 @@ export default function DashboardPage() {
   if (!currentUser) {
     return null; // Will redirect to home
   }
-
-  console.log(subscriptions?.[0]?.createdAt as Date);
 
   return (
     <div className="min-h-screen py-20">
