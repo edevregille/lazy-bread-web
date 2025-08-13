@@ -5,6 +5,7 @@ export const NAV_ITEMS = [
   { name: "Order", path: "/order" },
   { name: "About", path: "/about" },
   { name: "Find Us", path: "/find-us" },
+  { name: "Recipes", path: "/recipes" },
 ];
 
 export const AUTH_NAV_ITEMS = [
@@ -12,6 +13,7 @@ export const AUTH_NAV_ITEMS = [
   { name: "Order", path: "/order" },
   { name: "About", path: "/about" },
   { name: "Find Us", path: "/find-us" },
+  { name: "Recipes", path: "/recipes" },
 ];
 
 export const BREAD_TYPES = [
