@@ -1,5 +1,6 @@
 import React from 'react';
 import Image from 'next/image';
+import Link from 'next/link';
 
 interface Recipe {
   id: string;
@@ -10,6 +11,8 @@ interface Recipe {
   difficulty: 'Easy' | 'Medium' | 'Hard';
   prepTime: string;
 }
+
+const DEFAULT_IMAGE = '/recipes/default.jpg';
 
 const recipes: Recipe[] = [
   {
@@ -55,8 +58,8 @@ const recipes: Recipe[] = [
     prepTime: '8 minutes'
   },
   {
-    id: 'grilled-focaccia',
-    title: 'Grilled Focaccia',
+    id: 'crackers-focaccia',
+    title: 'Focaccia Crackers',
     description: 'Add smoky flavor by grilling your focaccia for a unique twist on this classic bread.',
     instructions: [
       'Preheat grill to medium heat',
@@ -64,7 +67,8 @@ const recipes: Recipe[] = [
       'Grill for 2-3 minutes per side until char marks appear',
       'Serve with grilled vegetables or as a side to grilled meats'
     ],
-    imagePlaceholder: '/recipes/grilled-focaccia.jpg',
+    // imagePlaceholder: '/recipes/grilled-focaccia.jpg',
+    imagePlaceholder: DEFAULT_IMAGE,
     difficulty: 'Medium',
     prepTime: '15 minutes'
   },
@@ -92,7 +96,8 @@ const recipes: Recipe[] = [
       'Top with diced tomatoes, fresh basil, and olive oil',
       'Season with salt and pepper to taste'
     ],
-    imagePlaceholder: '/recipes/focaccia-bruschetta.jpg',
+    // imagePlaceholder: '/recipes/focaccia-bruschetta.jpg',
+    imagePlaceholder: DEFAULT_IMAGE,
     difficulty: 'Medium',
     prepTime: '12 minutes'
   }
@@ -100,24 +105,12 @@ const recipes: Recipe[] = [
 
 export default function RecipesPage() {
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen background-gradient-warm py-16">
       {/* Hero Section */}
-      <div className="bg-gradient-to-r from-amber-600 to-orange-600 text-white">
-        <div className="container mx-auto px-4 py-16">
-          <div className="text-center">
-            <h1 className="text-4xl md:text-6xl font-bold mb-4">
-              Focaccia Recipes
-            </h1>
-            <p className="text-xl md:text-2xl mb-8 max-w-3xl mx-auto">
-              Discover delicious ways to enjoy our artisanal focaccia bread
-            </p>
-            <div className="flex justify-center space-x-4 text-sm">
-              <span className="bg-white/20 px-3 py-1 rounded-full">6 Recipes</span>
-              <span className="bg-white/20 px-3 py-1 rounded-full">Quick & Easy</span>
-              <span className="bg-white/20 px-3 py-1 rounded-full">Perfect for Any Meal</span>
-            </div>
-          </div>
-        </div>
+      <div className="text-center">
+        <h1 className="text-4xl font-semibold text-bakery-primary mb-6">
+          Focaccia Recipes Ideas
+        </h1>
       </div>
 
       {/* Recipes Grid */}
@@ -137,8 +130,7 @@ export default function RecipesPage() {
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
                       </svg>
                     </div>
-                    <p className="text-amber-600 font-medium">Recipe Image</p>
-                    <p className="text-amber-500 text-sm">{recipe.imagePlaceholder}</p>
+                    <Image src={recipe.imagePlaceholder || DEFAULT_IMAGE} alt={recipe.title} fill className="object-cover" />
                   </div>
                 </div>
               </div>
@@ -187,9 +179,11 @@ export default function RecipesPage() {
             <p className="text-gray-600 mb-6">
               Order our fresh focaccia bread and start creating these delicious dishes today!
             </p>
+            <Link href="/order">
             <button className="bg-amber-600 hover:bg-amber-700 text-white font-semibold py-3 px-8 rounded-lg transition-colors duration-200">
               Order Focaccia Now
             </button>
+            </Link>
           </div>
         </div>
       </div>

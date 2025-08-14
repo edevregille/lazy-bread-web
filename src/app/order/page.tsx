@@ -245,7 +245,7 @@ export default function OrderPage() {
   return (
     <div className="min-h-screen py-20 bg-warm-cream">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="card-bakery ">
+        <div className="card-bakery">
           <div className="mb-8">
             <h2 className="text-4xl font-semibold text-bakery-primary mb-6">
               Place your order 
