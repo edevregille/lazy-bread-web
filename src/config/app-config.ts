@@ -3,17 +3,17 @@
 export const NAV_ITEMS = [
   { name: "Home", path: "/" },
   { name: "Order", path: "/order" },
+  { name: "Recipes", path: "/recipes" },
   { name: "About", path: "/about" },
   { name: "Find Us", path: "/find-us" },
-  { name: "Recipes", path: "/recipes" },
 ];
 
 export const AUTH_NAV_ITEMS = [
   { name: "Home", path: "/" },
   { name: "Order", path: "/order" },
+  { name: "Recipes", path: "/recipes" },
   { name: "About", path: "/about" },
   { name: "Find Us", path: "/find-us" },
-  { name: "Recipes", path: "/recipes" },
 ];
 
 export const BREAD_TYPES = [

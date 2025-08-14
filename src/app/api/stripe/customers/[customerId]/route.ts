@@ -23,8 +23,6 @@ export async function GET(
     // Get customer payment methods
     const paymentMethods = await getCustomerPaymentMethods(customerId);
 
-    console.log('Customer and payment methods fetched successfully');
-
     return NextResponse.json({
       success: true,
       customer: {

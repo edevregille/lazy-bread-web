@@ -319,7 +319,6 @@ export async function createRecurringPaymentIntent(
  */
 export async function getCustomerPaymentMethods(customerId: string): Promise<Stripe.PaymentMethod[]> {
   const stripe = await getStripe();
-  console.log('Getting payment methods for customer:', customerId);
   const paymentMethods = await stripe.paymentMethods.list({
     customer: customerId,
     type: 'card',

@@ -251,7 +251,7 @@ export default function OrderPage() {
               Place your order 
             </h2>
             <p className="text-lg text-earth-brown">
-              Select your favorite focaccias and choose your delivery date, we will bring it to you. 
+              Select your favorite focaccias (minimum order is 2, free delivery) and choose your delivery date, we will bring it to you. 
               <br/>For specific orders or any question, send us an email or reach out via instagram.
             </p>
           </div>
@@ -281,7 +281,7 @@ export default function OrderPage() {
 
             {/* Bread Selection */}
             <div>
-              <h2 className="text-2xl font-semibold text-bakery-primary mb-6">Select your focaccias</h2>
+              <h2 className="text-2xl font-semibold text-bakery-primary mb-6">Select your focaccias (minimum order is 2)</h2>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {BREAD_TYPES.map((bread) => (
                   <div key={bread.name} className="bg-white rounded-lg shadow-md p-6 border border-bakery-light">
@@ -631,7 +631,7 @@ export default function OrderPage() {
             <div className="text-center">
               <button
                 type="submit"
-                disabled={loading || calculateTotal() === 0 || isHolidayMode}
+                disabled={loading || calculateTotal() === 0 || isHolidayMode || getOrderItems().length < 2}
                 className="bg-bakery-primary text-white px-6 py-3 rounded-md hover:bg-bakery-primary-dark transition-colors font-medium disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {isHolidayMode ? 'Orders Temporarily Disabled' : loading ? 'Processing...' : 'Proceed to Payment'}

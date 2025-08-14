@@ -111,7 +111,7 @@ export default function Header() {
                                     <>
                                         <button
                                             onClick={() => handleAuthClick('signin')}
-                                            className="px-4 py-2 rounded-md text-lg font-body font-medium text-earth-brown hover:text-bakery-primary hover:bg-warm-cream transition-colors duration-300"
+                                            className="px-2 py-2 bg-bakery-primary text-white px-6 py-3 rounded-md hover:bg-bakery-primary-dark transition-colors font-medium"
                                         >
                                             Sign In
                                         </button>

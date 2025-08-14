@@ -23,7 +23,6 @@ const recipes: Recipe[] = [
       'Slice focaccia into 1-inch thick pieces',
       'Toast in a toaster or under the broiler until golden brown',
       'Spread with room temperature butter',
-      'Sprinkle with sea salt and enjoy while warm'
     ],
     imagePlaceholder: '/recipes/toasted-focaccia.jpg',
     difficulty: 'Easy',
