@@ -663,7 +663,7 @@ export default function DashboardPage() {
                       <div className="flex justify-between items-start mb-4">
                         <div>
                           <h3 className="text-lg font-semibold text-bakery-primary">
-                            Order #{order.id?.slice(-8) || 'Unknown'}
+                            Order #{order.id || 'Unknown'}
                           </h3>
                           <p className="text-gray-600">
                             Placed on {order.createdAt ? order.createdAt.toLocaleDateString() : 'Unknown'}
