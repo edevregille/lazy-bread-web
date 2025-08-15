@@ -76,6 +76,15 @@ export interface UserProfile {
   updatedAt?: Date;
 }
 
+export interface StripeCustomer {
+  id: string;
+  email: string | null;
+  name: string | null;
+  created: number;
+  metadata: Record<string, string>;
+  paymentMethods?: PaymentMethod[];
+}
+
 // Payment method interface
 export interface PaymentMethod {
   id: string;

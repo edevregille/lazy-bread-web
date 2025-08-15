@@ -1,6 +1,7 @@
 'use server';
 
 import Stripe from "stripe";
+import { StripeCustomer } from "./types";
 
 let _stripe: Stripe | null = null;
 
@@ -26,17 +27,14 @@ export const getStripe = async (): Promise<Stripe> => {
  * @param email - Customer email
  * @param name - Optional customer name
  * @param metadata - Optional metadata
- * @returns Promise<Stripe.Customer>
+ * @returns Promise<StripeCustomer>
  */
 export async function createOrFindCustomer(
   email: string, 
   name?: string, 
   metadata?: Record<string, string>
 ): Promise<StripeCustomer> {
-  const stripe = await getStripe();
-  
-  console.log('Looking for existing customer with email:', email);
-  
+  const stripe = await getStripe();  
   try {
     // First, try to find existing customer
     const existingCustomers = await stripe.customers.list({
@@ -46,7 +44,6 @@ export async function createOrFindCustomer(
 
     if (existingCustomers.data.length > 0) {
       const customer = existingCustomers.data[0];
-      console.log('Found existing customer:', customer.id);
       
       // Update customer with new information if provided
       if (name || metadata) {
@@ -54,12 +51,25 @@ export async function createOrFindCustomer(
         if (name) updateData.name = name;
         if (metadata) updateData.metadata = metadata;
         
-        const updatedCustomer = await stripe.customers.update(customer.id, updateData);
-        console.log('Updated existing customer:', updatedCustomer.id);
-        return updatedCustomer;
+        const updatedCustomer = await stripe.customers.update(customer.id, updateData);        
+        // Return only serializable properties
+        return {
+          id: updatedCustomer.id,
+          email: updatedCustomer.email,
+          name: updatedCustomer.name || null,
+          created: updatedCustomer.created,
+          metadata: updatedCustomer.metadata,
+        };
       }
       
-      return customer;
+      // Return only serializable properties
+      return {
+        id: customer.id,
+        email: customer.email,
+        name: customer.name || null,
+        created: customer.created,
+        metadata: customer.metadata,
+      };
     }
 
     // If no existing customer, create a new one
@@ -78,7 +88,13 @@ export async function createOrFindCustomer(
 
     const newCustomer = await stripe.customers.create(customerData);
     console.log('Created new customer:', newCustomer.id);
-    return newCustomer;
+    return {
+      id: newCustomer.id,
+      email: newCustomer.email,
+      name: newCustomer.name || null,
+      created: newCustomer.created,
+      metadata: newCustomer.metadata,
+    };
   } catch (error) {
     console.error('Error in createOrFindCustomer:', error);
     throw new Error(`Failed to create or find Stripe customer: ${error instanceof Error ? error.message : 'Unknown error'}`);

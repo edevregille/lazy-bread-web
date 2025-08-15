@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from 'react';
+import { useAuth } from '@/contexts/AuthContext';
 
 interface ForgotPasswordProps {
   onSwitchToSignIn: () => void;
@@ -8,6 +9,7 @@ interface ForgotPasswordProps {
 }
 
 export default function ForgotPassword({ onSwitchToSignIn, onClose }: ForgotPasswordProps) {
+  const { resetPassword } = useAuth();
   const [email, setEmail] = useState('');
   const [error, setError] = useState('');
   const [success, setSuccess] = useState(false);
@@ -49,24 +51,9 @@ export default function ForgotPassword({ onSwitchToSignIn, onClose }: ForgotPass
     try {
       setError('');
       setLoading(true);
+      await resetPassword(email);
+      setSuccess(true);
       
-      const response = await fetch('/api/auth/forgot-password', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          email,
-        }),
-      });
-
-      const data = await response.json();
-
-      if (data.error) {
-        setError(data.message || 'Failed to send password reset email. Please try again.');
-      } else {
-        setSuccess(true);
-      }
     } catch (error: unknown) {
       console.error('Password reset error:', error);
       setError('An unexpected error occurred. Please try again.');

@@ -95,9 +95,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }
 
   async function resetPassword(email: string) {
-    console.log('Resetting password for:', email);
-    const response = await sendPasswordResetEmail(auth, email);
-    console.log('Password reset email sent:', response);
+    await sendPasswordResetEmail(auth, email);
     return ;
   }
 
