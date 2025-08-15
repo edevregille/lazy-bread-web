@@ -96,7 +96,7 @@ function AddPaymentMethodForm({ onClose }: AddPaymentMethodFormProps) {
         </button>
         <button
           type="button"
-          onClick={() => router.push('/payment-methods')}
+          onClick={() => router.push('/dashboard')}
           className="flex-1 bg-gray-300 text-gray-700 py-3 px-4 rounded-md hover:bg-gray-400 transition-colors"
         >
           Cancel
@@ -196,7 +196,7 @@ export default function AddPaymentMethodPage({ onClose }: AddPaymentMethodPagePr
 
   return (
       <div className="w-full px-4 sm:px-6 lg:px-8">
-        <div className="card-bakery">
+        <div className="card-bakery max-h-[80vh] overflow-y-auto">
           {clientSecret && (
             <Elements
               stripe={stripePromise}
