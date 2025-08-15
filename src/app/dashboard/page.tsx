@@ -15,7 +15,7 @@ import {
 import SubscriptionAddressEditModal from '@/components/payment/SubscriptionAddressEditModal';
 import ConfirmationModal from '@/components/ui/ConfirmationModal';
 import ShowSavedPaymentMethod from '@/components/payment/ShowSavedPaymentMethod';
-import { DELIVERY_ZONES } from '@/config/app-config';
+import { DELIVERY_ZONES, formatDeliveryDate } from '@/config/app-config';
 import { PaymentMethod, Subscription, Order } from '@/lib/types';
 import { trackSubscriptionAction } from '@/lib/gtag';
 
@@ -696,7 +696,7 @@ export default function DashboardPage() {
                         <div>
                           <h4 className="font-medium text-gray-900 mb-2">Delivery Details</h4>
                           <div className="text-sm space-y-1">
-                            <p><strong>Date:</strong> {formatDate(new Date(order.deliveryDate))}</p>
+                            <p><strong>Date:</strong> {formatDeliveryDate(order.deliveryDate)}</p>
                             <p><strong>Address:</strong> {order.address}</p>
                             <p><strong>City:</strong> {order.city}</p>
                             <p><strong>ZIP:</strong> {order.zipCode}</p>
