@@ -30,10 +30,11 @@ export const getUserOrders = async (email: string): Promise<Order[]> => {
     
     querySnapshot.forEach((doc) => {
       const data = doc.data();
+      const createdAt = data.createdAt?.toDate();
       orders.push({
         id: doc.id,
         ...data,
-        createdAt: data.createdAt?.toDate() || new Date(),
+        createdAt: createdAt ? createdAt.toISOString() : new Date().toISOString(),
       } as Order);
     });
     
@@ -66,17 +67,18 @@ export const getUserOrdersWithoutIndex = async (email: string): Promise<Order[]>
     
     querySnapshot.forEach((doc) => {
       const data = doc.data();
+      const createdAt = data.createdAt?.toDate();
       orders.push({
         id: doc.id,
         ...data,
-        createdAt: data.createdAt?.toDate() || new Date(),
+        createdAt: createdAt ? createdAt.toISOString() : new Date().toISOString(),
       } as Order);
     });
     
     // Sort in memory instead of in the query
     orders.sort((a, b) => {
-      const dateA = a.createdAt || new Date(0);
-      const dateB = b.createdAt || new Date(0);
+      const dateA = new Date(a.createdAt || '1970-01-01');
+      const dateB = new Date(b.createdAt || '1970-01-01');
       return dateB.getTime() - dateA.getTime(); // Descending order
     });
     
@@ -120,11 +122,16 @@ export const getUserProfile = async (uid: string): Promise<UserProfile | null> =
     
     const doc = querySnapshot.docs[0];
     const data = doc.data();
+    
+    // Convert Date objects to ISO strings to prevent serialization errors
+    const createdAt = data.createdAt?.toDate();
+    const updatedAt = data.updatedAt?.toDate();
+    
     return {
       id: doc.id,
       ...data,
-      createdAt: data.createdAt?.toDate() || new Date(),
-      updatedAt: data.updatedAt?.toDate() || new Date(),
+      createdAt: createdAt ? createdAt.toISOString() : undefined,
+      updatedAt: updatedAt ? updatedAt.toISOString() : undefined,
     } as UserProfile;
   } catch (error) {
     console.error('Error fetching user profile:', error);

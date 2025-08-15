@@ -1,4 +1,5 @@
 'use server';
+
 import Stripe from "stripe";
 
 let _stripe: Stripe | null = null;
@@ -31,7 +32,7 @@ export async function createOrFindCustomer(
   email: string, 
   name?: string, 
   metadata?: Record<string, string>
-): Promise<Stripe.Customer> {
+): Promise<StripeCustomer> {
   const stripe = await getStripe();
   
   console.log('Looking for existing customer with email:', email);

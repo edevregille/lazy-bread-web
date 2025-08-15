@@ -21,7 +21,6 @@ export interface OrderDetails {
   totalAmount: number;
   isRecurring?: boolean;
 }
-
 // Firebase-specific Order interface (different from OrderDetails)
 export interface Order {
   id: string;

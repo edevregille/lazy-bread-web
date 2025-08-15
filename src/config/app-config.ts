@@ -43,7 +43,7 @@ export const BUSINESS_SETTINGS = {
   recurringOrdersEmail: "lazybreadpdx@gmail.com",
   
   // Business hours and delivery
-  deliveryDays: ["Wednesday", "Friday", "Sunday"],
+  deliveryDays: ["Wednesday", "Friday"],
   minOrderAdvanceHours: 24,
   maxOrderQuantity: 5,
 };
@@ -145,46 +145,120 @@ export const ERROR_MESSAGES = {
   captchaNotConfigured: "⚠️ CAPTCHA is not configured. Please set up reCAPTCHA keys in your environment variables.",
 };
 
-// Helper functions
-export const getAvailableDeliveryDates = (): string[] => {
-  const dates: string[] = [];
-  const now = new Date();
-  const pacificTime = new Date(now.toLocaleString("en-US", {timeZone: "America/Los_Angeles"}));
+// Helper function to convert day names to numbers
+export const getDayNumber = (dayName: string): number => {
+  const dayNameToNumber: Record<string, number> = {
+    'Sunday': 0,
+    'Monday': 1,
+    'Tuesday': 2,
+    'Wednesday': 3,
+    'Thursday': 4,
+    'Friday': 5,
+    'Saturday': 6
+  };
+  return dayNameToNumber[dayName] ?? -1;
+};
+
+// Helper function to get current time in PST
+export const getCurrentTimeInPST = (): Date => {
+  return new Date(new Date().toLocaleString("en-US", {timeZone: "America/Los_Angeles"}));
+};
+
+// Helper function to format current time in PST for debugging
+export const getCurrentTimeInPSTString = (): string => {
+  const pstTime = getCurrentTimeInPST();
+  return pstTime.toLocaleString('en-US', {
+    timeZone: 'America/Los_Angeles',
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit',
+    second: '2-digit',
+    timeZoneName: 'short'
+  });
+};
+
+// Helper function to get the next available delivery date for a specific day
+export const getNextDeliveryDateForDay = (dayName: string): string | null => {
+  const dayNumber = getDayNumber(dayName);
+  if (dayNumber === -1) return null;
+  
+  const pstTime = getCurrentTimeInPST();
   
   // Start from tomorrow
-  const currentDate = new Date(pacificTime);
+  const currentDate = new Date(pstTime);
   currentDate.setDate(currentDate.getDate() + 1);
   
   // Add minimum order time
-  const minOrderTime = new Date(pacificTime);
+  const minOrderTime = new Date(pstTime);
   minOrderTime.setHours(minOrderTime.getHours() + BUSINESS_SETTINGS.minOrderAdvanceHours);
   
-  // Generate dates for the next 7 days
-  for (let i = 0; i < 7; i++) {
+  // Find the next occurrence of this day
+  for (let i = 0; i < 14; i++) { // Look up to 2 weeks ahead
     const date = new Date(currentDate);
     date.setDate(date.getDate() + i);
     
-    // Only include Wednesday (3) and Friday (5)
-    if (date.getDay() === 3 || date.getDay() === 5) {
+    // Convert the date to PST for day calculation
+    const pstDate = new Date(date.toLocaleString("en-US", {timeZone: "America/Los_Angeles"}));
+    const dayOfWeek = pstDate.getDay();
+    
+    if (dayOfWeek === dayNumber && date > minOrderTime) {
+      return date.toISOString().split('T')[0];
+    }
+  }
+  
+  return null;
+};
+
+export const getAvailableDeliveryDates = (): string[] => {
+  const dates: string[] = [];
+  const pstTime = getCurrentTimeInPST();
+  
+  // Start from tomorrow
+  const currentDate = new Date(pstTime);
+  currentDate.setDate(currentDate.getDate() + 1);
+  
+  // Add minimum order time
+  const minOrderTime = new Date(pstTime);
+  minOrderTime.setHours(minOrderTime.getHours() + BUSINESS_SETTINGS.minOrderAdvanceHours);
+  
+  // Get the day numbers for allowed delivery days
+  const allowedDeliveryDays = BUSINESS_SETTINGS.deliveryDays.map(day => getDayNumber(day));
+  
+  // Generate dates for the next 10 days
+  for (let i = 0; i < 10; i++) {
+    const date = new Date(currentDate);
+    date.setDate(date.getDate() + i);
+    
+    // Convert the date to PST for day calculation
+    const pstDate = new Date(date.toLocaleString("en-US", {timeZone: "America/Los_Angeles"}));
+    const dayOfWeek = pstDate.getDay();
+    
+    // Only include allowed delivery days
+    if (allowedDeliveryDays.includes(dayOfWeek)) {
       // Check if this date is at least minimum order time in the future
       if (date > minOrderTime) {
         dates.push(date.toISOString().split('T')[0]);
       }
     }
   }
-  
   return dates;
 };
 
 export const formatDeliveryDate = (dateString: string): string => {
-  const date = new Date(dateString);
+  // Convert the ISO date string to a PST date
+  const pstDate = new Date(dateString + 'T00:00:00-08:00'); // Force PST timezone  
+  // Format the date in PST timezone
   const options: Intl.DateTimeFormatOptions = { 
     weekday: 'long', 
     year: 'numeric', 
     month: 'long', 
-    day: 'numeric' 
+    day: 'numeric',
+    timeZone: 'America/Los_Angeles'
   };
-  return date.toLocaleDateString('en-US', options);
+  
+  return pstDate.toLocaleDateString('en-US', options) + ' (PST)';
 };
 
 export const validateUSPhoneNumber = (phone: string): boolean => {

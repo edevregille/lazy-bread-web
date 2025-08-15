@@ -393,9 +393,11 @@ export default function OrderPage() {
                       disabled={isHolidayMode}
                     >
                       <option value="">Select your preferred delivery day</option>
-                      <option value="wednesday">Every Wednesday</option>
-                      <option value="friday">Every Friday</option>
-                      <option value="sunday">Every Sunday</option>
+                      {BUSINESS_SETTINGS.deliveryDays.map((day) => (
+                        <option key={day} value={day.toLowerCase()}>
+                          Every {day}
+                        </option>
+                      ))}
                     </select>
                   ) : (
                     <select
