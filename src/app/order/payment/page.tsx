@@ -7,6 +7,7 @@ import { loadStripe } from '@stripe/stripe-js';
 import { useAuth } from '@/contexts/AuthContext';
 import { OrderDetails, PaymentFlow, PaymentMethod } from '@/lib/types';
 import ShowSavedPaymentMethod from '@/components/payment/ShowSavedPaymentMethod';
+import { formatDeliveryDate } from '@/config/app-config';
 
 // Load Stripe
 const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!);
@@ -428,12 +429,7 @@ export default function PaymentPage() {
                 <p><strong>Name:</strong> {orderDetails.customerName}</p>
                 <p><strong>Address:</strong> {orderDetails.address}</p>
                 <p><strong>City:</strong> {orderDetails.city}, {orderDetails.zipCode}</p>
-                <p><strong>Delivery Date:</strong> {orderDetails.isRecurring ? `Every ${orderDetails.deliveryDate}` : new Date(orderDetails.deliveryDate).toLocaleDateString('en-US', { 
-                  weekday: 'long', 
-                  year: 'numeric', 
-                  month: 'long', 
-                  day: 'numeric' 
-                })}</p>
+                <p><strong>Delivery Date:</strong> {orderDetails.isRecurring ? `Every ${orderDetails.deliveryDate}` : formatDeliveryDate(orderDetails.deliveryDate)}</p>
                 <p><strong>Email:</strong> {orderDetails.email}</p>
                 <p><strong>Phone:</strong> {orderDetails.phone}</p>
                 {orderDetails.comments && (

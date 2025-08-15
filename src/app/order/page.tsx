@@ -32,7 +32,7 @@ export default function OrderPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [showAuthModal, setShowAuthModal] = useState(false);
-  const [authModalMode, setAuthModalMode] = useState<'signin' | 'signup' | 'forgot-password'>('signin');
+  const [authModalMode, setAuthModalMode] = useState<'signin' | 'signup' | 'forgot-password'>('signup');
   const [showSaveAddressPrompt, setShowSaveAddressPrompt] = useState(false);
   const [savingAddress, setSavingAddress] = useState(false);
   const [addressSaved, setAddressSaved] = useState(false);
@@ -118,7 +118,7 @@ export default function OrderPage() {
     if (checked && !currentUser) {
       // User wants recurring order but is not signed in
       // Don't check the box, just show sign-in modal
-      setAuthModalMode('signin');
+      setAuthModalMode('signup');
       setShowAuthModal(true);
       return;
     }
@@ -128,8 +128,7 @@ export default function OrderPage() {
 
   const handleAuthSuccess = () => {
     setShowAuthModal(false);
-    // Don't automatically set recurring order to true
-    // Let the user decide if they want a recurring order
+    setIsRecurring(true);
   };
 
   const calculateTotal = () => {

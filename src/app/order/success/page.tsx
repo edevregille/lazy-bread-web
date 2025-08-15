@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { formatDeliveryDate } from '@/config/app-config';
 
 interface OrderDetails {
   breadQuantities: Record<string, number>;
@@ -79,8 +80,6 @@ export default function SuccessPage() {
     );
   }
 
-  console.log('orderDetails', orderDetails);
-
   return (
     <div className="min-h-screen bg-gray-50 py-20">
       <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -144,12 +143,7 @@ export default function SuccessPage() {
               <p><strong>Name:</strong> {orderDetails.customerName}</p>
               <p><strong>Address:</strong> {orderDetails.address}</p>
               <p><strong>City:</strong> {orderDetails.city}, {orderDetails.zipCode}</p>
-              <p><strong>Delivery Date:</strong> {new Date(orderDetails.deliveryDate).toLocaleDateString('en-US', { 
-                weekday: 'long', 
-                year: 'numeric', 
-                month: 'long', 
-                day: 'numeric' 
-              })}</p>
+              <p><strong>Delivery Date:</strong> {formatDeliveryDate(orderDetails.deliveryDate)}</p>
               <p><strong>Email:</strong> {orderDetails.email}</p>
               <p><strong>Phone:</strong> {orderDetails.phone}</p>
               {orderDetails.comments && (

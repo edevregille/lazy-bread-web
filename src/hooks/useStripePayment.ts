@@ -83,9 +83,7 @@ export function useStripePayment({
         setIsProcessing(false);
         return;
       }
-      
-      console.log('Payment intent status:', paymentIntent.status);
-      
+            
       if (paymentIntent.status === 'succeeded' || paymentIntent.status === 'requires_capture') {
         // Payment successful
         const successMessage = paymentIntent.status === 'requires_capture' 

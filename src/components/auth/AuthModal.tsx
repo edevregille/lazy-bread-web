@@ -12,8 +12,9 @@ interface AuthModalProps {
   onAuthSuccess?: () => void;
 }
 
-export default function AuthModal({ isOpen, onClose, initialMode = 'signin', onAuthSuccess }: AuthModalProps) {
-  const [mode, setMode] = useState<'signin' | 'signup' | 'forgot-password'>(initialMode);
+export default function AuthModal({ isOpen, onClose, initialMode, onAuthSuccess }: AuthModalProps) {
+  console.log('initialMode', initialMode);
+  const [mode, setMode] = useState<'signin' | 'signup' | 'forgot-password'>(initialMode || 'signup');
 
   if (!isOpen) return null;
 
