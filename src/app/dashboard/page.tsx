@@ -591,8 +591,8 @@ export default function DashboardPage() {
                         <div>
                           <h4 className="font-medium text-gray-900 mb-2">Delivery Schedule</h4>
                           <div className="text-sm space-y-1">
-                            <p><strong>Delivery Day:</strong> {subscription.dayOfWeek}</p>
-                            <p><strong>Started on:</strong> {subscription.createdAt ? subscription.createdAt.toLocaleDateString() : 'Unknown'}</p>
+                            <p><strong>Delivery Day:</strong> Every {subscription.dayOfWeek}</p>
+                            <p><strong>Start on:</strong> {subscription.createdAt ? subscription.createdAt.toLocaleDateString() : 'Unknown'}</p>
                           </div>
                         </div>
                       </div>

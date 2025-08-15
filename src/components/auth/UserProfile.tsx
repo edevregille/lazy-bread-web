@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useRouter } from 'next/navigation';
-import PaymentMethods from '../payment/AddPaymentMethods';
+import PaymentMethodPage from '../payment/AddPaymentMethods';
 
 interface UserProfileDropdownProps {
   onClose: () => void;
@@ -103,7 +103,7 @@ export default function UserProfileDropdown({ onClose }: UserProfileDropdownProp
             className="relative"
             onClick={(e) => e.stopPropagation()}
           >
-            <PaymentMethods onClose={() => setShowPaymentMethods(false)} />
+            <PaymentMethodPage onClose={() => setShowPaymentMethods(false)} />
           </div>
         </div>
       )}

@@ -96,7 +96,7 @@ function AddPaymentMethodForm({ onClose }: AddPaymentMethodFormProps) {
         </button>
         <button
           type="button"
-          onClick={() => router.push('/dashboard')}
+          onClick={() => onClose?.()}
           className="flex-1 bg-gray-300 text-gray-700 py-3 px-4 rounded-md hover:bg-gray-400 transition-colors"
         >
           Cancel

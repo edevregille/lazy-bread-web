@@ -23,7 +23,7 @@ export default function About() {
 
                             <div className="hidden md:block flex-[1]">
                                 <Image 
-                                    src="/about.png" 
+                                    src="/about.jpg" 
                                     alt="Lazy Bread" 
                                     className="object-cover rounded-lg shadow-bakery warm-glow" 
                                     width={400}
