@@ -488,7 +488,7 @@ export default function DashboardPage() {
             {/* Subscriptions */}
             <div className="card-bakery">
               <h2 className="text-2xl font-semibold text-bakery-primary mb-6">
-                🔄 Weekly focaccias delivery
+                🔄 Weekly delivery
               </h2>
               
               {subscriptionsLoading ? (
@@ -517,10 +517,70 @@ export default function DashboardPage() {
                             </h3>
                            
                           </div>
-                          
-                          {/* Action buttons for active subscriptions */}
-                          {subscription.status === 'active' && (
-                            <div className="flex space-x-2">
+                        <span className={`px-3 py-1 rounded-full text-sm font-medium ${getSubscriptionStatusColor(subscription.status)}`}>
+                          {subscription.status.charAt(0).toUpperCase() + subscription.status.slice(1)}
+                        </span>
+                      </div>
+                    </div>
+
+                      {/* <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4"> */}
+                        <div>
+                          <h4 className="font-medium text-gray-900 mb-2"><strong>Subscription Items</strong></h4>
+                          <div className="space-y-1">
+                            {subscription.items.map((item, index) => (
+                              <div key={index} className="flex justify-between text-sm">
+                                <span>{item.name} x{item.quantity}</span>
+                                <span>${item.total.toFixed(2)}</span>
+                              </div>
+                            ))}
+                          </div>
+                          <div className="border-t pt-2 mt-2">
+                            <div className="flex justify-between font-semibold">
+                            {subscription.totalAmount && <><span>Total</span> <span>${subscription.totalAmount.toFixed(2)}</span></>}
+                            </div>
+                          </div>
+                        </div>
+
+                        <div className='mt-4'>
+                          <h4 className="font-medium text-gray-900 mb-2"><strong>Delivery Schedule</strong></h4>
+                          <div className="text-sm space-y-1">
+                            <p>
+                              {/* strong>Delivery Day:</strong>  */}
+                            Every {subscription.dayOfWeek}</p>
+                            {/* <p><strong>Start on:</strong> {subscription.createdAt ? subscription.createdAt.toLocaleDateString() : 'Unknown'}</p> */}
+                          </div>
+                        </div>
+                      {/* </div> */}
+
+                      {/* <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4"> */}
+                        <div className='mt-4'>
+                          <div className="flex justify-between items-center mb-2">
+                            <h4 className="font-medium text-gray-900"><strong>Delivery Address</strong></h4>
+                            <button
+                              onClick={() => handleEditSubscriptionAddress(subscription)}
+                              className="text-bakery-primary hover:text-bakery-primary-dark text-sm font-medium"
+                            >
+                              Edit
+                            </button>
+                          </div>
+                          <div className="text-sm space-y-1">
+                            <p>{subscription.address}</p>
+                            <p>{subscription.city}, {subscription.zipCode}</p>
+                            <p>📞 {subscription.phone}</p>
+                          </div>
+                        {/* </div> */}
+
+                        {subscription.comments && (
+                          <div className='mt-4'>
+                            <h4 className="font-medium text-gray-900 mb-2"><strong>Special Instructions</strong></h4>
+                            <p className="text-sm text-gray-600">{subscription.comments}</p>
+                          </div>
+                        )}
+                      </div>
+
+                       {/* Action buttons for active subscriptions */}
+                       {subscription.status === 'active' && (
+                            <div className="flex space-x-2 mt-4">
                               <button
                                 onClick={() => handleSubscriptionActionClick(subscription, 'pause')}
                                 disabled={subscriptionActionLoading === subscription.id}
@@ -540,86 +600,27 @@ export default function DashboardPage() {
                             </div>
                           )}
 
-                          {/* Action buttons for paused subscriptions */}
-                          {subscription.status === 'paused' && (
-                            <div className="flex space-x-2">
-                              <button
-                                onClick={() => handleSubscriptionAction(subscription.id!, 'resume')}
-                                disabled={subscriptionActionLoading === subscription.id}
-                                className="px-3 py-1 text-xs bg-green-500 text-white rounded-md hover:bg-green-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                                title="Resume subscription"
-                              >
-                                {subscriptionActionLoading === subscription.id ? '...' : 'Resume'}
-                              </button>
-                              <button
-                                onClick={() => handleSubscriptionActionClick(subscription, 'cancel')}
-                                disabled={subscriptionActionLoading === subscription.id}
-                                className="px-3 py-1 text-xs bg-red-500 text-white rounded-md hover:bg-red-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                                title="Cancel subscription"
-                              >
-                                {subscriptionActionLoading === subscription.id ? '...' : 'Cancel'}
-                              </button>
-                            </div>
-                          )}
+                      {/* Action buttons for paused subscriptions */}
+                      {subscription.status === 'paused' && (
+                        <div className="flex space-x-2">
+                          <button
+                            onClick={() => handleSubscriptionAction(subscription.id!, 'resume')}
+                            disabled={subscriptionActionLoading === subscription.id}
+                            className="px-3 py-1 text-xs bg-green-500 text-white rounded-md hover:bg-green-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                            title="Resume subscription"
+                          >
+                            {subscriptionActionLoading === subscription.id ? '...' : 'Resume'}
+                          </button>
+                          <button
+                            onClick={() => handleSubscriptionActionClick(subscription, 'cancel')}
+                            disabled={subscriptionActionLoading === subscription.id}
+                            className="px-3 py-1 text-xs bg-red-500 text-white rounded-md hover:bg-red-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                            title="Cancel subscription"
+                          >
+                            {subscriptionActionLoading === subscription.id ? '...' : 'Cancel'}
+                          </button>
                         </div>
-                        <span className={`px-3 py-1 rounded-full text-sm font-medium ${getSubscriptionStatusColor(subscription.status)}`}>
-                          {subscription.status.charAt(0).toUpperCase() + subscription.status.slice(1)}
-                        </span>
-                      </div>
-
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                        <div>
-                          <h4 className="font-medium text-gray-900 mb-2">Subscription Items</h4>
-                          <div className="space-y-1">
-                            {subscription.items.map((item, index) => (
-                              <div key={index} className="flex justify-between text-sm">
-                                <span>{item.name} x{item.quantity}</span>
-                                <span>${item.total.toFixed(2)}</span>
-                              </div>
-                            ))}
-                          </div>
-                          <div className="border-t pt-2 mt-2">
-                            <div className="flex justify-between font-semibold">
-                            {subscription.totalAmount && <><span>Total</span> <span>${subscription.totalAmount.toFixed(2)}</span></>}
-                            </div>
-                          </div>
-                        </div>
-
-                        <div>
-                          <h4 className="font-medium text-gray-900 mb-2">Delivery Schedule</h4>
-                          <div className="text-sm space-y-1">
-                            <p><strong>Delivery Day:</strong> Every {subscription.dayOfWeek}</p>
-                            <p><strong>Start on:</strong> {subscription.createdAt ? subscription.createdAt.toLocaleDateString() : 'Unknown'}</p>
-                          </div>
-                        </div>
-                      </div>
-
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                        <div>
-                          <div className="flex justify-between items-center mb-2">
-                            <h4 className="font-medium text-gray-900">Delivery Address</h4>
-                            <button
-                              onClick={() => handleEditSubscriptionAddress(subscription)}
-                              className="text-bakery-primary hover:text-bakery-primary-dark text-sm font-medium"
-                            >
-                              Edit
-                            </button>
-                          </div>
-                          <div className="text-sm space-y-1">
-                            <p>{subscription.address}</p>
-                            <p>{subscription.city}, {subscription.zipCode}</p>
-                            <p>📞 {subscription.phone}</p>
-                          </div>
-                        </div>
-
-                        {subscription.comments && (
-                          <div>
-                            <h4 className="font-medium text-gray-900 mb-2">Special Instructions</h4>
-                            <p className="text-sm text-gray-600">{subscription.comments}</p>
-                          </div>
-                        )}
-                      </div>
-
+                      )}
                       {subscription.status === 'cancelled' && (
                         <div className="pt-4 border-t">
                           <p className="text-sm text-gray-500 text-center italic">
@@ -676,7 +677,7 @@ export default function DashboardPage() {
 
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                         <div>
-                          <h4 className="font-medium text-gray-900 mb-2">Order Items</h4>
+                          <h4 className="font-medium text-gray-900 mb-2"><strong>Order Items</strong></h4>
                           <div className="space-y-1">
                             {order.items.map((item, index) => (
                               <div key={index} className="flex justify-between text-sm">
@@ -694,7 +695,7 @@ export default function DashboardPage() {
                         </div>
 
                         <div>
-                          <h4 className="font-medium text-gray-900 mb-2">Delivery Details</h4>
+                          <h4 className="font-medium text-gray-900 mb-2"><strong>Delivery Details</strong></h4>
                           <div className="text-sm space-y-1">
                             <p><strong>Date:</strong> {formatDeliveryDate(order.deliveryDate)}</p>
                             <p><strong>Address:</strong> {order.address}</p>
@@ -706,7 +707,7 @@ export default function DashboardPage() {
 
                       {order.comments && (
                         <div className="mt-4 p-3 bg-gray-50 rounded-md">
-                          <h4 className="font-medium text-gray-900 mb-1">Special Instructions</h4>
+                          <h4 className="font-medium text-gray-900 mb-1"><strong>Special Instructions</strong></h4>
                           <p className="text-sm text-gray-600">{order.comments}</p>
                         </div>
                       )}
@@ -756,7 +757,7 @@ export default function DashboardPage() {
 
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                         <div>
-                          <h4 className="font-medium text-gray-900 mb-2">Order Items</h4>
+                          <h4 className="font-medium text-gray-900 mb-2"><strong>Order Items</strong></h4>
                           <div className="space-y-1">
                             {order.items.map((item, index) => (
                               <div key={index} className="flex justify-between text-sm">
@@ -774,7 +775,7 @@ export default function DashboardPage() {
                         </div>
 
                         <div>
-                          <h4 className="font-medium text-gray-900 mb-2">Delivery Details</h4>
+                          <h4 className="font-medium text-gray-900 mb-2"><strong>Delivery Details</strong></h4>
                           <div className="text-sm space-y-1">
                             <p><strong>Date:</strong> {formatDeliveryDate(order.deliveryDate)}</p>
                             <p><strong>Address:</strong> {order.address}</p>
@@ -786,7 +787,7 @@ export default function DashboardPage() {
 
                       {order.comments && (
                         <div className="mt-4 p-3 bg-gray-50 rounded-md">
-                          <h4 className="font-medium text-gray-900 mb-1">Special Instructions</h4>
+                          <h4 className="font-medium text-gray-900 mb-1"><strong>Special Instructions</strong></h4>
                           <p className="text-sm text-gray-600">{order.comments}</p>
                         </div>
                       )}

@@ -212,38 +212,39 @@ export const getNextDeliveryDateForDay = (dayName: string): string | null => {
 };
 
 export const getAvailableDeliveryDates = (): string[] => {
-  const dates: string[] = [];
-  const pstTime = getCurrentTimeInPST();
   
-  // Start from tomorrow
-  const currentDate = new Date(pstTime);
-  currentDate.setDate(currentDate.getDate() + 1);
-  
-  // Add minimum order time
-  const minOrderTime = new Date(pstTime);
-  minOrderTime.setHours(minOrderTime.getHours() + BUSINESS_SETTINGS.minOrderAdvanceHours);
-  
-  // Get the day numbers for allowed delivery days
   const allowedDeliveryDays = BUSINESS_SETTINGS.deliveryDays.map(day => getDayNumber(day));
   
-  // Generate dates for the next 10 days
-  for (let i = 0; i < 10; i++) {
-    const date = new Date(currentDate);
-    date.setDate(date.getDate() + i);
-    
-    // Convert the date to PST for day calculation
-    const pstDate = new Date(date.toLocaleString("en-US", {timeZone: "America/Los_Angeles"}));
-    const dayOfWeek = pstDate.getDay();
-    
-    // Only include allowed delivery days
+  const results: string[] = [];
+  const now = new Date();
+
+  // Earliest delivery time = 24h from now
+  const earliest = new Date(now.getTime() + 24 * 60 * 60 * 1000);
+
+  // Start checking from earliest possible date
+  let checkDate = new Date(earliest);
+
+  while (results.length < 3) {
+    const dayOfWeek = checkDate.getDay(); // 0 = Sunday, 6 = Saturday
     if (allowedDeliveryDays.includes(dayOfWeek)) {
-      // Check if this date is at least minimum order time in the future
-      if (date > minOrderTime) {
-        dates.push(date.toISOString().split('T')[0]);
-      }
+       // Format date into YYYY-MM-DD in PST
+       const parts = new Intl.DateTimeFormat("en-CA", {
+        timeZone: "America/Los_Angeles",
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit"
+      }).formatToParts(checkDate);
+
+      const year = parts.find(p => p.type === "year")?.value;
+      const month = parts.find(p => p.type === "month")?.value;
+      const day = parts.find(p => p.type === "day")?.value;
+
+      results.push(`${year}-${month}-${day}`); // e.g. "2025-08-16"
     }
+    // Move to next day
+    checkDate.setDate(checkDate.getDate() + 1);
   }
-  return dates;
+  return results;
 };
 
 export const formatDeliveryDate = (dateString: string): string => {
