@@ -345,7 +345,7 @@ export default function DashboardPage() {
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Left Column - Profile & Payment */}
+          {/* Left Column - Profile, Payment & Subscriptions */}
           <div className="lg:col-span-1 space-y-8">
             {/* Delivery Address */}
             <div className="card-bakery">
@@ -484,10 +484,7 @@ export default function DashboardPage() {
               paymentMethods={paymentMethods}
               onPaymentMethodUpdate={fetchPaymentMethods}
             />
-          </div>
 
-          {/* Right Column - Subscriptions & Orders */}
-          <div className="lg:col-span-2 space-y-8">
             {/* Subscriptions */}
             <div className="card-bakery">
               <h2 className="text-2xl font-semibold text-bakery-primary mb-6">
@@ -635,20 +632,103 @@ export default function DashboardPage() {
                 </div>
               )}
             </div>
+          </div>
 
-            {/* Orders */}
+          {/* Right Column - Orders */}
+          <div className="lg:col-span-2 space-y-8">
+            {/* Pending Orders */}
             <div className="card-bakery">
               <h2 className="text-2xl font-semibold text-bakery-primary mb-6">
-                📋 Last 30 days history
+                ⏳ Pending Orders
               </h2>
               
               {ordersLoading ? (
                 <div className="text-center py-8">
                   <div className="text-bakery-primary">Loading your orders...</div>
                 </div>
-              ) : orders.length === 0 ? (
+              ) : orders.filter(order => order.status === 'pending').length === 0 ? (
                 <div className="text-center py-8">
-                  <div className="text-gray-600 mb-4">You haven&apos;t placed any orders yet.</div>
+                  <div className="text-gray-600 mb-4">No pending orders.</div>
+                  <button
+                    onClick={() => router.push('/order')}
+                    className="bg-bakery-primary text-white px-4 py-2 rounded-md hover:bg-bakery-primary-dark transition-colors"
+                  >
+                    Place New Order
+                  </button>
+                </div>
+              ) : (
+                <div className="space-y-6">
+                  {orders.filter(order => order.status === 'pending').map((order) => (
+                    <div key={order.id} className="bg-white rounded-lg shadow-md p-6 border border-bakery-light">
+                      <div className="flex justify-between items-start mb-4">
+                        <div>
+                          <h3 className="text-lg font-semibold text-bakery-primary">
+                            Order #{order.id || 'Unknown'}
+                          </h3>
+                          <p className="text-gray-600">
+                            Placed on {order.createdAt ? order.createdAt.toLocaleDateString() : 'Unknown'}
+                          </p>
+                        </div>
+                        <span className={`px-3 py-1 rounded-full text-sm font-medium ${getStatusColor(order.status)}`}>
+                          {order.status.charAt(0).toUpperCase() + order.status.slice(1)}
+                        </span>
+                      </div>
+
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                        <div>
+                          <h4 className="font-medium text-gray-900 mb-2">Order Items</h4>
+                          <div className="space-y-1">
+                            {order.items.map((item, index) => (
+                              <div key={index} className="flex justify-between text-sm">
+                                <span>{item.name} x{item.quantity}</span>
+                                <span>${item.total.toFixed(2)}</span>
+                              </div>
+                            ))}
+                          </div>
+                          <div className="border-t pt-2 mt-2">
+                            <div className="flex justify-between font-semibold">
+                              <span>Total</span>
+                              <span>${order.totalAmount.toFixed(2)}</span>
+                            </div>
+                          </div>
+                        </div>
+
+                        <div>
+                          <h4 className="font-medium text-gray-900 mb-2">Delivery Details</h4>
+                          <div className="text-sm space-y-1">
+                            <p><strong>Date:</strong> {formatDeliveryDate(order.deliveryDate)}</p>
+                            <p><strong>Address:</strong> {order.address}</p>
+                            <p><strong>City:</strong> {order.city}</p>
+                            <p><strong>ZIP:</strong> {order.zipCode}</p>
+                          </div>
+                        </div>
+                      </div>
+
+                      {order.comments && (
+                        <div className="mt-4 p-3 bg-gray-50 rounded-md">
+                          <h4 className="font-medium text-gray-900 mb-1">Special Instructions</h4>
+                          <p className="text-sm text-gray-600">{order.comments}</p>
+                        </div>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            {/* History Orders */}
+            <div className="card-bakery">
+              <h2 className="text-2xl font-semibold text-bakery-primary mb-6">
+                📋 History Orders (Last 30 days)
+              </h2>
+              
+              {ordersLoading ? (
+                <div className="text-center py-8">
+                  <div className="text-bakery-primary">Loading your orders...</div>
+                </div>
+              ) : orders.filter(order => order.status !== 'pending').length === 0 ? (
+                <div className="text-center py-8">
+                  <div className="text-gray-600 mb-4">No order history yet.</div>
                   <button
                     onClick={() => router.push('/order')}
                     className="bg-bakery-primary text-white px-4 py-2 rounded-md hover:bg-bakery-primary-dark transition-colors"
@@ -658,7 +738,7 @@ export default function DashboardPage() {
                 </div>
               ) : (
                 <div className="space-y-6">
-                  {orders.map((order) => (
+                  {orders.filter(order => order.status !== 'pending').map((order) => (
                     <div key={order.id} className="bg-white rounded-lg shadow-md p-6 border border-bakery-light">
                       <div className="flex justify-between items-start mb-4">
                         <div>
