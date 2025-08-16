@@ -222,7 +222,7 @@ export const getAvailableDeliveryDates = (): string[] => {
   const earliest = new Date(now.getTime() + 24 * 60 * 60 * 1000);
 
   // Start checking from earliest possible date
-  let checkDate = new Date(earliest);
+  const checkDate = new Date(earliest);
 
   while (results.length < 3) {
     const dayOfWeek = checkDate.getDay(); // 0 = Sunday, 6 = Saturday
