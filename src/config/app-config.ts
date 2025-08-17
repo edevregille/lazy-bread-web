@@ -43,7 +43,7 @@ export const BUSINESS_SETTINGS = {
   recurringOrdersEmail: "lazybreadpdx@gmail.com",
   
   // Business hours and delivery
-  deliveryDays: ["Wednesday", "Friday"],
+  deliveryDays: ["Wednesday"],
   minOrderAdvanceHours: 24,
   maxOrderQuantity: 5,
 };
