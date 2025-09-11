@@ -2,7 +2,7 @@
 
 export const NAV_ITEMS = [
   { name: "Home", path: "/" },
-  { name: "Order", path: "/order" },
+  // { name: "Order", path: "/order" },
   { name: "Recipes", path: "/recipes" },
   { name: "About", path: "/about" },
   { name: "Find Us", path: "/find-us" },
@@ -10,7 +10,7 @@ export const NAV_ITEMS = [
 
 export const AUTH_NAV_ITEMS = [
   { name: "Home", path: "/" },
-  { name: "Order", path: "/order" },
+  // { name: "Order", path: "/order" },
   { name: "Recipes", path: "/recipes" },
   { name: "About", path: "/about" },
   { name: "Find Us", path: "/find-us" },

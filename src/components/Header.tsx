@@ -9,6 +9,8 @@ import { useAuth } from "@/contexts/AuthContext";
 import AuthModal from "./auth/AuthModal";
 import UserProfileDropdown from "./auth/UserProfile";
 
+const ACTIVATE_ORDER = false;
+
 export default function Header() {
     const [isOpen, setIsOpen] = useState(false);
     const [showAuthModal, setShowAuthModal] = useState(false);
@@ -88,7 +90,7 @@ export default function Header() {
                             })}
                             
                             {/* Authentication */}
-                            <div className="flex items-center space-x-4">
+                            {ACTIVATE_ORDER && <div className="flex items-center space-x-4">
                                 {currentUser ? (
                                     <div className="relative" ref={userDropdownRef}>
                                         <button
@@ -117,7 +119,7 @@ export default function Header() {
                                         </button>
                                     </>
                                 )}
-                            </div>
+                            </div>}
                         </div>
                     </nav> 
 
@@ -161,7 +163,7 @@ export default function Header() {
                         })}
                         
                         {/* Mobile Authentication */}
-                        <div className="border-t pt-3 mt-3">
+                        {ACTIVATE_ORDER && <div className="border-t pt-3 mt-3">
                             {currentUser ? (
                                 <div className="space-y-2">
                                     <button
@@ -212,18 +214,18 @@ export default function Header() {
                                     </button>
                                 </div>
                             )}
-                        </div>
+                        </div>}
                     </div>
                 </div>
             </div>
         </header>
 
         {/* Authentication Modal */}
-        <AuthModal
+        {ACTIVATE_ORDER && <AuthModal
             isOpen={showAuthModal}
             onClose={() => setShowAuthModal(false)}
             initialMode={authMode}
-        />
+        />}
     </>
     );
 }
