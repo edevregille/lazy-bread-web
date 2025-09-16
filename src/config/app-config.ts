@@ -2,7 +2,7 @@
 
 export const NAV_ITEMS = [
   { name: "Home", path: "/" },
-  // { name: "Order", path: "/order" },
+  { name: "Order", path: "/order" },
   { name: "Recipes", path: "/recipes" },
   { name: "About", path: "/about" },
   { name: "Find Us", path: "/find-us" },
@@ -10,7 +10,7 @@ export const NAV_ITEMS = [
 
 export const AUTH_NAV_ITEMS = [
   { name: "Home", path: "/" },
-  // { name: "Order", path: "/order" },
+  { name: "Order", path: "/order" },
   { name: "Recipes", path: "/recipes" },
   { name: "About", path: "/about" },
   { name: "Find Us", path: "/find-us" },
@@ -43,8 +43,8 @@ export const BUSINESS_SETTINGS = {
   recurringOrdersEmail: "lazybreadpdx@gmail.com",
   
   // Business hours and delivery
-  deliveryDays: ["Wednesday"],
-  minOrderAdvanceHours: 24,
+  deliveryDays: ["Friday"],
+  minOrderAdvanceHours: 36,
   maxOrderQuantity: 5,
 };
 
@@ -216,32 +216,45 @@ export const getAvailableDeliveryDates = (): string[] => {
   const allowedDeliveryDays = BUSINESS_SETTINGS.deliveryDays.map(day => getDayNumber(day));
   
   const results: string[] = [];
-  const now = new Date();
+  // Use PST as the source of truth for time calculations
+  const nowPST = getCurrentTimeInPST();
+  const deadline = new Date(nowPST.getTime() + BUSINESS_SETTINGS.minOrderAdvanceHours * 60 * 60 * 1000); 
 
-  // Earliest delivery time = 24h from now
-  const earliest = new Date(now.getTime() + 24 * 60 * 60 * 1000);
-
-  // Start checking from earliest possible date
-  const checkDate = new Date(earliest);
+  // Start checking from today's date (PST), move forward day-by-day
+  const checkDate = new Date(nowPST);
+  checkDate.setHours(0, 0, 0, 0);
 
   while (results.length < 3) {
-    const dayOfWeek = checkDate.getDay(); // 0 = Sunday, 6 = Saturday
-    if (allowedDeliveryDays.includes(dayOfWeek)) {
-       // Format date into YYYY-MM-DD in PST
-       const parts = new Intl.DateTimeFormat("en-CA", {
-        timeZone: "America/Los_Angeles",
-        year: "numeric",
-        month: "2-digit",
-        day: "2-digit"
-      }).formatToParts(checkDate);
+    // Convert the current iteration date to PST for accurate weekday calculation
+    const pstDate = new Date(checkDate.toLocaleString("en-US", { timeZone: "America/Los_Angeles" }));
+    const dayOfWeek = pstDate.getDay(); // 0 = Sunday, 6 = Saturday
 
-      const year = parts.find(p => p.type === "year")?.value;
-      const month = parts.find(p => p.type === "month")?.value;
-      const day = parts.find(p => p.type === "day")?.value;
+    // Format candidate date and deadline into YYYY-MM-DD in PST for lexicographic comparison
+    const fmt = new Intl.DateTimeFormat("en-CA", {
+      timeZone: "America/Los_Angeles",
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit"
+    });
 
-      results.push(`${year}-${month}-${day}`); // e.g. "2025-08-16"
+    const candidateParts = fmt.formatToParts(pstDate);
+    const cYear = candidateParts.find(p => p.type === "year")?.value;
+    const cMonth = candidateParts.find(p => p.type === "month")?.value;
+    const cDay = candidateParts.find(p => p.type === "day")?.value;
+    const candidateStr = `${cYear}-${cMonth}-${cDay}`;
+
+    const deadlineParts = fmt.formatToParts(deadline);
+    const dYear = deadlineParts.find(p => p.type === "year")?.value;
+    const dMonth = deadlineParts.find(p => p.type === "month")?.value;
+    const dDay = deadlineParts.find(p => p.type === "day")?.value;
+    const deadlineStr = `${dYear}-${dMonth}-${dDay}`;
+
+    // Only include if it's an allowed delivery day AND its PST calendar day is strictly after the 36h deadline day
+    if (allowedDeliveryDays.includes(dayOfWeek) && candidateStr > deadlineStr) {
+      results.push(candidateStr); // e.g. "2025-08-16"
     }
-    // Move to next day
+
+    // Move to next day (from PST baseline)
     checkDate.setDate(checkDate.getDate() + 1);
   }
   return results;

@@ -9,7 +9,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import AuthModal from "./auth/AuthModal";
 import UserProfileDropdown from "./auth/UserProfile";
 
-const ACTIVATE_ORDER = false;
+const ACTIVATE_ORDER = true;
 
 export default function Header() {
     const [isOpen, setIsOpen] = useState(false);
