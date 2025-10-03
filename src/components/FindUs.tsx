@@ -15,14 +15,20 @@ export default function FindUs () {
                 <Image
                   src={location.image}
                   alt={location.imageAlt}
-                  className="w-100 h-40 object-cover rounded-t-lg"
+                  className="w-100 h-64 object-cover rounded-t-lg"
                   width={420}
-                  height={150}
+                  height={400}
                 />
               </div>
               <div className="mt-4 text-center">
-                <p className="text-black mb-4 font-bold font-body">
-                  {location.name} <br/> {location.address} <br/> {location.schedule}
+                <h3 className="text-black mb-3 font-bold font-body text-lg">
+                  {location.name}
+                </h3>
+                <p className="text-gray-700 mb-2 font-medium font-body">
+                  📍 {location.address}
+                </p>
+                <p className="text-amber-700 mb-4 font-semibold font-body bg-amber-50 px-3 py-1 rounded-full inline-block">
+                  🕒 {location.schedule}
                 </p>
               </div>
             </Title>

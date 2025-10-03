@@ -102,13 +102,13 @@ const recipes: Recipe[] = [
   }
 ];
 
-export default function RecipesPage() {
+export default function InspirationPage() {
   return (
     <div className="min-h-screen background-gradient-warm py-16">
       {/* Hero Section */}
       <div className="text-center">
         <h1 className="text-4xl font-semibold text-bakery-primary mb-6">
-          Focaccia Recipes Ideas
+        A few thoughts on how to use our focaccia
         </h1>
       </div>
 

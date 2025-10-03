@@ -3,7 +3,7 @@
 export const NAV_ITEMS = [
   { name: "Home", path: "/" },
   { name: "Order", path: "/order" },
-  { name: "Recipes", path: "/recipes" },
+  { name: "Inspiration", path: "/inspiration" },
   { name: "About", path: "/about" },
   { name: "Find Us", path: "/find-us" },
 ];
@@ -11,7 +11,7 @@ export const NAV_ITEMS = [
 export const AUTH_NAV_ITEMS = [
   { name: "Home", path: "/" },
   { name: "Order", path: "/order" },
-  { name: "Recipes", path: "/recipes" },
+  { name: "Inspiration", path: "/inspiration" },
   { name: "About", path: "/about" },
   { name: "Find Us", path: "/find-us" },
 ];
@@ -25,7 +25,6 @@ export const BREAD_TYPES = [
   },
   { id: 'rosemary', name: 'Rosemary', price: 6.00, description: 'Artisan bread with fresh rosemary' },
   { id: 'green-olive', name: 'Green Olive', price: 6.00, description: 'Rustic bread with green olives' },
-  { id: 'cheez-it', name: 'Cheez-it', price: 6.00, description: 'Cheesy bread with a crispy crust' },
 ];
 
 export const BUSINESS_SETTINGS = {
@@ -43,7 +42,7 @@ export const BUSINESS_SETTINGS = {
   recurringOrdersEmail: "lazybreadpdx@gmail.com",
   
   // Business hours and delivery
-  deliveryDays: ["Friday"],
+  deliveryDays: ["Wednesday","Friday"],
   minOrderAdvanceHours: 36,
   maxOrderQuantity: 5,
 };
@@ -63,6 +62,19 @@ export const DELIVERY_ZONES = {
 
 export const FIND_US_LOCATIONS = [
   {
+    id: 'pop-up-shop',
+    name: 'Pop-Up Shop',
+    address: '55 NE Holman St, Portland OR',
+    image: '/popup-shop.jpg',
+    imageAlt: 'Pop-up Shop',
+    schedule: 'Wednesdays, Fridays, and Saturdays 8am to 9pm',
+    active: true,
+    coordinates: {
+      lat: 45.5647,
+      lng: -122.6587
+    }
+  },
+  {
     id: 'cafe-eleven',
     name: 'Café Eleven',
     address: '435 NE Rosa Parks, Portland OR 97211',
@@ -81,19 +93,7 @@ export const FIND_US_LOCATIONS = [
     address: 'Woodlawn Triangle, Portland OR',
     image: '/contact-market.png',
     imageAlt: 'Woodlawn Farmers Market',
-    schedule: 'Every other Saturday',
-    active: true,
-    coordinates: {
-      lat: 45.5647,
-      lng: -122.6587
-    }
-  },{
-    id: 'pop-up-shop',
-    name: 'Pop-Up Shop',
-    address: '55 NE Holman St, Portland OR',
-    image: '/home.png',
-    imageAlt: 'Pop-up Shop',
-    schedule: 'Weekends',
+    schedule: 'Most Saturdays June - October',
     active: true,
     coordinates: {
       lat: 45.5647,

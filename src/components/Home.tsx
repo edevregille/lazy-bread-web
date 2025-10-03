@@ -83,7 +83,7 @@ export default function Home() {
                 Organic Sourdough Cottage Bakery
               </h2>
               <p className="text-xl md:text-2xl font-body text-earth-brown mb-8 leading-relaxed">
-                Handcrafted sourdough focaccia made with organic ingredients. 
+                Handcrafted sourdough focaccia made with organic flour. 
                 Each loaf is carefully fermented and baked to perfection in our cottage bakery.
               </p>
               <div className="flex flex-row gap-2 sm:gap-4">
@@ -111,7 +111,7 @@ export default function Home() {
               Our Varieties
             </h2>
             <p className="text-xl md:text-2xl font-body text-earth-brown mb-8 leading-relaxed">
-              Each focaccia is crafted with our signature sourdough starter and organic ingredients, 
+              Each focaccia is crafted with our signature sourdough starter and organic flour, 
               creating unique flavors that celebrate local, seasonal produce.
             </p>
           </div>
