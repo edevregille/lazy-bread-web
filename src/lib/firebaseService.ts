@@ -3,6 +3,7 @@ import { db } from './firebase';
 import { 
   Subscription, 
   Order, 
+  OrderItem,
   UserProfile as BaseUserProfile 
 } from '@/lib/types';
 import { auth } from './firebase'; // Added missing import for auth
@@ -333,5 +334,25 @@ export const updateSubscriptionDeliveryAddress = async (
   } catch (error) {
     console.error('Error updating subscription delivery address:', error);
     throw new Error('Failed to update subscription delivery address');
+  }
+};
+
+export const updateSubscriptionContent = async (
+  subscriptionId: string, 
+  contentData: {
+    items: OrderItem[];
+    totalAmount: number;
+  }
+): Promise<void> => {
+  try {
+    const subscriptionRef = doc(db, 'subscriptions', subscriptionId);
+    await updateDoc(subscriptionRef, {
+      items: contentData.items,
+      totalAmount: contentData.totalAmount,
+      updatedAt: serverTimestamp(),
+    });
+  } catch (error) {
+    console.error('Error updating subscription content:', error);
+    throw new Error('Failed to update subscription content');
   }
 };

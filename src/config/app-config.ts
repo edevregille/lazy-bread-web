@@ -21,10 +21,29 @@ export const BREAD_TYPES = [
     id: 'classic-salt', 
     name: 'Classic Salt', 
     price: 6.00, 
-    description: 'Traditional sourdough with sea salt' 
+    description: 'Traditional sourdough with sea salt',
+    availableForOrders: true, 
   },
-  { id: 'rosemary', name: 'Rosemary', price: 6.00, description: 'Artisan bread with fresh rosemary' },
-  { id: 'green-olive', name: 'Green Olive', price: 6.00, description: 'Rustic bread with green olives' },
+  { 
+    id: 'rosemary', 
+    name: 'Rosemary', 
+    price: 6.00, 
+    description: 'Artisan bread with fresh rosemary' ,
+    availableForOrders: true, 
+  },
+  { 
+    id: 'green-olive', 
+    name: 'Green Olive', 
+    price: 6.00, 
+    description: 'Rustic bread with green olives',
+    availableForOrders: true, 
+  }, { 
+    id: 'seasonal', 
+    name: 'Seasonal', 
+    price: 6.00, 
+    description: 'Candied orange peel and anise, grape & rosemary, parmesan & pepper',
+    availableForOrders: false, 
+  },
 ];
 
 export const BUSINESS_SETTINGS = {
@@ -73,8 +92,19 @@ export const FIND_US_LOCATIONS = [
       lat: 45.5647,
       lng: -122.6587
     }
-  },
-  {
+  },{
+    id: 'woodlawn-farmers-market',
+    name: 'Woodlawn Farmers Market',
+    address: 'Woodlawn Triangle, Portland OR',
+    image: '/contact-market.png',
+    imageAlt: 'Woodlawn Farmers Market',
+    schedule: 'Most Saturdays June - October',
+    active: true,
+    coordinates: {
+      lat: 45.5647,
+      lng: -122.6587
+    }
+  },{
     id: 'cafe-eleven',
     name: 'Café Eleven',
     address: '435 NE Rosa Parks, Portland OR 97211',
@@ -87,19 +117,6 @@ export const FIND_US_LOCATIONS = [
       lng: -122.6587
     }
   },
-  {
-    id: 'woodlawn-farmers-market',
-    name: 'Woodlawn Farmers Market',
-    address: 'Woodlawn Triangle, Portland OR',
-    image: '/contact-market.png',
-    imageAlt: 'Woodlawn Farmers Market',
-    schedule: 'Most Saturdays June - October',
-    active: true,
-    coordinates: {
-      lat: 45.5647,
-      lng: -122.6587
-    }
-  }
 ];
 
 export const SOCIAL_MEDIA = {

@@ -133,7 +133,7 @@ export default function OrderPage() {
 
   const calculateTotal = () => {
     return Object.entries(breadQuantities).reduce((total, [breadType, quantity]) => {
-      const bread = BREAD_TYPES.find(b => b.name === breadType);
+      const bread = BREAD_TYPES.find(b => b.name === breadType && b.availableForOrders);
       return total + (bread ? bread.price * quantity : 0);
     }, 0);
   };
@@ -142,7 +142,7 @@ export default function OrderPage() {
     return Object.entries(breadQuantities)
       .filter(([, quantity]) => quantity > 0)
       .map(([breadType, quantity]) => {
-        const bread = BREAD_TYPES.find(b => b.name === breadType);
+        const bread = BREAD_TYPES.find(b => b.name === breadType && b.availableForOrders);
         return {
           id: breadType,
           name: breadType,
@@ -282,7 +282,7 @@ export default function OrderPage() {
             <div>
               <h2 className="text-2xl font-semibold text-bakery-primary mb-6">Select your focaccias</h2>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {BREAD_TYPES.map((bread) => (
+                {BREAD_TYPES.filter(bread => bread.availableForOrders).map((bread) => (
                   <div key={bread.name} className="bg-white rounded-lg shadow-md p-6 border border-bakery-light">
                     <div className="flex justify-between items-start mb-4">
                       <div>

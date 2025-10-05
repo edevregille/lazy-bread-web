@@ -13,6 +13,7 @@ import {
   cancelSubscription,
 } from '@/lib/firebaseService';
 import SubscriptionAddressEditModal from '@/components/payment/SubscriptionAddressEditModal';
+import SubscriptionContentEditModal from '@/components/payment/SubscriptionContentEditModal';
 import ConfirmationModal from '@/components/ui/ConfirmationModal';
 import ShowSavedPaymentMethod from '@/components/payment/ShowSavedPaymentMethod';
 import { DELIVERY_ZONES, formatDeliveryDate } from '@/config/app-config';
@@ -40,6 +41,7 @@ export default function DashboardPage() {
   const [profileLoading, setProfileLoading] = useState(true);
   const [subscriptionActionLoading, setSubscriptionActionLoading] = useState<string | null>(null);
   const [editingSubscriptionAddress, setEditingSubscriptionAddress] = useState(false);
+  const [editingSubscriptionContent, setEditingSubscriptionContent] = useState(false);
   const [selectedSubscription, setSelectedSubscription] = useState<Subscription | null>(null);
   const [confirmationModal, setConfirmationModal] = useState<{
     isOpen: boolean;
@@ -241,6 +243,21 @@ export default function DashboardPage() {
     fetchUserSubscriptions();
   };
 
+  const handleEditSubscriptionContent = (subscription: Subscription) => {
+    setSelectedSubscription(subscription);
+    setEditingSubscriptionContent(true);
+  };
+
+  const handleCloseContentModal = () => {
+    setEditingSubscriptionContent(false);
+    setSelectedSubscription(null);
+  };
+
+  const handleContentUpdated = () => {
+    // Refresh subscriptions to show updated content
+    fetchUserSubscriptions();
+  };
+
   // Validate zip code is in Multnomah County
   const validateZipCode = (zip: string): boolean => {
     return DELIVERY_ZONES.allowedZipCodes.includes(zip.trim());
@@ -350,7 +367,10 @@ export default function DashboardPage() {
             {/* Delivery Address */}
             <div className="card-bakery">
               <div className="flex justify-between items-center mb-4">
-                <h2 className="text-2xl font-semibold text-bakery-primary">Delivery Address</h2>
+                <div className="flex items-center space-x-2">
+                  <span className="text-2xl">📍</span>
+                  <h2 className="text-2xl font-semibold text-bakery-primary">Your Saved Address</h2>
+                </div>
                 <button
                   onClick={() => setEditingAddress(!editingAddress)}
                   className="text-bakery-primary hover:text-bakery-primary-dark text-sm font-medium"
@@ -484,11 +504,14 @@ export default function DashboardPage() {
               paymentMethods={paymentMethods}
               onPaymentMethodUpdate={fetchPaymentMethods}
             />
+          </div>
 
+          {/* Right Column - Subscriptions & Orders */}
+          <div className="lg:col-span-2 space-y-8">
             {/* Subscriptions */}
             <div className="card-bakery">
               <h2 className="text-2xl font-semibold text-bakery-primary mb-6">
-                🔄 Weekly delivery
+                🔄 Your Weekly Delivery Order
               </h2>
               
               {subscriptionsLoading ? (
@@ -523,9 +546,29 @@ export default function DashboardPage() {
                       </div>
                     </div>
 
+
+                        <div className='mt-4'>
+                          <h4 className="font-medium text-gray-900 mb-2"><strong>Delivery Schedule</strong></h4>
+                          <div className="text-sm space-y-1">
+                            <p>
+                              {/* strong>Delivery Day:</strong>  */}
+                            Every {subscription.dayOfWeek}</p>
+                            {/* <p><strong>Start on:</strong> {subscription.createdAt ? subscription.createdAt.toLocaleDateString() : 'Unknown'}</p> */}
+                          </div>
+                        </div>
+                      {/* </div> */}
+
                       {/* <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4"> */}
-                        <div>
-                          <h4 className="font-medium text-gray-900 mb-2"><strong>Subscription Items</strong></h4>
+                        <div className='mt-4'>
+                          <div className="flex justify-between items-center mb-2">
+                            <h4 className="font-medium text-gray-900"><strong>Subscription Items</strong></h4>
+                            <button
+                              onClick={() => handleEditSubscriptionContent(subscription)}
+                              className="text-bakery-primary hover:text-bakery-primary-dark text-sm font-medium"
+                            >
+                              Edit
+                            </button>
+                          </div>
                           <div className="space-y-1">
                             {subscription.items.map((item, index) => (
                               <div key={index} className="flex justify-between text-sm">
@@ -541,18 +584,6 @@ export default function DashboardPage() {
                           </div>
                         </div>
 
-                        <div className='mt-4'>
-                          <h4 className="font-medium text-gray-900 mb-2"><strong>Delivery Schedule</strong></h4>
-                          <div className="text-sm space-y-1">
-                            <p>
-                              {/* strong>Delivery Day:</strong>  */}
-                            Every {subscription.dayOfWeek}</p>
-                            {/* <p><strong>Start on:</strong> {subscription.createdAt ? subscription.createdAt.toLocaleDateString() : 'Unknown'}</p> */}
-                          </div>
-                        </div>
-                      {/* </div> */}
-
-                      {/* <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4"> */}
                         <div className='mt-4'>
                           <div className="flex justify-between items-center mb-2">
                             <h4 className="font-medium text-gray-900"><strong>Delivery Address</strong></h4>
@@ -602,7 +633,7 @@ export default function DashboardPage() {
 
                       {/* Action buttons for paused subscriptions */}
                       {subscription.status === 'paused' && (
-                        <div className="flex space-x-2">
+                        <div className="flex space-x-2 mt-4">
                           <button
                             onClick={() => handleSubscriptionAction(subscription.id!, 'resume')}
                             disabled={subscriptionActionLoading === subscription.id}
@@ -633,14 +664,11 @@ export default function DashboardPage() {
                 </div>
               )}
             </div>
-          </div>
 
-          {/* Right Column - Orders */}
-          <div className="lg:col-span-2 space-y-8">
             {/* Pending Orders */}
             <div className="card-bakery">
               <h2 className="text-2xl font-semibold text-bakery-primary mb-6">
-                ⏳ Pending Orders
+                ⏳ Your Pending Orders
               </h2>
               
               {ordersLoading ? (
@@ -809,6 +837,16 @@ export default function DashboardPage() {
           onClose={handleCloseAddressModal}
           subscription={selectedSubscription}
           onAddressUpdated={handleAddressUpdated}
+        />
+      )}
+
+      {/* Subscription Content Edit Modal */}
+      {selectedSubscription && (
+        <SubscriptionContentEditModal
+          isOpen={editingSubscriptionContent}
+          onClose={handleCloseContentModal}
+          subscription={selectedSubscription}
+          onContentUpdated={handleContentUpdated}
         />
       )}
 
