@@ -29,6 +29,7 @@ export default function OrderPage() {
   const [phone, setPhone] = useState('');
   const [comments, setComments] = useState('');
   const [isRecurring, setIsRecurring] = useState(false);
+  const [frequency, setFrequency] = useState<'weekly' | 'bi-weekly' | 'every-4-weeks'>('weekly');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [showAuthModal, setShowAuthModal] = useState(false);
@@ -222,7 +223,8 @@ export default function OrderPage() {
         phone: phone.trim(),
         comments: comments.trim(),
         totalAmount,
-        isRecurring
+        isRecurring,
+        frequency: isRecurring ? frequency : undefined
       };
 
       // Store order data in session storage for payment page
@@ -244,7 +246,7 @@ export default function OrderPage() {
   return (
     <div className="min-h-screen py-20 bg-warm-cream">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="card-bakery">
+        <div className="bg-white rounded-lg shadow-lg p-6">
           <div className="mb-8">
             <h2 className="text-4xl font-semibold text-bakery-primary mb-6">
               Place your order 
@@ -297,7 +299,7 @@ export default function OrderPage() {
                         type="button"
                         onClick={() => updateQuantity(bread.name, (breadQuantities[bread.name] || 0) - 1)}
                         disabled={isHolidayMode}
-                        className="w-8 h-8 bg-bakery-primary text-white rounded-full flex items-center justify-center hover:bg-bakery-primary-dark transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                        className="w-8 h-8 btn-primary rounded-full flex items-center justify-center"
                       >
                         -
                       </button>
@@ -308,7 +310,7 @@ export default function OrderPage() {
                         type="button"
                         onClick={() => updateQuantity(bread.name, (breadQuantities[bread.name] || 0) + 1)}
                         disabled={isHolidayMode}
-                        className="w-8 h-8 bg-bakery-primary text-white rounded-full flex items-center justify-center hover:bg-bakery-primary-dark transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                        className="w-8 h-8 btn-primary rounded-full flex items-center justify-center"
                       >
                         +
                       </button>
@@ -340,16 +342,11 @@ export default function OrderPage() {
                         className="w-5 h-5 rounded border-gray-300 text-bakery-primary focus:ring-bakery-primary focus:ring-2 disabled:opacity-50"
                       />
                       <h3 className="text-lg font-semibold text-gray-900">
-                        Set up as weekly focaccias delivery
+                        Set up as weekly, bi-weekly or every 4 weeks focaccias delivery
                       </h3>
                     </div>
                     <p className="text-gray-700 mb-3">
                       Get fresh focaccias delivered to your door every week!
-                      {!currentUser && (
-                        <span className="block mt-2 text-sm text-blue-600 font-medium">
-                          💡 Sign in required for recurring orders to manage your subscription
-                        </span>
-                      )}
                       {isRecurring && !currentUser && (
                         <span className="block mt-2 text-sm text-orange-600 font-medium">
                           ⚠️ Please sign in to activate your recurring order
@@ -361,13 +358,13 @@ export default function OrderPage() {
                         <svg className="w-4 h-4 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                         </svg>
-                        <span>Weekly delivery on your chosen day</span>
+                        <span>Modify, pause or cancel anytime</span>
                       </div>
                       <div className="flex items-center space-x-2 text-sm text-gray-600 mt-1">
                         <svg className="w-4 h-4 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                         </svg>
-                        <span>Easy to pause or cancel anytime</span>
+                        <span>Payment is charged only after delivery</span>
                       </div>
                     </div>
                   </div>
@@ -379,6 +376,27 @@ export default function OrderPage() {
             <div>
               <h2 className="text-2xl font-semibold text-bakery-primary mb-6">Delivery information</h2>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {isRecurring && (
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Delivery Frequency *
+                    </label>
+                    <select
+                      value={frequency}
+                      onChange={(e) => setFrequency(e.target.value as 'weekly' | 'bi-weekly' | 'every-4-weeks')}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-bakery-primary focus:border-transparent"
+                      required
+                      disabled={isHolidayMode}
+                    >
+                      <option value="weekly">Weekly</option>
+                      <option value="bi-weekly">Bi-weekly (Every 2 weeks)</option>
+                      <option value="every-4-weeks">Every 4 weeks</option>
+                    </select>
+                    <p className="text-xs text-gray-500 mt-1">
+                      Choose how often you&apos;d like to receive your delivery
+                    </p>
+                  </div>
+                )}
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
                     {isRecurring ? 'Delivery Day *' : 'Delivery Date *'}
@@ -558,7 +576,7 @@ export default function OrderPage() {
                                 }
                               }}
                               disabled={savingAddress || addressSaved || !address.trim() || !zipCode.trim()}
-                              className="bg-blue-600 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                              className="btn-primary-sm"
                             >
                               {savingAddress ? 'Saving...' : addressSaved ? 'Address Saved!' : 'Save Address'}
                             </button>
@@ -626,7 +644,7 @@ export default function OrderPage() {
               <button
                 type="submit"
                 disabled={loading || calculateTotal() === 0 || isHolidayMode || getOrderItems().length < 1}
-                className="bg-bakery-primary text-white px-6 py-3 rounded-md hover:bg-bakery-primary-dark transition-colors font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+                className="btn-primary"
               >
                 {isHolidayMode ? 'Orders Temporarily Disabled' : loading ? 'Processing...' : 'Proceed to Payment'}
               </button>

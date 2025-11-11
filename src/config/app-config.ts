@@ -86,7 +86,7 @@ export const FIND_US_LOCATIONS = [
     address: '55 NE Holman St, Portland OR',
     image: '/popup-shop.jpg',
     imageAlt: 'Pop-up Shop',
-    schedule: 'Wednesdays, Fridays, and Saturdays 8am to 9pm',
+    schedule: 'Wednesdays and Fridays 8am to 9pm',
     active: true,
     coordinates: {
       lat: 45.5647,

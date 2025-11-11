@@ -4,9 +4,9 @@ import { createSetupIntent } from '@/lib/stripeService';
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { customerId, orderDetails, userId } = body;
+    const { customerId, orderDetails, userId, frequency } = body;
 
-    const setupIntent = await createSetupIntent(customerId, orderDetails, userId);
+    const setupIntent = await createSetupIntent(customerId, orderDetails, userId, frequency);
 
     return NextResponse.json({
       clientSecret: setupIntent.client_secret,

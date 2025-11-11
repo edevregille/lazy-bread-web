@@ -2,13 +2,14 @@
 @tailwind components;
 @tailwind utilities;
 
-@import url('https://fonts.googleapis.com/css2?family=Crimson+Text:wght@400;600;700&family=Source+Sans+Pro:wght@300;400;600;700&family=Caveat:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@300;400;500;600;700&family=Dancing+Script:wght@400;600;700&display=swap');
 
 :root {
   --background: #FDF8F0;
   --foreground: #6B4423;
   --primary: #d45b04;
   --primary-light: #A0522D;
+  --primary-dark: #b84a03;
   --secondary: #D2691E;
   --accent: #F4A460;
   /* --warm-cream: #FDF5E6; */
@@ -23,21 +24,21 @@
 body {
   color: var(--foreground);
   background: var(--background);
-  font-family: 'Source Sans Pro', sans-serif;
+  font-family: 'Inter', sans-serif;
   line-height: 1.6;
 }
 
 /* Artisanal Bakery Typography */
 .font-bakery {
-  font-family: 'Crimson Text', serif;
+  font-family: 'Playfair Display', serif;
 }
 
 .font-body {
-  font-family: 'Source Sans Pro', sans-serif;
+  font-family: 'Inter', sans-serif;
 }
 
 .font-accent {
-  font-family: 'Caveat', cursive;
+  font-family: 'Dancing Script', cursive;
 }
 
 /* Warm, Organic Color Palette */
@@ -68,6 +69,10 @@ body {
 /* Background Colors */
 .bg-bakery-primary {
   background-color: var(--primary);
+}
+
+.bg-bakery-primary-dark {
+  background-color: var(--primary-dark);
 }
 
 .bg-bakery-secondary {
@@ -136,20 +141,68 @@ body {
   border: 2px solid var(--golden-wheat);
 }
 
-/* Button Styles */
+/* Button Styles - Enhanced */
 .btn-bakery-primary {
   background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
   color: white;
-  padding: 12px 24px;
-  border-radius: 8px;
-  font-weight: 500;
-  transition: all 0.3s ease;
-  box-shadow: 0 4px 15px rgba(139, 69, 19, 0.3);
+  padding: 14px 32px;
+  border-radius: 10px;
+  font-weight: 600;
+  font-size: 16px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 
+    0 4px 6px rgba(139, 69, 19, 0.2),
+    0 2px 4px rgba(139, 69, 19, 0.15),
+    0 0 0 0 rgba(139, 69, 19, 0);
+  border: none;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-bakery-primary::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: left 0.5s;
 }
 
 .btn-bakery-primary:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(139, 69, 19, 0.4);
+  transform: translateY(-3px);
+  box-shadow: 
+    0 8px 12px rgba(139, 69, 19, 0.3),
+    0 4px 6px rgba(139, 69, 19, 0.2),
+    0 0 0 0 rgba(139, 69, 19, 0);
+  background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary) 100%);
+}
+
+.btn-bakery-primary:hover::before {
+  left: 100%;
+}
+
+.btn-bakery-primary:active {
+  transform: translateY(-1px);
+  box-shadow: 
+    0 2px 4px rgba(139, 69, 19, 0.2),
+    0 1px 2px rgba(139, 69, 19, 0.15);
+}
+
+.btn-bakery-primary:focus {
+  outline: none;
+  box-shadow: 
+    0 4px 6px rgba(139, 69, 19, 0.2),
+    0 2px 4px rgba(139, 69, 19, 0.15),
+    0 0 0 3px rgba(139, 69, 19, 0.3);
+}
+
+.btn-bakery-primary:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
 }
 
 .btn-bakery-secondary {
@@ -167,9 +220,9 @@ body {
   box-shadow: 0 6px 20px rgba(210, 105, 30, 0.4);
 }
 
-/* Card Styles */
+/* Card Styles - Legacy class, prefer using Tailwind classes directly */
 .card-bakery {
-  background: bg-warm-cream;
+  background: var(--warm-cream);
   border-radius: 12px;
   padding: 24px;
   box-shadow: 0 4px 20px rgba(139, 69, 19, 0.1);
@@ -253,9 +306,13 @@ body {
 /* Authentic Bakery Utility Classes */
 @layer components {
   .btn-bakery-primary {
-    @apply bg-bakery-brown text-bakery-cream px-6 py-3 rounded-lg font-bakery font-semibold 
-           hover:bg-bakery-rust transition-all duration-300 shadow-bakery hover:shadow-bakery-hover
-           focus:outline-none focus:ring-2 focus:ring-bakery-gold focus:ring-offset-2;
+    @apply bg-bakery-brown text-white px-8 py-3.5 rounded-xl font-semibold text-base
+           hover:bg-bakery-rust transition-all duration-300 
+           shadow-[0_4px_6px_rgba(139,69,19,0.2),0_2px_4px_rgba(139,69,19,0.15)]
+           hover:shadow-[0_8px_12px_rgba(139,69,19,0.3),0_4px_6px_rgba(139,69,19,0.2)]
+           hover:-translate-y-0.5 active:translate-y-0 active:shadow-[0_2px_4px_rgba(139,69,19,0.2)]
+           focus:outline-none focus:ring-2 focus:ring-bakery-gold focus:ring-offset-2
+           disabled:opacity-60 disabled:cursor-not-allowed disabled:transform-none;
   }
 
   .btn-bakery-secondary {
@@ -296,6 +353,42 @@ body {
   .background-gradient-warm {
     @apply bg-gradient-to-br from-[#FDF8F0] via-[#F5E6D3] to-[#F4E4BC];
   }
+
+  /* Enhanced Button System - Use these classes for consistent button styling */
+  .btn-primary {
+    @apply text-white px-6 py-3 rounded-md font-bold
+           transition-all duration-300 
+           shadow-[0_4px_6px_rgba(139,69,19,0.2),0_2px_4px_rgba(139,69,19,0.15)]
+           hover:shadow-[0_8px_12px_rgba(139,69,19,0.3),0_4px_6px_rgba(139,69,19,0.2)]
+           hover:-translate-y-0.5 active:translate-y-0 active:shadow-[0_2px_4px_rgba(139,69,19,0.2)]
+           focus:outline-none focus:ring-2 focus:ring-bakery-gold focus:ring-offset-2
+           disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none;
+    background: var(--primary);
+  }
+  
+  .btn-primary:hover:not(:disabled) {
+    background: var(--primary-dark);
+  }
+
+  .btn-primary-sm {
+    @apply btn-primary px-4 py-2 text-sm;
+  }
+
+  .btn-primary-lg {
+    @apply btn-primary px-8 py-3.5 text-base;
+  }
+
+  .btn-secondary {
+    @apply bg-bakery-cream text-bakery-brown border-2 border-bakery-brown px-6 py-3 rounded-md 
+           font-bold hover:bg-bakery-warm transition-all duration-300 
+           shadow-rustic hover:shadow-bakery focus:outline-none focus:ring-2 focus:ring-bakery-gold focus:ring-offset-2
+           disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+
+  .btn-text {
+    @apply text-bakery-primary hover:text-bakery-primary-dark font-bold transition-colors duration-300
+           focus:outline-none focus:ring-2 focus:ring-bakery-gold focus:ring-offset-2 rounded;
+  }
 }
 
 /* Custom bakery patterns and effects */
@@ -311,18 +404,18 @@ body {
 }
 
 .handwritten-accent {
-  font-family: 'Caveat', cursive;
+  font-family: 'Dancing Script', cursive;
   font-weight: 600;
 }
 
 .artisan-heading {
-  font-family: 'Crimson Text', serif;
+  font-family: 'Playfair Display', serif;
   font-weight: 700;
   letter-spacing: -0.02em;
 }
 
 .rustic-text {
-  font-family: 'Source Sans Pro', sans-serif;
+  font-family: 'Inter', sans-serif;
   line-height: 1.6;
 }
 

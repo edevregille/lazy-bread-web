@@ -179,7 +179,7 @@ export default function InspirationPage() {
               Order our fresh focaccia bread and start creating these delicious dishes today!
             </p>
             <Link href="/order">
-            <button className="bg-amber-600 hover:bg-amber-700 text-white font-semibold py-3 px-8 rounded-lg transition-colors duration-200">
+            <button className="btn-primary-lg">
               Order Focaccia Now
             </button>
             </Link>

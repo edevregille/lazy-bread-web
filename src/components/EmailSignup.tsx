@@ -82,7 +82,7 @@ const EmailSignup = () => {
         />
         <button
           onClick={handleSubmit}
-          className="bg-bakery-primary text-white px-6 py-3 rounded-md hover:bg-bakery-primary-dark transition-colors font-medium"
+          className="btn-primary"
         >
           Submit
         </button>

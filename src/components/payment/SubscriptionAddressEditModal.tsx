@@ -151,14 +151,14 @@ export default function SubscriptionAddressEditModal({
           <button
             type="submit"
             disabled={saving}
-            className="flex-1 bg-bakery-primary text-white py-2 px-4 rounded-md hover:bg-bakery-primary-dark transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            className="flex-1 btn-primary"
           >
             {saving ? 'Saving...' : 'Save Address'}
           </button>
           <button
             type="button"
             onClick={onClose}
-            className="flex-1 bg-gray-300 text-gray-700 py-2 px-4 rounded-md hover:bg-gray-400 transition-colors"
+            className="flex-1 btn-secondary"
           >
             Cancel
           </button>

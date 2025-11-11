@@ -53,7 +53,7 @@ export default function Header() {
 
     return (
         <>
-            <header className="fixed top-0 left-0 right-0 bg-white shadow-bakery z-10 border-b-bakery-light">
+            <header className="fixed top-0 left-0 right-0 bg-white shadow-bakery z-10 border-b border-bakery-light">
             <div className="container mx-auto px-4">
                 <div className="flex items-center justify-between h-20">
                     {/* Logo */}
@@ -78,7 +78,7 @@ export default function Header() {
                                     <a
                                         key={item.name}
                                         href={item.path}
-                                        className={`px-4 py-2 rounded-md text-lg font-body font-medium transition-colors duration-300 ${
+                                        className={`px-4 py-2 rounded-md text-lg font-body font-bold transition-colors duration-300 ${
                                             isActive 
                                                 ? 'text-bakery-primary bg-warm-cream border-b-2 border-bakery-primary' 
                                                 : 'text-earth-brown hover:text-bakery-primary hover:bg-warm-cream'
@@ -113,7 +113,7 @@ export default function Header() {
                                     <>
                                         <button
                                             onClick={() => handleAuthClick('signin')}
-                                            className="px-2 py-2 bg-bakery-primary text-white px-6 py-3 rounded-md hover:bg-bakery-primary-dark transition-colors font-medium"
+                                            className="btn-primary"
                                         >
                                             Sign In
                                         </button>
@@ -149,7 +149,7 @@ export default function Header() {
                             return (
                                 <Link 
                                     href={item.path} 
-                                    className={`block py-3 px-4 rounded-md text-base font-body font-medium transition-colors duration-300 ${
+                                    className={`block py-3 px-4 rounded-md text-base font-body font-bold transition-colors duration-300 ${
                                         isActive 
                                             ? 'text-bakery-primary bg-warm-cream border-l-4 border-bakery-primary' 
                                             : 'text-earth-brown hover:text-bakery-primary hover:bg-warm-cream'
@@ -208,7 +208,7 @@ export default function Header() {
                                             handleAuthClick('signup');
                                             toggleMenu();
                                         }}
-                                        className="w-full py-3 px-4 bg-bakery-primary text-white rounded-md text-base font-body font-medium hover:bg-bakery-primary-dark transition-colors duration-300"
+                                        className="w-full btn-primary"
                                     >
                                         Sign Up
                                     </button>

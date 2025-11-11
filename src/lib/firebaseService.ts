@@ -225,6 +225,7 @@ export const getUserSubscriptions = async (userId: string): Promise<Subscription
         ...data,
         createdAt: data.createdAt?.toDate() || new Date(),
         updatedAt: data.updatedAt?.toDate() || new Date(),
+        nextDeliveryDate: data.nextDeliveryDate?.toDate ? data.nextDeliveryDate.toDate() : (data.nextDeliveryDate ? new Date(data.nextDeliveryDate) : undefined),
       } as unknown as Subscription);
     });
     return subscriptions;
@@ -270,6 +271,7 @@ export const getSubscription = async (subscriptionId: string): Promise<Subscript
       ...data,
       createdAt: data.createdAt?.toDate() || new Date(),
       updatedAt: data.updatedAt?.toDate() || new Date(),
+      nextDeliveryDate: data.nextDeliveryDate?.toDate ? data.nextDeliveryDate.toDate() : (data.nextDeliveryDate ? new Date(data.nextDeliveryDate) : undefined),
     } as unknown as Subscription;
   } catch (error) {
     console.error('Error fetching subscription:', error);
@@ -354,5 +356,27 @@ export const updateSubscriptionContent = async (
   } catch (error) {
     console.error('Error updating subscription content:', error);
     throw new Error('Failed to update subscription content');
+  }
+};
+
+export const updateSubscriptionSchedule = async (
+  subscriptionId: string,
+  scheduleData: {
+    frequency: 'weekly' | 'bi-weekly' | 'every-4-weeks';
+    dayOfWeek: number;
+    nextDeliveryDate: Date;
+  }
+): Promise<void> => {
+  try {
+    const subscriptionRef = doc(db, 'subscriptions', subscriptionId);
+    await updateDoc(subscriptionRef, {
+      frequency: scheduleData.frequency,
+      dayOfWeek: scheduleData.dayOfWeek,
+      nextDeliveryDate: scheduleData.nextDeliveryDate,
+      updatedAt: serverTimestamp(),
+    });
+  } catch (error) {
+    console.error('Error updating subscription schedule:', error);
+    throw new Error('Failed to update subscription schedule');
   }
 };

@@ -20,6 +20,7 @@ export interface OrderDetails {
   orderItems: OrderItem[];
   totalAmount: number;
   isRecurring?: boolean;
+  frequency?: 'weekly' | 'bi-weekly' | 'every-4-weeks';
 }
 // Firebase-specific Order interface (different from OrderDetails)
 export interface Order {
@@ -113,7 +114,8 @@ export interface Subscription {
   zipCode: string;
   dayOfWeek: number; // 0-6 (Sunday-Saturday)
   status: 'active' | 'paused' | 'cancelled';
-  frequency?: 'weekly';
+  frequency: 'weekly' | 'bi-weekly' | 'every-4-weeks';
+  nextDeliveryDate?: Date | string; // ISO date string or Firestore Timestamp
   email: string;
   phone: string;
   items: OrderItem[];

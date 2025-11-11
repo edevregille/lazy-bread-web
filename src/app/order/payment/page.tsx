@@ -12,6 +12,20 @@ import { formatDeliveryDate } from '@/config/app-config';
 // Load Stripe
 const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!);
 
+// Helper function to format frequency label
+const getFrequencyLabel = (frequency?: string): string => {
+  switch (frequency) {
+    case 'weekly':
+      return 'Weekly';
+    case 'bi-weekly':
+      return 'Bi-weekly';
+    case 'every-4-weeks':
+      return 'Every 4 weeks';
+    default:
+      return 'Weekly';
+  }
+};
+
 export default function PaymentPage() {
   const { currentUser, userProfile, loading } = useAuth();
   const [orderDetails, setOrderDetails] = useState<OrderDetails | null>(null);
@@ -133,6 +147,7 @@ export default function PaymentPage() {
                 deliveryDate: orderDetails.deliveryDate,
                 comments: orderDetails.comments,
               },
+              frequency: orderDetails.frequency || 'weekly',
               userId: currentUser.uid
             })
           });
@@ -281,17 +296,15 @@ export default function PaymentPage() {
         const setupIntent = await result.json();
 
         if (setupIntent.status === 'succeeded') {
-          const successMessage = setupIntent.status === 'requires_capture' 
-            ? 'Wekly delivery set up successfully! Your order will be captured when delivered. Redirecting to home page...'
-            : 'Weekly delivery set up successfully! Redirecting to home page...';
-            setMessage(successMessage);
+          setMessage('Subscription confirmed! Redirecting to dashboard...');
         
             // Store success data for the modal on home page
             sessionStorage.setItem('paymentSuccess', JSON.stringify({
               orderDetails: orderDetails,
-              paymentIntentId: setupIntent.id,
+              setupIntentId: setupIntent.id,
               timestamp: new Date().toISOString(),
-              status: setupIntent.status
+              status: 'setup_completed',
+              isRecurring: true
             }));
             
             // Clear order data
@@ -299,9 +312,9 @@ export default function PaymentPage() {
             
             setTimeout(() => {
               router.push('/');
-            }, 2000);
+            }, 1500);
           } else {
-            setMessage(`Payment status: ${setupIntent.status}. Please try again.`);
+            setMessage(`Setup status: ${setupIntent.status}. Please try again.`);
           }
         break;
       default:
@@ -369,7 +382,7 @@ export default function PaymentPage() {
           <p className="text-gray-600 mb-4">{error || 'Failed to set up payment'}</p>
           <button
             onClick={() => router.push('/order')}
-            className="w-full bg-bakery-primary text-white px-6 py-3 rounded-md hover:bg-bakery-primary-dark transition-colors font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+            className="w-full btn-primary"
           >
             Back to Order
           </button>
@@ -381,7 +394,7 @@ export default function PaymentPage() {
   return (
     <div className="min-h-screen py-20 bg-warm-cream">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="card-bakery ">
+        <div className="bg-white rounded-lg shadow-lg p-6">
           <div className="mb-8">
             <h2 className="text-4xl font-semibold text-bakery-primary mb-6">
               Complete Your Order
@@ -393,7 +406,7 @@ export default function PaymentPage() {
               <h2 className="text-2xl font-semibold text-bakery-primary mb-6">Order Summary</h2>
                 {orderDetails.isRecurring && (
                   <span className="px-3 py-1 bg-yellow-100 text-yellow-800 text-sm font-semibold rounded-full">
-                    🔄 Weekly Delivery
+                    🔄 {getFrequencyLabel(orderDetails.frequency)} Delivery
                   </span>
                 )}
               </div>
@@ -415,7 +428,7 @@ export default function PaymentPage() {
                   </div>
                   {orderDetails.isRecurring && (
                     <div className="mt-2 text-sm text-gray-600">
-                      This amount will be charged at delivery time every week.
+                      This amount will be charged at delivery time {orderDetails.frequency === 'bi-weekly' ? 'every 2 weeks' : orderDetails.frequency === 'every-4-weeks' ? 'every 4 weeks' : 'every week'}.
                     </div>
                   )}
                 </div>
@@ -429,6 +442,9 @@ export default function PaymentPage() {
                 <p><strong>Name:</strong> {orderDetails.customerName}</p>
                 <p><strong>Address:</strong> {orderDetails.address}</p>
                 <p><strong>City:</strong> {orderDetails.city}, {orderDetails.zipCode}</p>
+                {orderDetails.isRecurring && orderDetails.frequency && (
+                  <p><strong>Frequency:</strong> {getFrequencyLabel(orderDetails.frequency)}</p>
+                )}
                 <p><strong>Delivery Date:</strong> {orderDetails.isRecurring ? `Every ${orderDetails.deliveryDate}` : formatDeliveryDate(orderDetails.deliveryDate)}</p>
                 <p><strong>Email:</strong> {orderDetails.email}</p>
                 <p><strong>Phone:</strong> {orderDetails.phone}</p>
@@ -520,7 +536,7 @@ export default function PaymentPage() {
                   <button
                     onClick={handleConfirmOrder}
                     disabled={isProcessing}
-                    className="w-full bg-bakery-primary text-white px-6 py-3 rounded-md hover:bg-bakery-primary-dark transition-colors font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="w-full btn-primary"
                   >
                     {isProcessing ? 'Processing Payment...' : 'Confirm Payment'}
                   </button>
@@ -537,7 +553,7 @@ export default function PaymentPage() {
                       </svg>
                       <div className="ml-2">
                         <p className="text-sm text-yellow-800">
-                          <strong>Set up recurring payment:</strong> Provide a payment method for your weekly subscription: no charge will be made now. <br/> You can pause or cancel your weekly delivery at any time and will be charged only once delivery is made.
+                          <strong>Set up recurring payment:</strong> Provide a payment method for your weekly subscription: no charge will be made now. <br/> You can pause or cancel your subscription at any time and will be charged only once delivery is made.
                         </p>
                       </div>
                     </div>
@@ -565,7 +581,7 @@ export default function PaymentPage() {
                       </svg>
                       <div className="ml-2">
                         <p className="text-sm text-green-800">
-                          <strong>Set up weekly delivery of focaccias with saved payment method:</strong> You can pause or cancel your subscription at any time and will be charged only once delivery is made.
+                          <strong>Set up subscription with saved payment method:</strong> You can pause or cancel your subscription at any time and will be charged only once delivery is made.
                         </p>
                       </div>
                     </div>
@@ -579,9 +595,9 @@ export default function PaymentPage() {
                   <button
                     onClick={handleConfirmOrder}
                     disabled={isProcessing}
-                    className="w-full bg-bakery-primary text-white px-6 py-3 rounded-md hover:bg-bakery-primary-dark transition-colors font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="w-full btn-primary"
                   >
-                    {isProcessing ? 'Processing...' : `Confirm weekly delivery on ${orderDetails.deliveryDate}`}
+                    {isProcessing ? 'Processing...' : `Confirm subscription`}
                   </button>
                 </div>
               )}
@@ -596,7 +612,7 @@ export default function PaymentPage() {
 
               {/* Success/Error Messages */}
               {message && (
-                <div className={`p-4 rounded-lg ${
+                <div className={`mt-6 p-4 rounded-lg ${
                   message.includes('successful') || message.includes('authorized') || message.includes('Redirecting') || message.includes('set up successfully')
                     ? 'bg-green-100 text-green-700' 
                     : 'bg-red-100 text-red-700'
@@ -723,7 +739,7 @@ function SetupForm({ orderDetails, onSuccess }: { orderDetails: OrderDetails; on
         setIsProcessing(false);
       } else if (setupIntent) {
         // Setup successful
-        setMessage('Weekly delivery setup completed successfully! Redirecting to home page...');
+        setMessage('Subscription confirmed! Redirecting to dashboard...');
         
         // Store success data for the modal on home page
         sessionStorage.setItem('paymentSuccess', JSON.stringify({
@@ -737,10 +753,10 @@ function SetupForm({ orderDetails, onSuccess }: { orderDetails: OrderDetails; on
         // Clear order data from session storage
         sessionStorage.removeItem('orderData');
         
-        // Redirect to home page after a short delay
+        // Redirect to home page after a short delay (modal will handle dashboard redirect)
         setTimeout(() => {
           router.push('/');
-        }, 2000);
+        }, 1500);
       }
     } catch (error) {
       console.error('Setup error:', error);

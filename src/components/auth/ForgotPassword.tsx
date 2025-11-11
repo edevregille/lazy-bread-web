@@ -110,7 +110,7 @@ export default function ForgotPassword({ onSwitchToSignIn, onClose }: ForgotPass
             <div className="space-y-3">
               <button
                 onClick={handleBackToSignIn}
-                className="w-full bg-bakery-primary text-white py-2 px-4 rounded-md hover:bg-bakery-primary-dark transition-colors"
+                className="w-full btn-primary"
               >
                 Back to Sign In
               </button>
@@ -186,7 +186,7 @@ export default function ForgotPassword({ onSwitchToSignIn, onClose }: ForgotPass
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-bakery-primary text-white py-2 px-4 rounded-md hover:bg-bakery-primary-dark transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            className="w-full btn-primary"
           >
             {loading ? 'Sending...' : 'Send Reset Link'}
           </button>
@@ -212,7 +212,7 @@ export default function ForgotPassword({ onSwitchToSignIn, onClose }: ForgotPass
             Remember your password?{' '}
             <button
               onClick={handleBackToSignIn}
-              className="text-bakery-primary hover:text-bakery-primary-dark font-medium"
+              className="btn-text"
             >
               Back to Sign In
             </button>

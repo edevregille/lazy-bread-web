@@ -187,7 +187,7 @@ export default function SignUp({ onSwitchToSignIn, onClose, onSuccess }: SignUpP
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-bakery-primary text-white py-2 px-4 rounded-md hover:bg-bakery-primary-dark transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            className="w-full btn-primary"
           >
             {loading ? 'Creating Account...' : 'Sign Up'}
           </button>
@@ -223,7 +223,7 @@ export default function SignUp({ onSwitchToSignIn, onClose, onSuccess }: SignUpP
             Already have an account?{' '}
             <button
               onClick={onSwitchToSignIn}
-              className="text-bakery-primary hover:text-bakery-primary-dark font-medium"
+              className="btn-text"
             >
               Sign In
             </button>

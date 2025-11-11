@@ -14,6 +14,7 @@ import {
 } from '@/lib/firebaseService';
 import SubscriptionAddressEditModal from '@/components/payment/SubscriptionAddressEditModal';
 import SubscriptionContentEditModal from '@/components/payment/SubscriptionContentEditModal';
+import SubscriptionScheduleEditModal from '@/components/payment/SubscriptionScheduleEditModal';
 import ConfirmationModal from '@/components/ui/ConfirmationModal';
 import ShowSavedPaymentMethod from '@/components/payment/ShowSavedPaymentMethod';
 import { DELIVERY_ZONES, formatDeliveryDate } from '@/config/app-config';
@@ -42,6 +43,7 @@ export default function DashboardPage() {
   const [subscriptionActionLoading, setSubscriptionActionLoading] = useState<string | null>(null);
   const [editingSubscriptionAddress, setEditingSubscriptionAddress] = useState(false);
   const [editingSubscriptionContent, setEditingSubscriptionContent] = useState(false);
+  const [editingSubscriptionSchedule, setEditingSubscriptionSchedule] = useState(false);
   const [selectedSubscription, setSelectedSubscription] = useState<Subscription | null>(null);
   const [confirmationModal, setConfirmationModal] = useState<{
     isOpen: boolean;
@@ -257,6 +259,21 @@ export default function DashboardPage() {
     // Refresh subscriptions to show updated content
     fetchUserSubscriptions();
   };
+  
+  const handleEditSubscriptionSchedule = (subscription: Subscription) => {
+    setSelectedSubscription(subscription);
+    setEditingSubscriptionSchedule(true);
+  };
+
+  const handleCloseScheduleModal = () => {
+    setEditingSubscriptionSchedule(false);
+    setSelectedSubscription(null);
+  };
+
+  const handleScheduleUpdated = () => {
+    // Refresh subscriptions to show updated schedule
+    fetchUserSubscriptions();
+  };
 
   // Validate zip code is in Multnomah County
   const validateZipCode = (zip: string): boolean => {
@@ -331,6 +348,58 @@ export default function DashboardPage() {
     return days[dayOfWeek] || 'Unknown';
   };
 
+  const getFrequencyLabel = (frequency: string): string => {
+    switch (frequency) {
+      case 'weekly':
+        return 'Weekly';
+      case 'bi-weekly':
+        return 'Bi-weekly';
+      case 'every-4-weeks':
+        return 'Every 4 weeks';
+      default:
+        return frequency;
+    }
+  };
+
+  const formatNextDeliveryDate = (date: Date | string | undefined | { toDate?: () => Date; seconds?: number }): string => {
+    if (!date) return 'Not scheduled';
+    
+    let dateObj: Date;
+    
+    // Handle Firestore Timestamp objects with toDate method
+    if (date && typeof date === 'object' && !(date instanceof Date) && 'toDate' in date && typeof date.toDate === 'function') {
+      dateObj = date.toDate();
+    } else if (date instanceof Date) {
+      dateObj = date;
+    } else if (typeof date === 'string') {
+      dateObj = new Date(date);
+    } else if (date && typeof date === 'object' && !(date instanceof Date) && 'seconds' in date && typeof (date as { seconds: number }).seconds === 'number') {
+      // Handle Firestore Timestamp format { seconds: number, nanoseconds: number }
+      dateObj = new Date((date as { seconds: number }).seconds * 1000);
+    } else {
+      // Fallback: try to parse as date string
+      try {
+        dateObj = new Date(date as string);
+      } catch {
+        return 'Invalid date';
+      }
+    }
+    
+    // Check if date is valid
+    if (isNaN(dateObj.getTime())) {
+      return 'Invalid date';
+    }
+    
+    // Format date in PST/PDT timezone to match delivery timezone
+    return dateObj.toLocaleDateString('en-US', {
+      weekday: 'long',
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+      timeZone: 'America/Los_Angeles',
+    });
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -347,14 +416,14 @@ export default function DashboardPage() {
     <div className="min-h-screen py-20">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
-        <div className="card-bakery mb-8">
+        <div className="bg-white rounded-lg shadow-lg p-6 mb-8">
           <div className="flex justify-between items-center">
-            <h2 className="text-4xl font-semibold text-bakery-primary mb-6">
+            <h2 className="text-4xl font-semibold text-bakery-primary">
               Welcome back, {currentUser.displayName}!
             </h2>
             <button
               onClick={() => router.push('/order')}
-              className="bg-bakery-primary text-white px-6 py-3 rounded-md hover:bg-bakery-primary-dark transition-colors font-medium"
+              className="btn-primary"
             >
               + Order
             </button>
@@ -365,7 +434,7 @@ export default function DashboardPage() {
           {/* Left Column - Profile, Payment & Subscriptions */}
           <div className="lg:col-span-1 space-y-8">
             {/* Delivery Address */}
-            <div className="card-bakery">
+            <div className="bg-white rounded-lg shadow-lg p-6">
               <div className="flex justify-between items-center mb-4">
                 <div className="flex items-center space-x-2">
                   <span className="text-2xl">📍</span>
@@ -373,7 +442,7 @@ export default function DashboardPage() {
                 </div>
                 <button
                   onClick={() => setEditingAddress(!editingAddress)}
-                  className="text-bakery-primary hover:text-bakery-primary-dark text-sm font-medium"
+                  className="btn-text text-sm"
                 >
                   {editingAddress ? 'Cancel' : 'Edit'}
                 </button>
@@ -462,14 +531,14 @@ export default function DashboardPage() {
                     <button
                       type="submit"
                       disabled={savingAddress}
-                      className="flex-1 bg-bakery-primary text-white py-2 px-4 rounded-md hover:bg-bakery-primary-dark transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                      className="flex-1 btn-primary"
                     >
                       {savingAddress ? 'Saving...' : 'Save Address'}
                     </button>
                     <button
                       type="button"
                       onClick={() => setEditingAddress(false)}
-                      className="flex-1 bg-gray-300 text-gray-700 py-2 px-4 rounded-md hover:bg-gray-400 transition-colors"
+                      className="flex-1 btn-secondary"
                     >
                       Cancel
                     </button>
@@ -509,9 +578,9 @@ export default function DashboardPage() {
           {/* Right Column - Subscriptions & Orders */}
           <div className="lg:col-span-2 space-y-8">
             {/* Subscriptions */}
-            <div className="card-bakery">
+            <div className="bg-white rounded-lg shadow-lg p-6">
               <h2 className="text-2xl font-semibold text-bakery-primary mb-6">
-                🔄 Your Weekly Delivery Order
+                🔄 Your Subscriptions
               </h2>
               
               {subscriptionsLoading ? (
@@ -523,7 +592,7 @@ export default function DashboardPage() {
                   <div className="text-gray-600 mb-4">You don&apos;t have any active subscriptions.</div>
                   <button
                     onClick={() => router.push('/order')}
-                    className="bg-bakery-primary text-white px-4 py-2 rounded-md hover:bg-bakery-primary-dark transition-colors"
+                    className="btn-primary-sm"
                   >
                     + Order
                   </button>
@@ -548,12 +617,27 @@ export default function DashboardPage() {
 
 
                         <div className='mt-4'>
-                          <h4 className="font-medium text-gray-900 mb-2"><strong>Delivery Schedule</strong></h4>
+                          <div className="flex justify-between items-center mb-2">
+                            <h4 className="font-medium text-gray-900"><strong>Delivery Schedule</strong></h4>
+                            <button
+                              onClick={() => handleEditSubscriptionSchedule(subscription)}
+                              className="btn-text text-sm"
+                            >
+                              Edit
+                            </button>
+                          </div>
                           <div className="text-sm space-y-1">
                             <p>
-                              {/* strong>Delivery Day:</strong>  */}
-                            Every {subscription.dayOfWeek}</p>
-                            {/* <p><strong>Start on:</strong> {subscription.createdAt ? subscription.createdAt.toLocaleDateString() : 'Unknown'}</p> */}
+                              <strong>Frequency:</strong> {getFrequencyLabel(subscription.frequency || 'weekly')}
+                            </p>
+                            <p>
+                              <strong>Delivery Day:</strong> {getDayOfWeekName(subscription.dayOfWeek)}
+                            </p>
+                            {subscription.nextDeliveryDate && (
+                              <p>
+                                <strong>Next Delivery:</strong> {formatNextDeliveryDate(subscription.nextDeliveryDate)}
+                              </p>
+                            )}
                           </div>
                         </div>
                       {/* </div> */}
@@ -564,7 +648,7 @@ export default function DashboardPage() {
                             <h4 className="font-medium text-gray-900"><strong>Subscription Items</strong></h4>
                             <button
                               onClick={() => handleEditSubscriptionContent(subscription)}
-                              className="text-bakery-primary hover:text-bakery-primary-dark text-sm font-medium"
+                              className="btn-text text-sm"
                             >
                               Edit
                             </button>
@@ -589,7 +673,7 @@ export default function DashboardPage() {
                             <h4 className="font-medium text-gray-900"><strong>Delivery Address</strong></h4>
                             <button
                               onClick={() => handleEditSubscriptionAddress(subscription)}
-                              className="text-bakery-primary hover:text-bakery-primary-dark text-sm font-medium"
+                              className="btn-text text-sm"
                             >
                               Edit
                             </button>
@@ -666,7 +750,7 @@ export default function DashboardPage() {
             </div>
 
             {/* Pending Orders */}
-            <div className="card-bakery">
+            <div className="bg-white rounded-lg shadow-lg p-6">
               <h2 className="text-2xl font-semibold text-bakery-primary mb-6">
                 ⏳ Your Pending Orders
               </h2>
@@ -680,7 +764,7 @@ export default function DashboardPage() {
                   <div className="text-gray-600 mb-4">No pending orders.</div>
                   <button
                     onClick={() => router.push('/order')}
-                    className="bg-bakery-primary text-white px-4 py-2 rounded-md hover:bg-bakery-primary-dark transition-colors"
+                    className="btn-primary-sm"
                   >
                     Place New Order
                   </button>
@@ -746,7 +830,7 @@ export default function DashboardPage() {
             </div>
 
             {/* History Orders */}
-            <div className="card-bakery">
+            <div className="bg-white rounded-lg shadow-lg p-6">
               <h2 className="text-2xl font-semibold text-bakery-primary mb-6">
                 📋 History Orders (Last 30 days)
               </h2>
@@ -760,7 +844,7 @@ export default function DashboardPage() {
                   <div className="text-gray-600 mb-4">No order history yet.</div>
                   <button
                     onClick={() => router.push('/order')}
-                    className="bg-bakery-primary text-white px-4 py-2 rounded-md hover:bg-bakery-primary-dark transition-colors"
+                    className="btn-primary-sm"
                   >
                     Place Your First Order
                   </button>
@@ -850,6 +934,16 @@ export default function DashboardPage() {
         />
       )}
 
+      {/* Subscription Schedule Edit Modal */}
+      {selectedSubscription && (
+        <SubscriptionScheduleEditModal
+          isOpen={editingSubscriptionSchedule}
+          onClose={handleCloseScheduleModal}
+          subscription={selectedSubscription}
+          onScheduleUpdated={handleScheduleUpdated}
+        />
+      )}
+
       {/* Confirmation Modal */}
       {confirmationModal.isOpen && confirmationModal.subscription && (
         <ConfirmationModal
@@ -864,7 +958,7 @@ export default function DashboardPage() {
           message={
             confirmationModal.action === 'pause'
               ? `Are you sure you want to pause your subscription? You can resume it at any time from your dashboard.`
-              : `Are you sure you want to cancel your subscription? This action cannot be undone and you will no longer receive weekly deliveries.`
+              : `Are you sure you want to cancel your subscription? `
           }
           confirmText={
             confirmationModal.action === 'pause' ? 'Pause Subscription' : 'Cancel Subscription'
