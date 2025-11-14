@@ -64,41 +64,18 @@ export default function Home() {
       {/* Hero Section */}
       <section className="py-8 px-8 bg-warm-cream">
         <div className="max-w-6xl mx-auto">
-          <div className="md:flex items-center">
-            <div className="md:w-1/3 relative animate-gentle-float">
-              <div className="md:h-full relative overflow-hidden flex items-center justify-center">
-                <Image 
-                  src="/welcome-img.png" 
-                  alt="Artisanal Organic Focaccia" 
-                  width={300}
-                  height={300}
-                  priority
-                  className="object-contain max-h-full max-w-full"
-                />
-              </div>
-            </div>
-            <div className="md:w-2/3 p-8 md:p-12">
-              <h2 className="text-4xl font-semibold text-bakery-primary mb-6">
-                Organic Sourdough Cottage Bakery
-              </h2>
-              <p className="text-xl md:text-2xl font-body text-earth-brown mb-8 leading-relaxed">
-                Handcrafted sourdough focaccia made with organic flour. 
-                Each loaf is carefully fermented and baked to perfection in our cottage bakery.
-              </p>
-              <div className="flex flex-row gap-2 sm:gap-4">
-                <Link href="/order">
-                  <button className="btn-primary-lg">
-                    Order Now
-                  </button>
-                </Link>
-                <Link href="/find-us">
-                  <button className="btn-primary-lg">
-                    Find Us
-                  </button>
-                </Link>
-              </div>
-            </div>
-          </div>
+          <Link href="/order" className="block cursor-pointer hover:opacity-90 transition-opacity">
+            <Image 
+              src="/home-ordering.png" 
+              alt="Order Now" 
+              width={1920}
+              height={1080}
+              quality={100}
+              priority
+              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 100vw, 1200px"
+              className="object-contain w-full h-auto rounded-lg shadow-lg"
+            />
+          </Link>
         </div>
       </section>
 
@@ -123,7 +100,7 @@ export default function Home() {
                 priority
                 width={500}
                 height={200}
-                className="object-contain w-full h-auto shadow-bakery rounded-lg"
+                className="object-contain w-full h-auto rounded-lg shadow-lg"
               />
             </div>
             <div className="md:w-full p-6 md:p-8">
