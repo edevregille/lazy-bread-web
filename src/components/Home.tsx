@@ -64,16 +64,41 @@ export default function Home() {
       {/* Hero Section */}
       <section className="py-8 px-8 bg-warm-cream">
         <div className="max-w-6xl mx-auto">
-          <Link href="/order" className="block cursor-pointer hover:opacity-90 transition-opacity">
-            <Image 
-              src="/home-ordering.png" 
-              alt="Order Now - Click to place your order" 
-              width={600}
-              height={300}
-              priority
-              className="w-full h-auto object-contain rounded-lg"
-            />
-          </Link>
+          <div className="md:flex items-center">
+            <div className="md:w-1/3 relative animate-gentle-float">
+              <div className="md:h-full relative overflow-hidden flex items-center justify-center">
+                <Image 
+                  src="/welcome-img.png" 
+                  alt="Artisanal Organic Focaccia" 
+                  width={300}
+                  height={300}
+                  priority
+                  className="object-contain max-h-full max-w-full"
+                />
+              </div>
+            </div>
+            <div className="md:w-2/3 p-8 md:p-12">
+              <h2 className="text-4xl font-semibold text-bakery-primary mb-6">
+                Organic Sourdough Cottage Bakery
+              </h2>
+              <p className="text-xl md:text-2xl font-body text-earth-brown mb-8 leading-relaxed">
+                Handcrafted sourdough focaccia made with organic flour. 
+                Each loaf is carefully fermented and baked to perfection in our cottage bakery.
+              </p>
+              <div className="flex flex-row gap-2 sm:gap-4">
+                <Link href="/order">
+                  <button className="btn-primary-lg">
+                    Order Now
+                  </button>
+                </Link>
+                <Link href="/find-us">
+                  <button className="btn-primary-lg">
+                    Find Us
+                  </button>
+                </Link>
+              </div>
+            </div>
+          </div>
         </div>
       </section>
 

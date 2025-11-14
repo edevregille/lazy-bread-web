@@ -27,7 +27,7 @@ export default function ShowSavedPaymentMethod({ paymentMethods, onPaymentMethod
         {paymentMethods.length === 0 && (
           <button
             onClick={() => setShowPaymentMethods(true)}
-            className="text-bakery-primary hover:text-bakery-primary-dark text-sm font-medium"
+            className="btn-text text-sm"
           >
             Add
           </button>
@@ -35,7 +35,7 @@ export default function ShowSavedPaymentMethod({ paymentMethods, onPaymentMethod
         {paymentMethods.length > 0 && (
           <button
             onClick={() => setShowPaymentMethods(true)}
-            className="text-bakery-primary hover:text-bakery-primary-dark text-sm font-medium"
+            className="btn-text text-sm"
           >
             Edit
           </button>

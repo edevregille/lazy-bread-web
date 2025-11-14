@@ -25,6 +25,7 @@ interface OrderDetails {
   comments: string;
   orderItems: OrderItem[];
   totalAmount: number;
+  frequency?: 'weekly' | 'bi-weekly' | 'every-4-weeks';
 }
 
 interface PaymentSuccessData {
@@ -146,8 +147,8 @@ export const PaymentSuccessModal: React.FC<PaymentSuccessModalProps> = ({
             <p><strong>Name:</strong> {orderDetails.customerName}</p>
             <p><strong>Address:</strong> {orderDetails.address}</p>
             <p><strong>City:</strong> {orderDetails.city}, {orderDetails.zipCode}</p>
-            {isRecurring && (orderDetails as any).frequency && (
-              <p><strong>Frequency:</strong> {getFrequencyLabel((orderDetails as any).frequency)}</p>
+            {isRecurring && orderDetails.frequency && (
+              <p><strong>Frequency:</strong> {getFrequencyLabel(orderDetails.frequency)}</p>
             )}
             <p><strong>Delivery {isRecurring ? 'Day' : 'Date'}:</strong> {isRecurring ? `Every ${orderDetails.deliveryDate}` : formatDeliveryDate(orderDetails.deliveryDate)}</p>
             <p><strong>Email:</strong> {orderDetails.email}</p>
@@ -186,7 +187,7 @@ export const PaymentSuccessModal: React.FC<PaymentSuccessModalProps> = ({
         <div className="flex justify-center">
           <button
             onClick={handleClose}
-            className="bg-bakery-primary text-white px-6 py-3 rounded-md hover:bg-bakery-primary-dark transition-colors font-medium"
+            className="btn-primary"
           >
             {isSetupIntent ? 'Go to Dashboard' : 'Continue'}
           </button>
