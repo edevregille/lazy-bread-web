@@ -45,7 +45,7 @@ export default function ConfirmationModal({
           <button
             onClick={onClose}
             disabled={loading}
-            className="flex-1 bg-gray-300 text-gray-700 py-2 px-4 rounded-md hover:bg-gray-400 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            className="flex-1 btn-secondary"
           >
             {cancelText}
           </button>

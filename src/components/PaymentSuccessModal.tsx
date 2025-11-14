@@ -1,7 +1,9 @@
 'use client'
 
-import React from 'react';
+import React, { useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import { Modal } from './ui/Modal';
+import { formatDeliveryDate } from '@/config/app-config';
 
 interface OrderItem {
   id: string;
@@ -45,14 +47,47 @@ export const PaymentSuccessModal: React.FC<PaymentSuccessModalProps> = ({
   onClose,
   paymentData
 }) => {
+  const router = useRouter();
   const { orderDetails, isRecurring, status } = paymentData;
   const isSetupIntent = status === 'setup_completed';
+
+  // Auto-redirect to dashboard for subscriptions after 3 seconds
+  useEffect(() => {
+    if (isOpen && isSetupIntent) {
+      const timer = setTimeout(() => {
+        router.push('/dashboard');
+      }, 3000);
+      return () => clearTimeout(timer);
+    }
+  }, [isOpen, isSetupIntent, router]);
+
+  const handleClose = () => {
+    if (isSetupIntent) {
+      router.push('/dashboard');
+    } else {
+      onClose();
+    }
+  };
+
+  // Helper function to format frequency label
+  const getFrequencyLabel = (frequency?: string): string => {
+    switch (frequency) {
+      case 'weekly':
+        return 'Weekly';
+      case 'bi-weekly':
+        return 'Bi-weekly';
+      case 'every-4-weeks':
+        return 'Every 4 weeks';
+      default:
+        return 'Weekly';
+    }
+  };
 
   return (
     <Modal
       isOpen={isOpen}
-      onClose={onClose}
-      title={isSetupIntent ? "🎉 Setup Complete!" : "🎉 Payment Successful!"}
+      onClose={handleClose}
+      title={isSetupIntent ? "✅ Subscription Confirmed!" : "🎉 Payment Successful!"}
     >
       <div className="space-y-6">
         {/* Success Message */}
@@ -74,10 +109,15 @@ export const PaymentSuccessModal: React.FC<PaymentSuccessModalProps> = ({
           </div>
           <h2 className="text-2xl font-bold text-gray-900 mb-2">
             {isSetupIntent 
-              ? "Weekly delivery setup complete!" 
+              ? "Your subscription is confirmed!" 
               : "Thank you for your order!"
             }
           </h2>
+          {isSetupIntent && (
+            <p className="text-gray-600 mt-2">
+              You&apos;ll be redirected to your dashboard in a few seconds...
+            </p>
+          )}
         </div>
 
         {/* Order Summary */}
@@ -106,12 +146,10 @@ export const PaymentSuccessModal: React.FC<PaymentSuccessModalProps> = ({
             <p><strong>Name:</strong> {orderDetails.customerName}</p>
             <p><strong>Address:</strong> {orderDetails.address}</p>
             <p><strong>City:</strong> {orderDetails.city}, {orderDetails.zipCode}</p>
-            <p><strong>Delivery {isRecurring ? 'Day' : 'Date'}:</strong> {isRecurring ? `Every week on ${orderDetails.deliveryDate}` : new Date(orderDetails.deliveryDate).toLocaleDateString('en-US', { 
-              weekday: 'long', 
-              year: 'numeric', 
-              month: 'long', 
-              day: 'numeric' 
-            })}</p>
+            {isRecurring && (orderDetails as any).frequency && (
+              <p><strong>Frequency:</strong> {getFrequencyLabel((orderDetails as any).frequency)}</p>
+            )}
+            <p><strong>Delivery {isRecurring ? 'Day' : 'Date'}:</strong> {isRecurring ? `Every ${orderDetails.deliveryDate}` : formatDeliveryDate(orderDetails.deliveryDate)}</p>
             <p><strong>Email:</strong> {orderDetails.email}</p>
             <p><strong>Phone:</strong> {orderDetails.phone}</p>
             {orderDetails.comments && (
@@ -123,51 +161,34 @@ export const PaymentSuccessModal: React.FC<PaymentSuccessModalProps> = ({
           </div>
         </div>
 
-        {/* Next Steps */}
-        <div className="bg-green-50 rounded-lg p-4">
-          <h3 className="text-lg font-semibold text-gray-900 mb-2">What&apos;s Next?</h3>
-          <div className="space-y-2 text-sm">
-            {isSetupIntent ? (
-              <>
-                <div className="flex items-start">
-                  <div className="flex-shrink-0 w-5 h-5 bg-green-500 text-white rounded-full flex items-center justify-center text-xs font-bold mr-2 mt-0.5">
-                    1
-                  </div>
-                  <p className="text-gray-700">Your payment method has been securely saved for future orders.</p>
+        {/* Next Steps - Only show for regular orders, not subscriptions */}
+        {!isSetupIntent && (
+          <div className="bg-green-50 rounded-lg p-4">
+            <h3 className="text-lg font-semibold text-gray-900 mb-2">What&apos;s Next?</h3>
+            <div className="space-y-2 text-sm">
+              <div className="flex items-start">
+                <div className="flex-shrink-0 w-5 h-5 bg-green-500 text-white rounded-full flex items-center justify-center text-xs font-bold mr-2 mt-0.5">
+                  1
                 </div>
-                <div className="flex items-start">
-                  <div className="flex-shrink-0 w-5 h-5 bg-green-500 text-white rounded-full flex items-center justify-center text-xs font-bold mr-2 mt-0.5">
-                    2
-                  </div>
-                  <p className="text-gray-700">Manage your weekly delivery from your dashboard if you want to pause it or cancel it</p>
+                <p className="text-gray-700">We&apos;ll send you a confirmation email with your order details.</p>
+              </div>
+              <div className="flex items-start">
+                <div className="flex-shrink-0 w-5 h-5 bg-green-500 text-white rounded-full flex items-center justify-center text-xs font-bold mr-2 mt-0.5">
+                  2
                 </div>
-              </>
-            ) : (
-              <>
-                <div className="flex items-start">
-                  <div className="flex-shrink-0 w-5 h-5 bg-green-500 text-white rounded-full flex items-center justify-center text-xs font-bold mr-2 mt-0.5">
-                    1
-                  </div>
-                  <p className="text-gray-700">We&apos;ll send you a confirmation email with your order details.</p>
-                </div>
-                <div className="flex items-start">
-                  <div className="flex-shrink-0 w-5 h-5 bg-green-500 text-white rounded-full flex items-center justify-center text-xs font-bold mr-2 mt-0.5">
-                    2
-                  </div>
-                  <p className="text-gray-700">We&apos;ll deliver to your doorstep on the day you selected.</p>
-                </div>
-              </>
-            )}
+                <p className="text-gray-700">We&apos;ll deliver to your doorstep on the day you selected.</p>
+              </div>
+            </div>
           </div>
-        </div>
+        )}
 
         {/* Close Button */}
         <div className="flex justify-center">
           <button
-            onClick={onClose}
+            onClick={handleClose}
             className="bg-bakery-primary text-white px-6 py-3 rounded-md hover:bg-bakery-primary-dark transition-colors font-medium"
           >
-            Continue
+            {isSetupIntent ? 'Go to Dashboard' : 'Continue'}
           </button>
         </div>
       </div>

@@ -22,18 +22,20 @@ export default {
         'bakery-earth': '#6B4423',      // Earth brown
         'bakery-butter': '#F4E4BC',     // Butter yellow
         'bakery-cinnamon': '#D2691E',   // Cinnamon brown
+        'bakery-primary': '#d45b04',    // Primary orange-brown
+        'bakery-primary-dark': '#b84a03', // Darker primary for hover
       },
       fontFamily: {
-        sans: ['Source Sans Pro', 'ui-sans-serif', 'system-ui', 'sans-serif'],
-        serif: ['Crimson Text', 'ui-serif', 'Georgia', 'serif'],
+        sans: ['Inter', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+        serif: ['Playfair Display', 'ui-serif', 'Georgia', 'serif'],
         mono: ['IBM Plex Mono', 'ui-monospace', 'monospace'],
-        display: ['Crimson Text', 'serif'],
-        body: ['Source Sans Pro', 'sans-serif'],
+        display: ['Playfair Display', 'serif'],
+        body: ['Inter', 'sans-serif'],
         // Authentic bakery fonts
-        'bakery': ['Crimson Text', 'serif'],          // Elegant serif for headings
-        'handwritten': ['Caveat', 'cursive'],         // Handwritten feel
-        'rustic': ['Source Sans Pro', 'sans-serif'],  // Clean, readable body text
-        'artisan': ['Crimson Text', 'serif'],         // Artisan serif
+        'bakery': ['Playfair Display', 'serif'],          // Elegant serif for headings
+        'handwritten': ['Dancing Script', 'cursive'],     // Handwritten feel
+        'rustic': ['Inter', 'sans-serif'],                // Clean, readable body text
+        'artisan': ['Playfair Display', 'serif'],         // Artisan serif
       },
       boxShadow: {
         'bakery': '0 4px 6px rgba(139, 69, 19, 0.1), 0 2px 4px rgba(139, 69, 19, 0.06)',

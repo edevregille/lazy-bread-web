@@ -1,8 +1,7 @@
 import React from 'react';
 import { Title } from './ui/Title';
 import Image from 'next/image';
-import EmailSignup from "./EmailSignup";
-import { FIND_US_LOCATIONS, SOCIAL_MEDIA } from '@/config/app-config';
+import { FIND_US_LOCATIONS } from '@/config/app-config';
 
 export default function FindUs () {
   return (
@@ -33,23 +32,6 @@ export default function FindUs () {
               </div>
             </Title>
           ))}
-
-          <Title title="Follow us!">
-            <h3 className="text-black font-body mb-6">Lazy Bread is just launching: subscribe now to receive updates!</h3>
-            <EmailSignup />
-            {SOCIAL_MEDIA.instagram.active && (
-              <div className="mt-4 text-center">
-                <a 
-                  href={SOCIAL_MEDIA.instagram.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-bakery-primary hover:text-bakery-secondary transition-colors duration-300 font-body"
-                >
-                  📸 Follow us on Instagram: {SOCIAL_MEDIA.instagram.handle}
-                </a>
-              </div>
-            )}
-          </Title>
         </div>
       </div>
     </section>

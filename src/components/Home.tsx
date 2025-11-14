@@ -2,7 +2,6 @@
 
 import React, { useState, useEffect } from "react";
 import Image from "next/image";
-import EmailSignup from "./EmailSignup";
 import Link from "next/link";
 import { BREAD_TYPES } from "@/config/app-config";
 import { PaymentSuccessModal } from "./PaymentSuccessModal";
@@ -65,46 +64,21 @@ export default function Home() {
       {/* Hero Section */}
       <section className="py-8 px-8 bg-warm-cream">
         <div className="max-w-6xl mx-auto">
-          <div className="md:flex items-center">
-            <div className="md:w-1/3 relative animate-gentle-float">
-              <div className="md:h-full relative overflow-hidden flex items-center justify-center">
-                <Image 
-                  src="/welcome-img.png" 
-                  alt="Artisanal Organic Focaccia" 
-                  width={300}
-                  height={300}
-                  priority
-                  className="object-contain max-h-full max-w-full"
-                />
-              </div>
-            </div>
-            <div className="md:w-2/3 p-8 md:p-12">
-              <h2 className="text-4xl font-semibold text-bakery-primary mb-6">
-                Organic Sourdough Cottage Bakery
-              </h2>
-              <p className="text-xl md:text-2xl font-body text-earth-brown mb-8 leading-relaxed">
-                Handcrafted sourdough focaccia made with organic flour. 
-                Each loaf is carefully fermented and baked to perfection in our cottage bakery.
-              </p>
-              <div className="flex flex-row gap-2 sm:gap-4">
-                <Link href="/order">
-                  <button className="bg-bakery-primary text-white px-6 py-3 rounded-md hover:bg-bakery-primary-dark transition-colors font-medium">
-                    Order
-                  </button>
-                </Link>
-                <Link href="/find-us">
-                  <button className="bg-bakery-primary text-white px-6 py-3 rounded-md hover:bg-bakery-primary-dark transition-colors font-medium">
-                    Find Us
-                  </button>
-                </Link>
-              </div>
-            </div>
-          </div>
+          <Link href="/order" className="block cursor-pointer hover:opacity-90 transition-opacity">
+            <Image 
+              src="/home-ordering.png" 
+              alt="Order Now - Click to place your order" 
+              width={600}
+              height={300}
+              priority
+              className="w-full h-auto object-contain rounded-lg"
+            />
+          </Link>
         </div>
       </section>
 
       {/* Menu Section */}
-      <section className="py-8 px-8 bg-warm-cream">
+      <section className="py-8 px-8 pb-16 bg-warm-cream mb-8">
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-12">
             <h2 className="text-4xl font-semibold text-bakery-primary mb-6">
@@ -117,24 +91,24 @@ export default function Home() {
           </div>
           
           <div className="grid md:grid-cols-2 gap-8 items-center">
-            <div className="md:h-full relative overflow-hidden flex items-center justify-center">
+            <div className="flex items-center justify-center">
               <Image 
                 src="/about.png"
                 alt="Fresh Organic Focaccia"
                 priority
                 width={500}
                 height={200}
-                className="object-contain max-h-full max-w-full shadow-bakery rounded-lg"
+                className="object-contain w-full h-auto shadow-bakery rounded-lg"
               />
             </div>
             <div className="md:w-full p-6 md:p-8">
-              <h3 className="text-2xl font-bakery font-semibold text-bakery-primary mb-6">
+              <h3 className="text-2xl font-semibold text-bakery-primary mb-6">
                 Available at Farmers Markets
               </h3>
               
               <div className="space-y-4">
                 {BREAD_TYPES.map((item, index) => (
-                  <div key={index} className="card-bakery hover:shadow-bakery-hover">
+                  <div key={index} className="bg-white rounded-lg shadow-lg p-6 hover:shadow-xl transition-shadow">
                     <div className="flex items-start">
                       <div className="flex-shrink-0 h-8 w-8 rounded-full bg-golden-wheat flex items-center justify-center mr-4 shadow-golden">
                         <svg className="h-5 w-5 text-white" fill="currentColor" viewBox="0 0 20 20">
@@ -150,21 +124,6 @@ export default function Home() {
                 ))}
               </div>
             </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Email Signup Section */}
-      <section className="py-16 px-8 background-gradient-warm">
-        <div className="max-w-4xl mx-auto text-center">
-          <div className="card-bakery">
-            <h2 className="text-4xl font-semibold text-bakery-primary mb-6">
-              Follow Us
-            </h2>
-            <p className="text-lg font-body text-earth-brown mb-8">
-              Subscribe to receive updates from Lazy Bread.
-            </p>
-            <EmailSignup />
           </div>
         </div>
       </section>

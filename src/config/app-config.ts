@@ -3,7 +3,6 @@
 export const NAV_ITEMS = [
   { name: "Home", path: "/" },
   { name: "Order", path: "/order" },
-  { name: "Inspiration", path: "/inspiration" },
   { name: "About", path: "/about" },
   { name: "Find Us", path: "/find-us" },
 ];
@@ -11,7 +10,6 @@ export const NAV_ITEMS = [
 export const AUTH_NAV_ITEMS = [
   { name: "Home", path: "/" },
   { name: "Order", path: "/order" },
-  { name: "Inspiration", path: "/inspiration" },
   { name: "About", path: "/about" },
   { name: "Find Us", path: "/find-us" },
 ];
@@ -19,30 +17,38 @@ export const AUTH_NAV_ITEMS = [
 export const BREAD_TYPES = [
   { 
     id: 'classic-salt', 
-    name: 'Classic Salt', 
+    name: 'Classic Salt Loaf', 
     price: 6.00, 
-    description: 'Traditional sourdough with sea salt',
+    description: 'Traditional sourdough focaccia finished off with a light sprinkling of course kosher salt. Ready for anything!',
     availableForOrders: true, 
   },
   { 
     id: 'rosemary', 
-    name: 'Rosemary', 
+    name: 'Rosemary Loaf', 
     price: 6.00, 
-    description: 'Artisan bread with fresh rosemary' ,
+    description: 'Backyard rosemary gives a delicate flavor to this loaf that pairs beautifully with the slight sourdough tang.',
     availableForOrders: true, 
   },
   { 
     id: 'green-olive', 
-    name: 'Green Olive', 
+    name: 'Olive', 
     price: 6.00, 
-    description: 'Rustic bread with green olives',
+    description: 'Laced with green pimento olives throughout.',
     availableForOrders: true, 
-  }, { 
-    id: 'seasonal', 
-    name: 'Seasonal', 
+  },
+  { 
+    id: 'caramelized-onion', 
+    name: 'Caramelized onion with herbs de Provence', 
     price: 6.00, 
-    description: 'Candied orange peel and anise, grape & rosemary, parmesan & pepper',
-    availableForOrders: false, 
+    description: 'Savory onions caramelized and baked into the dough for an added hit of flavor',
+    availableForOrders: true, 
+  },
+  { 
+    id: 'dilly-bread', 
+    name: 'Dilly bread', 
+    price: 6.00, 
+    description: 'Dill seeds and onions bring comforting flavor to our tangy sourdough',
+    availableForOrders: true, 
   },
 ];
 
@@ -64,6 +70,11 @@ export const BUSINESS_SETTINGS = {
   deliveryDays: ["Wednesday","Friday"],
   minOrderAdvanceHours: 36,
   maxOrderQuantity: 5,
+  // Excluded delivery dates (format: YYYY-MM-DD)
+  excludedDeliveryDates: [
+    "2025-11-26",
+    "2025-11-28",
+  ],
 };
 
 export const DELIVERY_ZONES = {
@@ -86,7 +97,7 @@ export const FIND_US_LOCATIONS = [
     address: '55 NE Holman St, Portland OR',
     image: '/popup-shop.jpg',
     imageAlt: 'Pop-up Shop',
-    schedule: 'Wednesdays, Fridays, and Saturdays 8am to 9pm',
+    schedule: 'Wednesdays and Fridays 8am to 9pm',
     active: true,
     coordinates: {
       lat: 45.5647,
@@ -220,8 +231,11 @@ export const getNextDeliveryDateForDay = (dayName: string): string | null => {
     const pstDate = new Date(date.toLocaleString("en-US", {timeZone: "America/Los_Angeles"}));
     const dayOfWeek = pstDate.getDay();
     
-    if (dayOfWeek === dayNumber && date > minOrderTime) {
-      return date.toISOString().split('T')[0];
+    // Format date as YYYY-MM-DD for comparison
+    const dateStr = date.toISOString().split('T')[0];
+    
+    if (dayOfWeek === dayNumber && date > minOrderTime && !BUSINESS_SETTINGS.excludedDeliveryDates.includes(dateStr)) {
+      return dateStr;
     }
   }
   
@@ -267,7 +281,8 @@ export const getAvailableDeliveryDates = (): string[] => {
     const deadlineStr = `${dYear}-${dMonth}-${dDay}`;
 
     // Only include if it's an allowed delivery day AND its PST calendar day is strictly after the 36h deadline day
-    if (allowedDeliveryDays.includes(dayOfWeek) && candidateStr > deadlineStr) {
+    // AND it's not in the excluded dates list
+    if (allowedDeliveryDays.includes(dayOfWeek) && candidateStr > deadlineStr && !BUSINESS_SETTINGS.excludedDeliveryDates.includes(candidateStr)) {
       results.push(candidateStr); // e.g. "2025-08-16"
     }
 

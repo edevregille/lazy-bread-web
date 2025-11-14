@@ -19,7 +19,7 @@ export default function ShowSavedPaymentMethod({ paymentMethods, onPaymentMethod
   }, []);
 
   return (
-    <div className="card-bakery">
+    <div className="bg-white rounded-lg shadow-lg p-6">
       <div className="flex justify-between items-center mb-6">
         <h2 className="text-2xl font-semibold text-bakery-primary">
           💳 Payment Information

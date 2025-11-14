@@ -142,7 +142,7 @@ export default function SignIn({ onSwitchToSignUp, onSwitchToForgotPassword, onC
               <button
                 type="button"
                 onClick={onSwitchToForgotPassword}
-                className="text-sm text-bakery-primary hover:text-bakery-primary-dark font-medium"
+                className="text-sm btn-text"
               >
                 Forgot Password?
               </button>
@@ -152,7 +152,7 @@ export default function SignIn({ onSwitchToSignUp, onSwitchToForgotPassword, onC
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-bakery-primary text-white py-2 px-4 rounded-md hover:bg-bakery-primary-dark transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            className="w-full btn-primary"
           >
             {loading ? 'Signing In...' : 'Sign In'}
           </button>
@@ -178,7 +178,7 @@ export default function SignIn({ onSwitchToSignUp, onSwitchToForgotPassword, onC
             Don&apos;t have an account?{' '}
             <button
               onClick={onSwitchToSignUp}
-              className="text-bakery-primary hover:text-bakery-primary-dark font-medium"
+              className="btn-text"
             >
               Sign Up
             </button>

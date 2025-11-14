@@ -348,6 +348,7 @@ export async function getCustomerPaymentMethods(customerId: string): Promise<Str
  * @param customerId - Stripe customer ID
  * @param orderDetails - Optional order details to store as metadata
  * @param userId - Optional user ID
+ * @param frequency - Optional delivery frequency
  * @returns Promise<Stripe.SetupIntent>
  */
 export async function createSetupIntent(
@@ -372,6 +373,7 @@ export async function createSetupIntent(
     comments?: string;
   },
   userId?: string,
+  frequency?: 'weekly' | 'bi-weekly' | 'every-4-weeks',
 ): Promise<Stripe.SetupIntent> {
   const stripe = await getStripe();
 
@@ -394,6 +396,7 @@ export async function createSetupIntent(
       comments: orderDetails.comments || '',
       isRecurring: 'true',
       userId: userId || '',
+      frequency: frequency || 'weekly',
     } : {},
   };
 

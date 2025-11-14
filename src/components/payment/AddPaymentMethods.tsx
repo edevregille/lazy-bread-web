@@ -90,14 +90,14 @@ function AddPaymentMethodForm({ onClose }: AddPaymentMethodFormProps) {
         <button
           type="submit"
           disabled={!stripe || loading}
-          className="flex-1 bg-bakery-primary text-white py-3 px-4 rounded-md hover:bg-bakery-primary-dark transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          className="flex-1 btn-primary"
         >
           {loading ? 'Saving...' : 'Save'}
         </button>
         <button
           type="button"
           onClick={() => onClose?.()}
-          className="flex-1 bg-gray-300 text-gray-700 py-3 px-4 rounded-md hover:bg-gray-400 transition-colors"
+          className="flex-1 btn-secondary"
         >
           Cancel
         </button>
@@ -179,7 +179,7 @@ export default function AddPaymentMethodPage({ onClose }: AddPaymentMethodPagePr
   if (setupError) {
     return (
       <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="card-bakery">
+        <div className="bg-white rounded-lg shadow-lg p-6">
           <div className="text-center py-8">
             <div className="mx-auto flex items-center justify-center h-16 w-16 rounded-full bg-red-100 mb-4">
               <svg className="h-8 w-8 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -196,7 +196,7 @@ export default function AddPaymentMethodPage({ onClose }: AddPaymentMethodPagePr
 
   return (
       <div className="w-full px-4 sm:px-6 lg:px-8">
-        <div className="card-bakery max-h-[80vh] overflow-y-auto">
+        <div className="bg-white rounded-lg shadow-lg p-6 max-h-[80vh] overflow-y-auto">
           {clientSecret && (
             <Elements
               stripe={stripePromise}
