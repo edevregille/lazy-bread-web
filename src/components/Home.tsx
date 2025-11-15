@@ -65,6 +65,18 @@ export default function Home() {
       <section className="py-8 px-8 bg-warm-cream">
         <div className="max-w-6xl mx-auto">
           <Link href="/order" className="block cursor-pointer hover:opacity-90 transition-opacity">
+            {/* Mobile Image */}
+            <Image 
+              src="/home-ordering-mobile.png" 
+              alt="Order Now" 
+              width={1920}
+              height={1080}
+              quality={100}
+              priority
+              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 100vw, 1200px"
+              className="object-contain w-full h-auto rounded-lg shadow-lg md:hidden"
+            />
+            {/* Desktop Image */}
             <Image 
               src="/home-ordering.png" 
               alt="Order Now" 
@@ -73,7 +85,7 @@ export default function Home() {
               quality={100}
               priority
               sizes="(max-width: 768px) 100vw, (max-width: 1200px) 100vw, 1200px"
-              className="object-contain w-full h-auto rounded-lg shadow-lg"
+              className="object-contain w-full h-auto rounded-lg shadow-lg hidden md:block"
             />
           </Link>
         </div>

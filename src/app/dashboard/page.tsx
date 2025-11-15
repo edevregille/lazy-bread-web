@@ -418,12 +418,12 @@ export default function DashboardPage() {
         {/* Header */}
         <div className="bg-white rounded-lg shadow-lg p-6 mb-8">
           <div className="flex justify-between items-center">
-            <h2 className="text-4xl font-semibold text-bakery-primary">
+            <h2 className="text-2xl md:text-4xl font-semibold text-bakery-primary">
               Welcome back, {currentUser.displayName}!
             </h2>
             <button
               onClick={() => router.push('/order')}
-              className="btn-primary"
+              className="btn-primary text-sm md:text-base px-4 md:px-6 py-2 md:py-3 whitespace-nowrap"
             >
               + Order
             </button>
@@ -795,7 +795,7 @@ export default function DashboardPage() {
                   <div className="space-y-6">
                     {recentOrders.map((order) => (
                       <div key={order.id} className="bg-white rounded-lg shadow-md p-6 border border-bakery-light">
-                        <div className="flex justify-between items-start mb-4">
+                        <div className="flex flex-col md:flex-row md:justify-between md:items-start mb-4 gap-2 md:gap-0">
                           <div>
                             <h3 className="text-lg font-semibold text-bakery-primary">
                               Order #{order.id || 'Unknown'}
@@ -804,7 +804,7 @@ export default function DashboardPage() {
                               Placed on {order.createdAt ? (order.createdAt instanceof Date ? order.createdAt.toLocaleDateString() : new Date(order.createdAt).toLocaleDateString()) : 'Unknown'}
                             </p>
                           </div>
-                          <span className={`px-3 py-1 rounded-full text-sm font-medium ${getStatusColor(order.status)}`}>
+                          <span className={`px-3 py-1 rounded-full text-sm font-medium w-fit ${getStatusColor(order.status)}`}>
                             {order.status.charAt(0).toUpperCase() + order.status.slice(1)}
                           </span>
                         </div>
