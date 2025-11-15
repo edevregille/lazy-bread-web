@@ -189,8 +189,8 @@ export default function SubscriptionScheduleEditModal({
             required
           >
             <option value="weekly">Weekly</option>
-            <option value="bi-weekly">Bi-weekly (Every 2 weeks)</option>
-            <option value="every-4-weeks">Every 4 weeks</option>
+            <option value="bi-weekly">Bi-weekly (Delivering every 2 weeks)</option>
+            <option value="every-4-weeks">Delivering every 4 weeks</option>
           </select>
         </div>
 
@@ -206,7 +206,7 @@ export default function SubscriptionScheduleEditModal({
           >
             {BUSINESS_SETTINGS.deliveryDays.map((day) => (
               <option key={day} value={day}>
-                {day}
+                {day}s
               </option>
             ))}
           </select>

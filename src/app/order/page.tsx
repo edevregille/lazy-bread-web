@@ -324,14 +324,7 @@ export default function OrderPage() {
             <div>
               {/* <h2 className="text-2xl font-semibold text-bakery-primary mb-6">Order Type</h2> */}
               <div className="bg-gradient-to-r from-yellow-50 to-orange-50 border-2 border-yellow-200 rounded-lg p-6 hover:border-yellow-300 transition-colors">
-                <div className="flex items-start space-x-4">
-                  <div className="flex-shrink-0">
-                    <div className="w-10 h-10 bg-yellow-100 rounded-full flex items-center justify-center">
-                      <svg className="w-6 h-6 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-                      </svg>
-                    </div>
-                  </div>
+                <div className="flex items-start">
                   <div className="flex-1">
                     <div className="flex items-center space-x-3 mb-2">
                       <input
@@ -389,8 +382,8 @@ export default function OrderPage() {
                       disabled={isHolidayMode}
                     >
                       <option value="weekly">Weekly</option>
-                      <option value="bi-weekly">Bi-weekly (Every 2 weeks)</option>
-                      <option value="every-4-weeks">Every 4 weeks</option>
+                      <option value="bi-weekly">Bi-weekly (Delivering every 2 weeks)</option>
+                      <option value="every-4-weeks">Delivering every 4 weeks</option>
                     </select>
                     <p className="text-xs text-gray-500 mt-1">
                       Choose how often you&apos;d like to receive your delivery
@@ -412,7 +405,7 @@ export default function OrderPage() {
                       <option value="">Select your preferred delivery day</option>
                       {BUSINESS_SETTINGS.deliveryDays.map((day) => (
                         <option key={day} value={day.toLowerCase()}>
-                          Every {day}
+                          {day}s
                         </option>
                       ))}
                     </select>
