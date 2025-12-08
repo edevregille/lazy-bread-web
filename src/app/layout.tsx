@@ -80,10 +80,10 @@ export default function RootLayout({
             window.DD_RUM && window.DD_RUM.init({
               applicationId: "${process.env.NEXT_PUBLIC_DD_RUM_APPLICATION_ID || ''}",
               clientToken: "${process.env.NEXT_PUBLIC_DD_RUM_CLIENT_TOKEN || ''}",
-              site: "${process.env.NEXT_PUBLIC_DD_SITE || ''}",
-              service: "${process.env.NEXT_PUBLIC_DD_SERVICE || ''}",
+              site: "datadoghq.com",
+              service: "lazy-bread-web",
               env: "${process.env.NEXT_PUBLIC_DD_ENV || ''}",
-              version: "${process.env.NEXT_PUBLIC_DD_VERSION || ''}",
+              version: "",
               sessionSampleRate: 100,
               sessionReplaySampleRate: 20,
               trackUserInteractions: true,

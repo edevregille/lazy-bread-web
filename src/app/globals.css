@@ -5,20 +5,23 @@
 @tailwind utilities;
 
 :root {
-  --background: #FDF8F0;
-  --foreground: #6B4423;
-  --primary: #d45b04;
-  --primary-light: #A0522D;
-  --primary-dark: #b84a03;
-  --secondary: #D2691E;
-  --accent: #F4A460;
-  /* --warm-cream: #FDF5E6; */
-  --warm-beige: #F5F5DC;
-  --earth-brown: #8B4513;
-  --golden-wheat: #DAA520;
-  --sage-green: #9DC183;
-  --rust-orange: #CD853F;
+  --background: #FFFFFF;
+  --foreground: #1F1F1F;
+  --primary: #B87D6A;
+  --primary-light: #D4A799;
+  --primary-dark: #9A6B5A;
+  --secondary: #8B7D6B;
+  --accent: #9CAF88;
+  --warm-cream: #FAF8F5;
+  --warm-beige: #F5F3F0;
+  --earth-brown: #5C4A3A;
+  --golden-wheat: #C9A961;
+  --sage-green: #9CAF88;
+  --rust-orange: #B87D6A;
   --black: #000000;
+  --gray-light: #F7F7F7;
+  --gray-medium: #E5E5E5;
+  --gray-dark: #6B6B6B;
 }
 
 body {
@@ -26,6 +29,8 @@ body {
   background: var(--background);
   font-family: 'Inter', sans-serif;
   line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 /* Artisanal Bakery Typography */
@@ -99,33 +104,33 @@ body {
   background-color: var(--sage-green);
 }
 
-/* Gradients */
+/* Gradients - Subtle and Clean */
 .text-gradient-bakery {
-  background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 50%, var(--golden-wheat) 100%);
+  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
 }
 
 .background-gradient-bakery {
-  background: linear-gradient(135deg, var(--warm-cream) 0%, var(--warm-beige) 50%, #fff8dc 100%);
+  background: linear-gradient(135deg, var(--background) 0%, var(--warm-cream) 100%);
 }
 
 .background-gradient-warm {
-  background: linear-gradient(135deg, var(--warm-cream) 0%, #faf0e6 100%);
+  background: linear-gradient(135deg, var(--warm-cream) 0%, var(--warm-beige) 100%);
 }
 
-/* Organic Shadows and Effects */
+/* Clean, Subtle Shadows */
 .shadow-bakery {
-  box-shadow: 0 4px 20px rgba(139, 69, 19, 0.15), 0 2px 8px rgba(139, 69, 19, 0.1);
+  box-shadow: 0 2px 8px rgba(31, 31, 31, 0.08), 0 1px 3px rgba(31, 31, 31, 0.05);
 }
 
 .shadow-bakery-hover {
-  box-shadow: 0 8px 30px rgba(139, 69, 19, 0.2), 0 4px 12px rgba(139, 69, 19, 0.15);
+  box-shadow: 0 4px 12px rgba(31, 31, 31, 0.12), 0 2px 6px rgba(31, 31, 31, 0.08);
 }
 
 .shadow-golden {
-  box-shadow: 0 4px 15px rgba(218, 165, 32, 0.3), 0 2px 6px rgba(218, 165, 32, 0.2);
+  box-shadow: 0 2px 8px rgba(201, 169, 97, 0.15), 0 1px 3px rgba(201, 169, 97, 0.1);
 }
 
 /* Organic Borders */
@@ -141,19 +146,18 @@ body {
   border: 2px solid var(--golden-wheat);
 }
 
-/* Button Styles - Enhanced */
+/* Button Styles - Clean and Modern */
 .btn-bakery-primary {
-  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+  background: var(--primary);
   color: white;
   padding: 14px 32px;
-  border-radius: 10px;
+  border-radius: 8px;
   font-weight: 600;
   font-size: 16px;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: all 0.2s ease;
   box-shadow: 
-    0 4px 6px rgba(139, 69, 19, 0.2),
-    0 2px 4px rgba(139, 69, 19, 0.15),
-    0 0 0 0 rgba(139, 69, 19, 0);
+    0 2px 4px rgba(184, 125, 106, 0.2),
+    0 1px 2px rgba(184, 125, 106, 0.15);
   border: none;
   cursor: pointer;
   position: relative;
@@ -172,12 +176,11 @@ body {
 }
 
 .btn-bakery-primary:hover {
-  transform: translateY(-3px);
+  transform: translateY(-1px);
   box-shadow: 
-    0 8px 12px rgba(139, 69, 19, 0.3),
-    0 4px 6px rgba(139, 69, 19, 0.2),
-    0 0 0 0 rgba(139, 69, 19, 0);
-  background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary) 100%);
+    0 4px 8px rgba(184, 125, 106, 0.25),
+    0 2px 4px rgba(184, 125, 106, 0.2);
+  background: var(--primary-dark);
 }
 
 .btn-bakery-primary:hover::before {
@@ -185,18 +188,16 @@ body {
 }
 
 .btn-bakery-primary:active {
-  transform: translateY(-1px);
+  transform: translateY(0);
   box-shadow: 
-    0 2px 4px rgba(139, 69, 19, 0.2),
-    0 1px 2px rgba(139, 69, 19, 0.15);
+    0 1px 2px rgba(184, 125, 106, 0.2);
 }
 
 .btn-bakery-primary:focus {
   outline: none;
   box-shadow: 
-    0 4px 6px rgba(139, 69, 19, 0.2),
-    0 2px 4px rgba(139, 69, 19, 0.15),
-    0 0 0 3px rgba(139, 69, 19, 0.3);
+    0 2px 4px rgba(184, 125, 106, 0.2),
+    0 0 0 3px rgba(184, 125, 106, 0.2);
 }
 
 .btn-bakery-primary:disabled {
@@ -206,33 +207,37 @@ body {
 }
 
 .btn-bakery-secondary {
-  background: linear-gradient(135deg, var(--secondary) 0%, var(--accent) 100%);
-  color: white;
+  background: transparent;
+  color: var(--primary);
   padding: 12px 24px;
   border-radius: 8px;
   font-weight: 500;
-  transition: all 0.3s ease;
-  box-shadow: 0 4px 15px rgba(210, 105, 30, 0.3);
+  border: 2px solid var(--primary);
+  transition: all 0.2s ease;
+  box-shadow: 0 1px 2px rgba(184, 125, 106, 0.1);
 }
 
 .btn-bakery-secondary:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(210, 105, 30, 0.4);
+  transform: translateY(-1px);
+  background: var(--primary);
+  color: white;
+  box-shadow: 0 2px 4px rgba(184, 125, 106, 0.2);
 }
 
-/* Card Styles - Legacy class, prefer using Tailwind classes directly */
+/* Card Styles - Clean and Minimal */
 .card-bakery {
-  background: var(--warm-cream);
+  background: var(--background);
   border-radius: 12px;
   padding: 24px;
-  box-shadow: 0 4px 20px rgba(139, 69, 19, 0.1);
-  border: 1px solid rgba(139, 69, 19, 0.1);
-  transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(31, 31, 31, 0.08);
+  border: 1px solid var(--gray-medium);
+  transition: all 0.2s ease;
 }
 
 .card-bakery:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 8px 30px rgba(139, 69, 19, 0.15);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(31, 31, 31, 0.12);
+  border-color: var(--primary);
 }
 
 /* Organic Patterns */
@@ -246,8 +251,8 @@ body {
     45deg,
     transparent,
     transparent 2px,
-    rgba(139, 69, 19, 0.05) 2px,
-    rgba(139, 69, 19, 0.05) 4px
+    rgba(184, 125, 106, 0.03) 2px,
+    rgba(184, 125, 106, 0.03) 4px
   );
 }
 
@@ -265,8 +270,8 @@ body {
   right: 0;
   bottom: 0;
   background-image: 
-    radial-gradient(circle at 20% 80%, rgba(218, 165, 32, 0.1) 0%, transparent 50%),
-    radial-gradient(circle at 80% 20%, rgba(139, 69, 19, 0.05) 0%, transparent 50%);
+    radial-gradient(circle at 20% 80%, rgba(201, 169, 97, 0.05) 0%, transparent 50%),
+    radial-gradient(circle at 80% 20%, rgba(184, 125, 106, 0.03) 0%, transparent 50%);
   pointer-events: none;
 }
 
@@ -306,24 +311,25 @@ body {
 /* Authentic Bakery Utility Classes */
 @layer components {
   .btn-bakery-primary {
-    @apply bg-bakery-brown text-white px-8 py-3.5 rounded-xl font-semibold text-base
-           hover:bg-bakery-rust transition-all duration-300 
-           shadow-[0_4px_6px_rgba(139,69,19,0.2),0_2px_4px_rgba(139,69,19,0.15)]
-           hover:shadow-[0_8px_12px_rgba(139,69,19,0.3),0_4px_6px_rgba(139,69,19,0.2)]
-           hover:-translate-y-0.5 active:translate-y-0 active:shadow-[0_2px_4px_rgba(139,69,19,0.2)]
-           focus:outline-none focus:ring-2 focus:ring-bakery-gold focus:ring-offset-2
+    @apply bg-bakery-primary text-white px-8 py-3.5 rounded-lg font-semibold text-base
+           hover:bg-bakery-primary-dark transition-all duration-200 
+           shadow-[0_2px_4px_rgba(184,125,106,0.2),0_1px_2px_rgba(184,125,106,0.15)]
+           hover:shadow-[0_4px_8px_rgba(184,125,106,0.25),0_2px_4px_rgba(184,125,106,0.2)]
+           hover:-translate-y-0.5 active:translate-y-0 active:shadow-[0_1px_2px_rgba(184,125,106,0.2)]
+           focus:outline-none focus:ring-2 focus:ring-bakery-primary focus:ring-offset-2
            disabled:opacity-60 disabled:cursor-not-allowed disabled:transform-none;
   }
 
   .btn-bakery-secondary {
-    @apply bg-bakery-cream text-bakery-brown border-2 border-bakery-brown px-6 py-3 rounded-lg 
-           font-bakery font-semibold hover:bg-bakery-warm transition-all duration-300 
-           shadow-rustic hover:shadow-bakery focus:outline-none focus:ring-2 focus:ring-bakery-gold focus:ring-offset-2;
+    @apply bg-transparent text-bakery-primary border-2 border-bakery-primary px-6 py-3 rounded-lg 
+           font-semibold hover:bg-bakery-primary hover:text-white transition-all duration-200 
+           shadow-[0_1px_2px_rgba(184,125,106,0.1)] hover:shadow-[0_2px_4px_rgba(184,125,106,0.2)]
+           focus:outline-none focus:ring-2 focus:ring-bakery-primary focus:ring-offset-2;
   }
 
   .card-bakery {
-    @apply bg-bakery-cream border border-bakery-warm rounded-lg p-6 shadow-bakery 
-           hover:shadow-bakery-hover transition-all duration-300;
+    @apply bg-white border border-gray-300 rounded-lg p-6 shadow-[0_2px_8px_rgba(31,31,31,0.08)] 
+           hover:shadow-[0_4px_12px_rgba(31,31,31,0.12)] hover:border-bakery-primary transition-all duration-200;
   }
 
   .text-bakery-primary {
@@ -343,25 +349,25 @@ body {
   }
 
   .shadow-bakery-hover {
-    @apply shadow-[0_10px_15px_rgba(139,69,19,0.1),0_4px_6px_rgba(139,69,19,0.05)];
+    @apply shadow-[0_4px_12px_rgba(31,31,31,0.12),0_2px_6px_rgba(31,31,31,0.08)];
   }
 
   .shadow-golden {
-    @apply shadow-[0_2px_4px_rgba(212,175,55,0.3)];
+    @apply shadow-[0_2px_8px_rgba(201,169,97,0.15),0_1px_3px_rgba(201,169,97,0.1)];
   }
 
   .background-gradient-warm {
-    @apply bg-gradient-to-br from-[#FDF8F0] via-[#F5E6D3] to-[#F4E4BC];
+    @apply bg-gradient-to-br from-white via-[#FAF8F5] to-[#F5F3F0];
   }
 
   /* Enhanced Button System - Use these classes for consistent button styling */
   .btn-primary {
-    @apply text-white px-6 py-3 rounded-md font-bold
-           transition-all duration-300 
-           shadow-[0_4px_6px_rgba(139,69,19,0.2),0_2px_4px_rgba(139,69,19,0.15)]
-           hover:shadow-[0_8px_12px_rgba(139,69,19,0.3),0_4px_6px_rgba(139,69,19,0.2)]
-           hover:-translate-y-0.5 active:translate-y-0 active:shadow-[0_2px_4px_rgba(139,69,19,0.2)]
-           focus:outline-none focus:ring-2 focus:ring-bakery-gold focus:ring-offset-2
+    @apply text-white px-6 py-3 rounded-lg font-semibold
+           transition-all duration-200 
+           shadow-[0_2px_4px_rgba(184,125,106,0.2),0_1px_2px_rgba(184,125,106,0.15)]
+           hover:shadow-[0_4px_8px_rgba(184,125,106,0.25),0_2px_4px_rgba(184,125,106,0.2)]
+           hover:-translate-y-0.5 active:translate-y-0 active:shadow-[0_1px_2px_rgba(184,125,106,0.2)]
+           focus:outline-none focus:ring-2 focus:ring-bakery-primary focus:ring-offset-2
            disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none;
     background: var(--primary);
   }
@@ -379,9 +385,10 @@ body {
   }
 
   .btn-secondary {
-    @apply bg-bakery-cream text-bakery-brown border-2 border-bakery-brown px-6 py-3 rounded-md 
-           font-bold hover:bg-bakery-warm transition-all duration-300 
-           shadow-rustic hover:shadow-bakery focus:outline-none focus:ring-2 focus:ring-bakery-gold focus:ring-offset-2
+    @apply bg-transparent text-bakery-primary border-2 border-bakery-primary px-6 py-3 rounded-lg 
+           font-semibold hover:bg-bakery-primary hover:text-white transition-all duration-200 
+           shadow-[0_1px_2px_rgba(184,125,106,0.1)] hover:shadow-[0_2px_4px_rgba(184,125,106,0.2)]
+           focus:outline-none focus:ring-2 focus:ring-bakery-primary focus:ring-offset-2
            disabled:opacity-50 disabled:cursor-not-allowed;
   }
 
@@ -394,13 +401,13 @@ body {
 /* Custom bakery patterns and effects */
 .bakery-texture {
   background-image: 
-    radial-gradient(circle at 25% 25%, rgba(139, 69, 19, 0.05) 0%, transparent 50%),
-    radial-gradient(circle at 75% 75%, rgba(212, 175, 55, 0.05) 0%, transparent 50%);
+    radial-gradient(circle at 25% 25%, rgba(184, 125, 106, 0.03) 0%, transparent 50%),
+    radial-gradient(circle at 75% 75%, rgba(201, 169, 97, 0.03) 0%, transparent 50%);
 }
 
 .rustic-border {
   border: 2px solid;
-  border-image: linear-gradient(45deg, #8B4513, #D4AF37, #8B4513) 1;
+  border-image: linear-gradient(45deg, var(--primary), var(--golden-wheat), var(--primary)) 1;
 }
 
 .handwritten-accent {
@@ -428,9 +435,9 @@ body {
 /* Authentic bakery background pattern */
 .bakery-pattern-bg {
   background-image: 
-    radial-gradient(circle at 20% 20%, rgba(139, 69, 19, 0.03) 0%, transparent 50%),
-    radial-gradient(circle at 80% 80%, rgba(212, 175, 55, 0.03) 0%, transparent 50%),
-    radial-gradient(circle at 40% 60%, rgba(107, 68, 35, 0.02) 0%, transparent 50%);
+    radial-gradient(circle at 20% 20%, rgba(184, 125, 106, 0.02) 0%, transparent 50%),
+    radial-gradient(circle at 80% 80%, rgba(201, 169, 97, 0.02) 0%, transparent 50%),
+    radial-gradient(circle at 40% 60%, rgba(92, 74, 58, 0.015) 0%, transparent 50%);
 }
 
 /* Legacy classes for backward compatibility */
@@ -439,16 +446,16 @@ body {
 }
 
 .text-gradient_indigo-purple {
-  background: linear-gradient(90deg, #8B4513 0%, #D4AF37 100%);
+  background: linear-gradient(90deg, var(--primary) 0%, var(--primary-dark) 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
 }
 
 .background-gradient_indigo-purple {
-  background: linear-gradient(90deg, #8B4513 0%, #D4AF37 100%);
+  background: linear-gradient(90deg, var(--primary) 0%, var(--primary-dark) 100%);
 }
 
 .orange-light{
-  box-shadow: 0 4px 6px rgba(212, 175, 55, 0.3), 0 1px 3px rgba(212, 175, 55, 0.2);
+  box-shadow: 0 2px 4px rgba(184, 125, 106, 0.15), 0 1px 2px rgba(184, 125, 106, 0.1);
 }
