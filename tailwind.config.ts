@@ -11,19 +11,23 @@ export default {
       colors: {
         background: "var(--background)",
         foreground: "var(--foreground)",
-        // Authentic bakery colors
-        'bakery-cream': '#FDF8F0',      // Warm cream color
-        'bakery-brown': '#8B4513',      // Rich brown
-        'bakery-gold': '#D4AF37',       // Golden wheat
-        'bakery-rust': '#B8860B',       // Rustic orange-brown
-        'bakery-sage': '#9CAF88',       // Sage green
-        'bakery-charcoal': '#36454F',   // Charcoal gray
-        'bakery-warm': '#F5E6D3',       // Warm beige
-        'bakery-earth': '#6B4423',      // Earth brown
-        'bakery-butter': '#F4E4BC',     // Butter yellow
-        'bakery-cinnamon': '#D2691E',   // Cinnamon brown
-        'bakery-primary': '#d45b04',    // Primary orange-brown
-        'bakery-primary-dark': '#b84a03', // Darker primary for hover
+        // Clean, modern bakery colors
+        'bakery-cream': '#FAF8F5',      // Soft cream
+        'bakery-brown': '#5C4A3A',      // Refined brown
+        'bakery-gold': '#C9A961',       // Soft golden
+        'bakery-rust': '#9A6B5A',       // Muted terracotta
+        'bakery-sage': '#9CAF88',        // Sage green
+        'bakery-charcoal': '#1F1F1F',    // Dark charcoal
+        'bakery-warm': '#F5F3F0',       // Warm beige
+        'bakery-earth': '#5C4A3A',       // Earth brown
+        'bakery-butter': '#F5F3F0',     // Soft butter
+        'bakery-cinnamon': '#8B7D6B',   // Muted cinnamon
+        'bakery-primary': '#B87D6A',    // Soft terracotta primary
+        'bakery-primary-dark': '#9A6B5A', // Darker primary for hover
+        'bakery-primary-light': '#D4A799', // Lighter primary
+        'gray-light': '#F7F7F7',
+        'gray-medium': '#E5E5E5',
+        'gray-dark': '#6B6B6B',
       },
       fontFamily: {
         sans: ['Inter', 'ui-sans-serif', 'system-ui', 'sans-serif'],
@@ -38,9 +42,9 @@ export default {
         'artisan': ['Playfair Display', 'serif'],         // Artisan serif
       },
       boxShadow: {
-        'bakery': '0 4px 6px rgba(139, 69, 19, 0.1), 0 2px 4px rgba(139, 69, 19, 0.06)',
-        'bakery-hover': '0 10px 15px rgba(139, 69, 19, 0.1), 0 4px 6px rgba(139, 69, 19, 0.05)',
-        'rustic': '0 2px 4px rgba(107, 68, 35, 0.15)',
+        'bakery': '0 2px 8px rgba(31, 31, 31, 0.08), 0 1px 3px rgba(31, 31, 31, 0.05)',
+        'bakery-hover': '0 4px 12px rgba(31, 31, 31, 0.12), 0 2px 6px rgba(31, 31, 31, 0.08)',
+        'rustic': '0 1px 3px rgba(92, 74, 58, 0.12)',
       },
       backgroundImage: {
         'bakery-pattern': "url('data:image/svg+xml,%3Csvg width=\"60\" height=\"60\" viewBox=\"0 0 60 60\" xmlns=\"http://www.w3.org/2000/svg\"%3E%3Cg fill=\"none\" fill-rule=\"evenodd\"%3E%3Cg fill=\"%23f5e6d3\" fill-opacity=\"0.4\"%3E%3Ccircle cx=\"30\" cy=\"30\" r=\"2\"/%3E%3C/g%3E%3C/g%3E%3C/svg%3E')",

@@ -205,7 +205,7 @@ export default function AddPaymentMethodPage({ onClose }: AddPaymentMethodPagePr
                 appearance: {
                   theme: 'stripe',
                   variables: {
-                    colorPrimary: '#8B4513', // bakery-primary color
+                    colorPrimary: '#B87D6A', // bakery-primary color
                   },
                 },
               }}

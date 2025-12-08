@@ -1,4 +1,5 @@
 import type { Metadata, Viewport } from "next";
+import Script from "next/script";
 import "./globals.css";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
@@ -25,8 +26,8 @@ export const metadata: Metadata = {
     title: 'Lazy Bread PDX',
   },
   other: {
-    'msapplication-TileColor': '#8B4513',
-    'theme-color': '#8B4513',
+    'msapplication-TileColor': '#B87D6A',
+    'theme-color': '#B87D6A',
   },
 };
 
@@ -68,6 +69,30 @@ export default function RootLayout({
       <body
         className="antialiased"
       >
+        <Script
+          id="dd-rum-sync"
+          src="https://www.datadoghq-browser-agent.com/us1/v6/datadog-rum.js"
+          type="text/javascript"
+          strategy="beforeInteractive"
+        />
+        <Script id="datadog-rum">
+          {`
+            window.DD_RUM && window.DD_RUM.init({
+              applicationId: "${process.env.NEXT_PUBLIC_DD_RUM_APPLICATION_ID || ''}",
+              clientToken: "${process.env.NEXT_PUBLIC_DD_RUM_CLIENT_TOKEN || ''}",
+              site: "${process.env.NEXT_PUBLIC_DD_SITE || ''}",
+              service: "${process.env.NEXT_PUBLIC_DD_SERVICE || ''}",
+              env: "${process.env.NEXT_PUBLIC_DD_ENV || ''}",
+              version: "${process.env.NEXT_PUBLIC_DD_VERSION || ''}",
+              sessionSampleRate: 100,
+              sessionReplaySampleRate: 20,
+              trackUserInteractions: true,
+              trackResources: true,
+              trackLongTasks: true,
+              defaultPrivacyLevel: "mask-user-input",
+            });
+          `}
+        </Script>
         <AuthProvider>
           <div className="min-h-screen flex flex-col">
             <div className="flex-grow">
