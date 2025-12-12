@@ -32,6 +32,7 @@ export default function OrderPage() {
   const [frequency, setFrequency] = useState<'weekly' | 'bi-weekly' | 'every-4-weeks'>('weekly');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [authModalMode, setAuthModalMode] = useState<'signin' | 'signup' | 'forgot-password'>('signup');
   const [showSaveAddressPrompt, setShowSaveAddressPrompt] = useState(false);
@@ -109,10 +110,22 @@ export default function OrderPage() {
   };
 
   const updateQuantity = (breadType: string, quantity: number) => {
-    setBreadQuantities(prev => ({
-      ...prev,
-      [breadType]: Math.max(0, quantity)
-    }));
+    setBreadQuantities(prev => {
+      const updated = {
+        ...prev,
+        [breadType]: Math.max(0, quantity)
+      };
+      // Clear bread items error if user selects any bread
+      const hasBread = Object.values(updated).some(qty => qty > 0);
+      if (fieldErrors.breadItems && hasBread) {
+        setFieldErrors(prevErrors => {
+          const newErrors = { ...prevErrors };
+          delete newErrors.breadItems;
+          return newErrors;
+        });
+      }
+      return updated;
+    });
   };
 
   const handleRecurringToggle = (checked: boolean) => {
@@ -155,6 +168,9 @@ export default function OrderPage() {
   };
 
   const validateForm = () => {
+    const errors: Record<string, string> = {};
+    let hasErrors = false;
+
     if (isHolidayMode) {
       setError('Orders are temporarily disabled during our holiday break');
       return false;
@@ -163,44 +179,76 @@ export default function OrderPage() {
       setError('Please sign in to place a recurring order');
       return false;
     }
+    if (calculateTotal() === 0) {
+      errors.breadItems = 'Please select at least one bread item';
+      hasErrors = true;
+    }
     if (!deliveryDate) {
-      setError(isRecurring ? 'Please select a delivery day' : 'Please select a delivery date');
-      return false;
+      errors.deliveryDate = isRecurring ? 'Please select a delivery day' : 'Please select a delivery date';
+      hasErrors = true;
     }
     if (!address.trim()) {
-      setError('Please enter your delivery address');
-      return false;
+      errors.address = 'Please enter your delivery address';
+      hasErrors = true;
     }
     if (!zipCode.trim()) {
-      setError('Please enter your ZIP code');
-      return false;
-    }
-    if (!validateZipCode(zipCode)) {
-      setError('We only deliver to Multnomah County (Portland area). Please enter a valid Portland ZIP code.');
-      return false;
+      errors.zipCode = 'Please enter your ZIP code';
+      hasErrors = true;
+    } else if (!validateZipCode(zipCode)) {
+      errors.zipCode = 'We only deliver to Multnomah County (Portland area). Please enter a valid Portland ZIP code.';
+      hasErrors = true;
     }
     if (!customerName.trim()) {
-      setError('Please enter your name');
-      return false;
+      errors.customerName = 'Please enter your name';
+      hasErrors = true;
     }
     if (!email.trim()) {
-      setError('Please enter your email');
+      errors.email = 'Please enter your email';
+      hasErrors = true;
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())) {
+      errors.email = 'Please enter a valid email address';
+      hasErrors = true;
+    }
+
+    setFieldErrors(errors);
+    
+    if (hasErrors) {
+      // Set a general error message
+      const firstError = Object.values(errors)[0];
+      setError(firstError || 'Please fix the errors below');
+      
+      // Scroll to the first error field
+      setTimeout(() => {
+        const firstErrorField = document.querySelector('[data-field-error]');
+        if (firstErrorField) {
+          firstErrorField.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        } else {
+          // Fallback: scroll to error message
+          const errorElement = document.getElementById('form-error-message');
+          if (errorElement) {
+            errorElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          }
+        }
+      }, 100);
+      
       return false;
     }
-    if (calculateTotal() === 0) {
-      setError('Please select at least one bread item');
-      return false;
-    }
+
+    setFieldErrors({});
+    setError('');
     return true;
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!validateForm()) return;
+    if (!validateForm()) {
+      return;
+    }
 
     setLoading(true);
     setError('');
+    setFieldErrors({});
 
     // Add a timeout to prevent loading state from getting stuck
     const loadingTimeout = setTimeout(() => {
@@ -281,8 +329,18 @@ export default function OrderPage() {
           <form onSubmit={handleSubmit} className="space-y-8">
 
             {/* Bread Selection */}
-            <div>
+            <div data-field-error={fieldErrors.breadItems ? 'true' : undefined}>
               <h2 className="text-2xl font-semibold text-bakery-primary mb-6">Select your focaccias</h2>
+              {fieldErrors.breadItems && (
+                <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg">
+                  <p className="text-sm text-red-600 flex items-center">
+                    <svg className="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+                    </svg>
+                    {fieldErrors.breadItems}
+                  </p>
+                </div>
+              )}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {BREAD_TYPES.filter(bread => bread.availableForOrders).map((bread) => (
                   <div key={bread.name} className="bg-white rounded-lg shadow-md p-6 border border-bakery-light">
@@ -390,15 +448,28 @@ export default function OrderPage() {
                     </p>
                   </div>
                 )}
-                <div>
+                <div data-field-error={fieldErrors.deliveryDate ? 'true' : undefined}>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
                     {isRecurring ? 'Delivery Day *' : 'Delivery Date *'}
                   </label>
                   {isRecurring ? (
                     <select
                       value={deliveryDate}
-                      onChange={(e) => setDeliveryDate(e.target.value)}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-bakery-primary focus:border-transparent"
+                      onChange={(e) => {
+                        setDeliveryDate(e.target.value);
+                        if (fieldErrors.deliveryDate) {
+                          setFieldErrors(prev => {
+                            const newErrors = { ...prev };
+                            delete newErrors.deliveryDate;
+                            return newErrors;
+                          });
+                        }
+                      }}
+                      className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-bakery-primary focus:border-transparent ${
+                        fieldErrors.deliveryDate 
+                          ? 'border-red-500 bg-red-50' 
+                          : 'border-gray-300'
+                      }`}
                       required
                       disabled={isHolidayMode}
                     >
@@ -412,8 +483,21 @@ export default function OrderPage() {
                   ) : (
                     <select
                       value={deliveryDate}
-                      onChange={(e) => setDeliveryDate(e.target.value)}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-bakery-primary focus:border-transparent"
+                      onChange={(e) => {
+                        setDeliveryDate(e.target.value);
+                        if (fieldErrors.deliveryDate) {
+                          setFieldErrors(prev => {
+                            const newErrors = { ...prev };
+                            delete newErrors.deliveryDate;
+                            return newErrors;
+                          });
+                        }
+                      }}
+                      className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-bakery-primary focus:border-transparent ${
+                        fieldErrors.deliveryDate 
+                          ? 'border-red-500 bg-red-50' 
+                          : 'border-gray-300'
+                      }`}
                       required
                       disabled={isHolidayMode}
                     >
@@ -425,41 +509,91 @@ export default function OrderPage() {
                       ))}
                     </select>
                   )}
-                  {isRecurring && currentUser && (
+                  {fieldErrors.deliveryDate && (
+                    <p className="text-sm text-red-600 mt-1 flex items-center">
+                      <svg className="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                        <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+                      </svg>
+                      {fieldErrors.deliveryDate}
+                    </p>
+                  )}
+                  {!fieldErrors.deliveryDate && isRecurring && currentUser && (
                     <p className="text-xs text-gray-500 mt-1">
                       Your first delivery will be scheduled for the next available {deliveryDate || 'selected day'}
                     </p>
                   )}
                 </div>
 
-                <div>
+                <div data-field-error={fieldErrors.customerName ? 'true' : undefined}>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
                     Full Name *
                   </label>
                   <input
                     type="text"
                     value={customerName}
-                    onChange={(e) => setCustomerName(e.target.value)}
+                    onChange={(e) => {
+                      setCustomerName(e.target.value);
+                      if (fieldErrors.customerName) {
+                        setFieldErrors(prev => {
+                          const newErrors = { ...prev };
+                          delete newErrors.customerName;
+                          return newErrors;
+                        });
+                      }
+                    }}
                     disabled={isHolidayMode}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-bakery-primary focus:border-transparent disabled:opacity-50 disabled:cursor-not-allowed"
+                    className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-bakery-primary focus:border-transparent disabled:opacity-50 disabled:cursor-not-allowed ${
+                      fieldErrors.customerName 
+                        ? 'border-red-500 bg-red-50' 
+                        : 'border-gray-300'
+                    }`}
                     placeholder="Enter your full name"
                     required
                   />
+                  {fieldErrors.customerName && (
+                    <p className="text-sm text-red-600 mt-1 flex items-center">
+                      <svg className="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                        <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+                      </svg>
+                      {fieldErrors.customerName}
+                    </p>
+                  )}
                 </div>
 
-                <div>
+                <div data-field-error={fieldErrors.email ? 'true' : undefined}>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
                     Email *
                   </label>
                   <input
                     type="email"
                     value={email}
-                    onChange={(e) => setEmail(e.target.value)}
+                    onChange={(e) => {
+                      setEmail(e.target.value);
+                      if (fieldErrors.email) {
+                        setFieldErrors(prev => {
+                          const newErrors = { ...prev };
+                          delete newErrors.email;
+                          return newErrors;
+                        });
+                      }
+                    }}
                     disabled={isHolidayMode}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-bakery-primary focus:border-transparent disabled:opacity-50 disabled:cursor-not-allowed"
+                    className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-bakery-primary focus:border-transparent disabled:opacity-50 disabled:cursor-not-allowed ${
+                      fieldErrors.email 
+                        ? 'border-red-500 bg-red-50' 
+                        : 'border-gray-300'
+                    }`}
                     placeholder="Enter your email address"
                     required
                   />
+                  {fieldErrors.email && (
+                    <p className="text-sm text-red-600 mt-1 flex items-center">
+                      <svg className="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                        <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+                      </svg>
+                      {fieldErrors.email}
+                    </p>
+                  )}
                 </div>
 
                 <div>
@@ -477,19 +611,40 @@ export default function OrderPage() {
                   />
                 </div>
 
-                <div className="md:col-span-2">
+                <div className="md:col-span-2" data-field-error={fieldErrors.address ? 'true' : undefined}>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
                     Delivery Address *
                   </label>
                   <input
                     type="text"
                     value={address}
-                    onChange={(e) => setAddress(e.target.value)}
+                    onChange={(e) => {
+                      setAddress(e.target.value);
+                      if (fieldErrors.address) {
+                        setFieldErrors(prev => {
+                          const newErrors = { ...prev };
+                          delete newErrors.address;
+                          return newErrors;
+                        });
+                      }
+                    }}
                     disabled={isHolidayMode}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-bakery-primary focus:border-transparent disabled:opacity-50 disabled:cursor-not-allowed"
+                    className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-bakery-primary focus:border-transparent disabled:opacity-50 disabled:cursor-not-allowed ${
+                      fieldErrors.address 
+                        ? 'border-red-500 bg-red-50' 
+                        : 'border-gray-300'
+                    }`}
                     placeholder="Enter your street address"
                     required
                   />
+                  {fieldErrors.address && (
+                    <p className="text-sm text-red-600 mt-1 flex items-center">
+                      <svg className="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                        <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+                      </svg>
+                      {fieldErrors.address}
+                    </p>
+                  )}
                 </div>
 
                 <div>
@@ -506,20 +661,42 @@ export default function OrderPage() {
                   <p className="text-xs text-gray-500 mt-1">We currently only deliver to Portland, Oregon</p>
                 </div>
 
-                <div>
+                <div data-field-error={fieldErrors.zipCode ? 'true' : undefined}>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
                     ZIP Code *
                   </label>
                   <input
                     type="text"
                     value={zipCode}
-                    onChange={(e) => setZipCode(e.target.value)}
+                    onChange={(e) => {
+                      setZipCode(e.target.value);
+                      if (fieldErrors.zipCode) {
+                        setFieldErrors(prev => {
+                          const newErrors = { ...prev };
+                          delete newErrors.zipCode;
+                          return newErrors;
+                        });
+                      }
+                    }}
                     disabled={isHolidayMode}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-bakery-primary focus:border-transparent disabled:opacity-50 disabled:cursor-not-allowed"
+                    className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-bakery-primary focus:border-transparent disabled:opacity-50 disabled:cursor-not-allowed ${
+                      fieldErrors.zipCode 
+                        ? 'border-red-500 bg-red-50' 
+                        : 'border-gray-300'
+                    }`}
                     placeholder="Enter your Portland ZIP code"
                     required
                   />
-                  <p className="text-xs text-gray-500 mt-1">We deliver to Multnomah County (Portland area) only</p>
+                  {fieldErrors.zipCode ? (
+                    <p className="text-sm text-red-600 mt-1 flex items-center">
+                      <svg className="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                        <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+                      </svg>
+                      {fieldErrors.zipCode}
+                    </p>
+                  ) : (
+                    <p className="text-xs text-gray-500 mt-1">We deliver to Multnomah County (Portland area) only</p>
+                  )}
                 </div>
 
                 {/* Save Address Prompt for Logged-in Users */}
@@ -620,8 +797,8 @@ export default function OrderPage() {
 
             {/* Error Message */}
             {error && (
-              <div className="text-center">
-                <div className="inline-flex items-center p-4 bg-red-50 border border-red-200 rounded-lg max-w-md">
+              <div id="form-error-message" className="text-center">
+                <div className="inline-flex items-center p-4 bg-red-50 border-2 border-red-300 rounded-lg max-w-md shadow-md">
                   <svg className="w-5 h-5 text-red-600 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                   </svg>

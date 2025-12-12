@@ -471,7 +471,7 @@ export default function PaymentPage() {
                       </svg>
                       <div className="ml-2">
                         <p className="text-sm text-blue-800">
-                          <strong>Complete your order:</strong> Provide a payment method to complete your order. Payment will be captured when the order is delivered.
+                          <strong>Complete your order:</strong> provide a payment method and we will charge you only when the order is delivered.
                         </p>
                       </div>
                     </div>
@@ -495,7 +495,7 @@ export default function PaymentPage() {
                       </svg>
                       <div className="ml-2">
                         <p className="text-sm text-blue-800">
-                          <strong>Complete your order:</strong> Provide a payment method to complete your order. Payment will be captured when the order is delivered.
+                          <strong>Complete your order:</strong> provide a payment method and we will charge you only when the order is delivered.
                         </p>
                       </div>
                     </div>
@@ -519,7 +519,7 @@ export default function PaymentPage() {
                       </svg>
                       <div className="ml-2">
                         <p className="text-sm text-green-800">
-                          We&apos;ll use your saved payment method for your order.
+                          We will charge your saved payment method only once we have delivered.
                         </p>
                       </div>
                     </div>

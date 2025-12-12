@@ -413,7 +413,7 @@ export default function DashboardPage() {
   }
 
   return (
-    <div className="min-h-screen py-20">
+    <div className="min-h-screen py-20 background-gradient-warm">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="bg-white rounded-lg shadow-lg p-6 mb-8">

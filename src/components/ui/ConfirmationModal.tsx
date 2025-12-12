@@ -21,7 +21,7 @@ export default function ConfirmationModal({
   title,
   message,
   confirmText,
-  cancelText = 'Cancel',
+  cancelText = 'No',
   confirmButtonColor = 'bg-red-500 hover:bg-red-600',
   loading = false
 }: ConfirmationModalProps) {
