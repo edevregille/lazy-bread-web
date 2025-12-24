@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
 import { BREAD_TYPES, getAvailableDeliveryDates, formatDeliveryDate, DELIVERY_ZONES, BUSINESS_SETTINGS } from '@/config/app-config';
+import { useConfig } from '@/contexts/ConfigContext';
 import { updateUserProfile } from '@/lib/firebaseService';
 import AuthModal from '@/components/auth/AuthModal';
 
@@ -17,7 +18,13 @@ interface OrderItem {
 
 export default function OrderPage() {
   const { currentUser, userProfile } = useAuth();
+  const { config: runtimeConfig } = useConfig();
   const router = useRouter();
+  
+  // Use runtime config if available, otherwise fall back to imported values
+  const BUSINESS_SETTINGS_RUNTIME = runtimeConfig?.BUSINESS_SETTINGS || BUSINESS_SETTINGS;
+  const BREAD_TYPES_RUNTIME = runtimeConfig?.BREAD_TYPES || BREAD_TYPES;
+  const DELIVERY_ZONES_RUNTIME = runtimeConfig?.DELIVERY_ZONES || DELIVERY_ZONES;
   
   const [breadQuantities, setBreadQuantities] = useState<Record<string, number>>({});
   const [deliveryDate, setDeliveryDate] = useState('');
@@ -102,19 +109,54 @@ export default function OrderPage() {
   const availableDates = getAvailableDeliveryDates();
 
   // Check if we're in holiday mode
-  const isHolidayMode = BUSINESS_SETTINGS.isHolidayMode;
+  const isHolidayMode = BUSINESS_SETTINGS_RUNTIME.isHolidayMode;
 
   // Validate zip code is in Multnomah County
   const validateZipCode = (zip: string): boolean => {
-    return DELIVERY_ZONES.allowedZipCodes.includes(zip.trim());
+    return DELIVERY_ZONES_RUNTIME.allowedZipCodes.includes(zip.trim());
   };
 
   const updateQuantity = (breadType: string, quantity: number) => {
     setBreadQuantities(prev => {
+      const currentTotal = Object.values(prev).reduce((sum, qty) => sum + qty, 0);
+      const currentBreadQty = prev[breadType] || 0;
+      const newBreadQty = Math.max(0, quantity);
+      
+      // Calculate what the new total would be
+      const newTotal = currentTotal - currentBreadQty + newBreadQty;
+      const maxQuantity = BUSINESS_SETTINGS_RUNTIME.maxOrderQuantity;
+      
+      // If adding would exceed the max, cap it at the max
+      if (newTotal > maxQuantity && quantity > currentBreadQty) {
+        const allowedIncrease = maxQuantity - (currentTotal - currentBreadQty);
+        const cappedQty = currentBreadQty + Math.max(0, allowedIncrease);
+        
+        // Show error message
+        setFieldErrors(prevErrors => ({
+          ...prevErrors,
+          maxQuantity: `Maximum order quantity is ${maxQuantity} breads. You can add ${Math.max(0, allowedIncrease)} more.`
+        }));
+        
+        return {
+          ...prev,
+          [breadType]: cappedQty
+        };
+      }
+      
+      // Clear max quantity error if we're within limits
+      if (newTotal <= maxQuantity && fieldErrors.maxQuantity) {
+        setFieldErrors(prevErrors => {
+          const newErrors = { ...prevErrors };
+          delete newErrors.maxQuantity;
+          return newErrors;
+        });
+      }
+      
       const updated = {
         ...prev,
-        [breadType]: Math.max(0, quantity)
+        [breadType]: newBreadQty
       };
+      
       // Clear bread items error if user selects any bread
       const hasBread = Object.values(updated).some(qty => qty > 0);
       if (fieldErrors.breadItems && hasBread) {
@@ -124,6 +166,7 @@ export default function OrderPage() {
           return newErrors;
         });
       }
+      
       return updated;
     });
   };
@@ -147,7 +190,7 @@ export default function OrderPage() {
 
   const calculateTotal = () => {
     return Object.entries(breadQuantities).reduce((total, [breadType, quantity]) => {
-      const bread = BREAD_TYPES.find(b => b.name === breadType && b.availableForOrders);
+      const bread = BREAD_TYPES_RUNTIME.find(b => b.name === breadType && b.availableForOrders);
       return total + (bread ? bread.price * quantity : 0);
     }, 0);
   };
@@ -156,7 +199,7 @@ export default function OrderPage() {
     return Object.entries(breadQuantities)
       .filter(([, quantity]) => quantity > 0)
       .map(([breadType, quantity]) => {
-        const bread = BREAD_TYPES.find(b => b.name === breadType && b.availableForOrders);
+        const bread = BREAD_TYPES_RUNTIME.find(b => b.name === breadType && b.availableForOrders);
         return {
           id: breadType,
           name: breadType,
@@ -175,6 +218,15 @@ export default function OrderPage() {
       setError('Orders are temporarily disabled during our holiday break');
       return false;
     }
+    
+    // Check max order quantity
+    const totalQuantity = Object.values(breadQuantities).reduce((sum, qty) => sum + qty, 0);
+    const maxQuantity = BUSINESS_SETTINGS_RUNTIME.maxOrderQuantity;
+    if (totalQuantity > maxQuantity) {
+      errors.maxQuantity = `Maximum order quantity is ${maxQuantity} breads. Please reduce your order.`;
+      hasErrors = true;
+    }
+    
     if (isRecurring && !currentUser) {
       setError('Please sign in to place a recurring order');
       return false;
@@ -316,10 +368,10 @@ export default function OrderPage() {
                 </div>
                 <div>
                   <h3 className="text-lg font-semibold text-red-900 mb-1">
-                    {BUSINESS_SETTINGS.holidayMessage}
+                    {BUSINESS_SETTINGS_RUNTIME.holidayMessage}
                   </h3>
                   <p className="text-red-700">
-                    We&apos;ll be back taking orders on {BUSINESS_SETTINGS.returnDate}. Thank you for your patience!
+                    We&apos;ll be back taking orders on {BUSINESS_SETTINGS_RUNTIME.returnDate}. Thank you for your patience!
                   </p>
                 </div>
               </div>
@@ -330,7 +382,20 @@ export default function OrderPage() {
 
             {/* Bread Selection */}
             <div data-field-error={fieldErrors.breadItems ? 'true' : undefined}>
-              <h2 className="text-2xl font-semibold text-bakery-primary mb-6">Select your focaccias</h2>
+              <div className="flex justify-between items-center mb-6">
+                <h2 className="text-2xl font-semibold text-bakery-primary">Select your focaccias</h2>
+                <div className="text-sm text-gray-600">
+                  Max {BUSINESS_SETTINGS_RUNTIME.maxOrderQuantity} per order
+                  {(() => {
+                    const totalQuantity = Object.values(breadQuantities).reduce((sum, qty) => sum + qty, 0);
+                    return totalQuantity > 0 ? (
+                      <span className={`ml-2 font-semibold ${totalQuantity >= BUSINESS_SETTINGS_RUNTIME.maxOrderQuantity ? 'text-red-600' : 'text-gray-700'}`}>
+                        ({totalQuantity}/{BUSINESS_SETTINGS_RUNTIME.maxOrderQuantity})
+                      </span>
+                    ) : null;
+                  })()}
+                </div>
+              </div>
               {fieldErrors.breadItems && (
                 <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg">
                   <p className="text-sm text-red-600 flex items-center">
@@ -341,8 +406,18 @@ export default function OrderPage() {
                   </p>
                 </div>
               )}
+              {fieldErrors.maxQuantity && (
+                <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg">
+                  <p className="text-sm text-red-600 flex items-center">
+                    <svg className="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+                    </svg>
+                    {fieldErrors.maxQuantity}
+                  </p>
+                </div>
+              )}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {BREAD_TYPES.filter(bread => bread.availableForOrders).map((bread) => (
+                {BREAD_TYPES_RUNTIME.filter(bread => bread.availableForOrders).map((bread) => (
                   <div key={bread.name} className="bg-white rounded-lg shadow-md p-6 border border-bakery-light">
                     <div className="flex justify-between items-start mb-4">
                       <div>
@@ -356,8 +431,8 @@ export default function OrderPage() {
                       <button
                         type="button"
                         onClick={() => updateQuantity(bread.name, (breadQuantities[bread.name] || 0) - 1)}
-                        disabled={isHolidayMode}
-                        className="w-8 h-8 btn-primary rounded-full flex items-center justify-center"
+                        disabled={isHolidayMode || (breadQuantities[bread.name] || 0) === 0}
+                        className="w-8 h-8 btn-primary rounded-full flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed"
                       >
                         -
                       </button>
@@ -367,8 +442,17 @@ export default function OrderPage() {
                       <button
                         type="button"
                         onClick={() => updateQuantity(bread.name, (breadQuantities[bread.name] || 0) + 1)}
-                        disabled={isHolidayMode}
-                        className="w-8 h-8 btn-primary rounded-full flex items-center justify-center"
+                        disabled={isHolidayMode || (() => {
+                          const totalQuantity = Object.values(breadQuantities).reduce((sum, qty) => sum + qty, 0);
+                          return totalQuantity >= BUSINESS_SETTINGS_RUNTIME.maxOrderQuantity;
+                        })()}
+                        className="w-8 h-8 btn-primary rounded-full flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed"
+                        title={(() => {
+                          const totalQuantity = Object.values(breadQuantities).reduce((sum, qty) => sum + qty, 0);
+                          return totalQuantity >= BUSINESS_SETTINGS_RUNTIME.maxOrderQuantity 
+                            ? `Maximum order quantity is ${BUSINESS_SETTINGS_RUNTIME.maxOrderQuantity} breads`
+                            : '';
+                        })()}
                       >
                         +
                       </button>
@@ -474,7 +558,7 @@ export default function OrderPage() {
                       disabled={isHolidayMode}
                     >
                       <option value="">Select your preferred delivery day</option>
-                      {BUSINESS_SETTINGS.deliveryDays.map((day) => (
+                      {BUSINESS_SETTINGS_RUNTIME.deliveryDays.map((day) => (
                         <option key={day} value={day.toLowerCase()}>
                           {day}s
                         </option>

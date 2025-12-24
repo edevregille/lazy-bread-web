@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useEffect } from 'react';
+import React from 'react';
 import { useRouter } from 'next/navigation';
 import { Modal } from './ui/Modal';
 import { formatDeliveryDate } from '@/config/app-config';
@@ -52,18 +52,8 @@ export const PaymentSuccessModal: React.FC<PaymentSuccessModalProps> = ({
   const { orderDetails, isRecurring, status } = paymentData;
   const isSetupIntent = status === 'setup_completed';
 
-  // Auto-redirect to dashboard for subscriptions after 3 seconds
-  useEffect(() => {
-    if (isOpen && isSetupIntent) {
-      const timer = setTimeout(() => {
-        router.push('/dashboard');
-      }, 3000);
-      return () => clearTimeout(timer);
-    }
-  }, [isOpen, isSetupIntent, router]);
-
   const handleClose = () => {
-    if (isSetupIntent) {
+    if (isRecurring) {
       router.push('/dashboard');
     } else {
       onClose();
@@ -88,7 +78,7 @@ export const PaymentSuccessModal: React.FC<PaymentSuccessModalProps> = ({
     <Modal
       isOpen={isOpen}
       onClose={handleClose}
-      title={isSetupIntent ? "✅ Subscription Confirmed!" : "🎉 Payment Successful!"}
+      title={isRecurring ? "✅ Subscription Confirmed!" : "🎉 Payment Successful!"}
     >
       <div className="space-y-6">
         {/* Success Message */}
@@ -109,16 +99,11 @@ export const PaymentSuccessModal: React.FC<PaymentSuccessModalProps> = ({
             </svg>
           </div>
           <h2 className="text-2xl font-bold text-gray-900 mb-2">
-            {isSetupIntent 
+            {isRecurring 
               ? "Your subscription is confirmed!" 
               : "Thank you for your order!"
             }
           </h2>
-          {isSetupIntent && (
-            <p className="text-gray-600 mt-2">
-              You&apos;ll be redirected to your dashboard in a few seconds...
-            </p>
-          )}
         </div>
 
         {/* Order Summary */}
@@ -163,7 +148,7 @@ export const PaymentSuccessModal: React.FC<PaymentSuccessModalProps> = ({
         </div>
 
         {/* Next Steps - Only show for regular orders, not subscriptions */}
-        {!isSetupIntent && (
+        {!isRecurring && (
           <div className="bg-green-50 rounded-lg p-4">
             <h3 className="text-lg font-semibold text-gray-900 mb-2">What&apos;s Next?</h3>
             <div className="space-y-2 text-sm">
@@ -189,7 +174,7 @@ export const PaymentSuccessModal: React.FC<PaymentSuccessModalProps> = ({
             onClick={handleClose}
             className="btn-primary"
           >
-            {isSetupIntent ? 'Go to Dashboard' : 'Continue'}
+            {isRecurring ? 'Go to Dashboard' : 'Continue'}
           </button>
         </div>
       </div>

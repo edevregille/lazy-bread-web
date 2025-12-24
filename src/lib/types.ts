@@ -40,7 +40,9 @@ export interface Order {
   createdAt: Date;
   userId?: string;
   stripeCustomerId: string;
-  stripePaymentIntentId: string;
+  stripePaymentIntentId?: string | null;
+  stripeSetupIntentId?: string;
+  stripePaymentMethodId?: string;
   stripePaymentStatus: string;
 }
 
@@ -57,9 +59,9 @@ export interface PaymentSuccessData {
 // Payment flow types
 export type PaymentFlow = 
   | 'loading'
-  | 'guest-payment-intent'
-  | 'signed-in-payment-intent'
-  | 'saved-method-payment-intent'
+  | 'guest-setup-intent'
+  | 'one-time-setup-intent'
+  | 'one-time-setup-intent-saved-method'
   | 'subscription-setup-intent'
   | 'subscription-setup-intent-saved-method'
   | 'error';

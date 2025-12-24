@@ -27,12 +27,14 @@ export const getStripe = async (): Promise<Stripe> => {
  * @param email - Customer email
  * @param name - Optional customer name
  * @param metadata - Optional metadata
+ * @param customerType - Optional customer type ('guest' | 'one_time' | 'recurring')
  * @returns Promise<StripeCustomer>
  */
 export async function createOrFindCustomer(
   email: string, 
   name?: string, 
-  metadata?: Record<string, string>
+  metadata?: Record<string, string>,
+  customerType?: 'guest' | 'one_time' | 'recurring'
 ): Promise<StripeCustomer> {
   const stripe = await getStripe();  
   try {
@@ -46,10 +48,17 @@ export async function createOrFindCustomer(
       const customer = existingCustomers.data[0];
       
       // Update customer with new information if provided
-      if (name || metadata) {
+      if (name || metadata || customerType) {
         const updateData: Stripe.CustomerUpdateParams = {};
         if (name) updateData.name = name;
-        if (metadata) updateData.metadata = metadata;
+        const mergedMetadata = {
+          ...customer.metadata,
+          ...metadata,
+        };
+        if (customerType) {
+          mergedMetadata.customerType = customerType;
+        }
+        updateData.metadata = mergedMetadata;
         
         const updatedCustomer = await stripe.customers.update(customer.id, updateData);        
         // Return only serializable properties
@@ -81,6 +90,13 @@ export async function createOrFindCustomer(
         ...metadata,
       },
     };
+    
+    if (customerType) {
+      customerData.metadata = {
+        ...customerData.metadata,
+        customerType: customerType,
+      };
+    }
     
     if (name) {
       customerData.name = name;
@@ -348,7 +364,8 @@ export async function getCustomerPaymentMethods(customerId: string): Promise<Str
  * @param customerId - Stripe customer ID
  * @param orderDetails - Optional order details to store as metadata
  * @param userId - Optional user ID
- * @param frequency - Optional delivery frequency
+ * @param frequency - Optional delivery frequency (for recurring orders)
+ * @param isRecurring - Whether this is a recurring order (default: false)
  * @returns Promise<Stripe.SetupIntent>
  */
 export async function createSetupIntent(
@@ -374,11 +391,13 @@ export async function createSetupIntent(
   },
   userId?: string,
   frequency?: 'weekly' | 'bi-weekly' | 'every-4-weeks',
+  isRecurring: boolean = false,
 ): Promise<Stripe.SetupIntent> {
   const stripe = await getStripe();
 
   const setupIntentData: Stripe.SetupIntentCreateParams = {
     customer: customerId,
+    usage: 'off_session', // Allow using saved payment method off_session
     automatic_payment_methods: {
       enabled: true,
       allow_redirects: 'never',
@@ -394,10 +413,12 @@ export async function createSetupIntent(
       phone: orderDetails.customerInfo.phone || '',
       deliveryDate: orderDetails.deliveryDate,
       comments: orderDetails.comments || '',
-      isRecurring: 'true',
+      isRecurring: isRecurring ? 'true' : 'false',
       userId: userId || '',
-      frequency: frequency || 'weekly',
-    } : {},
+      ...(isRecurring && frequency ? { frequency: frequency } : {}),
+    } : {
+      isRecurring: isRecurring ? 'true' : 'false',
+    },
   };
 
   return await stripe.setupIntents.create(setupIntentData);

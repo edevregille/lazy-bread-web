@@ -1,20 +1,66 @@
 // App Configuration for Lazy Bread Bakery
+// Note: Data values are now loaded from S3 via configService.ts
+// The hardcoded values below serve as fallbacks until S3 config is loaded
 
-export const NAV_ITEMS = [
+// Global config object that can be updated at runtime
+let runtimeConfig: any = null;
+
+// Function to update runtime config (called by ConfigContext)
+export function setRuntimeConfig(config: any) {
+  runtimeConfig = config;
+  // Update the exported variables directly
+  if (config.NAV_ITEMS) {
+    NAV_ITEMS.length = 0;
+    NAV_ITEMS.push(...config.NAV_ITEMS);
+  }
+  if (config.AUTH_NAV_ITEMS) {
+    AUTH_NAV_ITEMS.length = 0;
+    AUTH_NAV_ITEMS.push(...config.AUTH_NAV_ITEMS);
+  }
+  if (config.BREAD_TYPES) {
+    BREAD_TYPES.length = 0;
+    BREAD_TYPES.push(...config.BREAD_TYPES);
+  }
+  if (config.BUSINESS_SETTINGS) {
+    Object.assign(BUSINESS_SETTINGS, config.BUSINESS_SETTINGS);
+  }
+  if (config.DELIVERY_ZONES) {
+    Object.assign(DELIVERY_ZONES, config.DELIVERY_ZONES);
+  }
+  if (config.FIND_US_LOCATIONS) {
+    FIND_US_LOCATIONS.length = 0;
+    FIND_US_LOCATIONS.push(...config.FIND_US_LOCATIONS);
+  }
+  if (config.SOCIAL_MEDIA) {
+    Object.assign(SOCIAL_MEDIA, config.SOCIAL_MEDIA);
+  }
+  if (config.VALIDATION_RULES) {
+    Object.assign(VALIDATION_RULES, config.VALIDATION_RULES);
+  }
+  if (config.PAGE_CONTENT) {
+    Object.assign(PAGE_CONTENT, config.PAGE_CONTENT);
+  }
+  if (config.ERROR_MESSAGES) {
+    Object.assign(ERROR_MESSAGES, config.ERROR_MESSAGES);
+  }
+}
+
+// Fallback values (used until S3 config is loaded)
+export let NAV_ITEMS = [
   { name: "Home", path: "/" },
   { name: "Order", path: "/order" },
   { name: "About", path: "/about" },
   { name: "Find Us", path: "/find-us" },
 ];
 
-export const AUTH_NAV_ITEMS = [
+export let AUTH_NAV_ITEMS = [
   { name: "Home", path: "/" },
   { name: "Order", path: "/order" },
   { name: "About", path: "/about" },
   { name: "Find Us", path: "/find-us" },
 ];
 
-export const BREAD_TYPES = [
+export let BREAD_TYPES = [
   { 
     id: 'classic-salt', 
     name: 'Classic Salt Loaf', 
@@ -52,7 +98,7 @@ export const BREAD_TYPES = [
   },
 ];
 
-export const BUSINESS_SETTINGS = {
+export let BUSINESS_SETTINGS = {
   // Holiday mode settings
   isHolidayMode: false, // Set to true to disable ordering
   holidayMessage: "🏖️ We're on Holiday! Taking a well-deserved break.",
@@ -77,7 +123,7 @@ export const BUSINESS_SETTINGS = {
   ],
 };
 
-export const DELIVERY_ZONES = {
+export let DELIVERY_ZONES = {
   cityName: "Portland Multnomah County",
   stateName: "Oregon",
   allowedZipCodes: [
@@ -90,7 +136,7 @@ export const DELIVERY_ZONES = {
   ],
 };
 
-export const FIND_US_LOCATIONS = [
+export let FIND_US_LOCATIONS = [
   {
     id: 'pop-up-shop',
     name: 'Pop-Up Shop',
@@ -130,7 +176,7 @@ export const FIND_US_LOCATIONS = [
   },
 ];
 
-export const SOCIAL_MEDIA = {
+export let SOCIAL_MEDIA = {
   instagram: {
     url: 'https://www.instagram.com/lazybreadpdx/',
     handle: '@lazybreadpdx',
@@ -142,13 +188,13 @@ export const SOCIAL_MEDIA = {
   }
 };
 
-export const VALIDATION_RULES = {
+export let VALIDATION_RULES = {
   requireCaptcha: true, // Temporarily disabled for testing
   requirePhoneValidation: false,
   maxCommentLength: 255,
 };
 
-export const PAGE_CONTENT = {
+export let PAGE_CONTENT = {
   orderPageTitle: "Order Organic Sourdough Focaccia Bread",
   holidayPageTitle: "We're on Holiday!",
   recurringDeliveryMessage: "For weekly or monthly recurring deliveries, please contact us directly at",
@@ -157,7 +203,7 @@ export const PAGE_CONTENT = {
   commentsHelper: "Optional: Let us know about any special requirements or delivery preferences. (Max 255 characters)",
 };
 
-export const ERROR_MESSAGES = {
+export let ERROR_MESSAGES = {
   breadTypeRequired: "Please select at least one bread type",
   deliveryDateRequired: "Please select a delivery date",
   deliveryDateInvalid: "Please select a valid delivery date (Wednesday or Friday, at least 24 hours in advance)",

@@ -91,89 +91,17 @@ export default function PaymentPage() {
           }
         }
 
-        // Scenario 1: Guest user (not signed in) - Payment Intent
-        if (!currentUser) {
-          console.log('Payment Flow: Guest user - creating payment intent');
-          const response = await fetch('/api/stripe/payment-intent/create', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              amount: orderDetails!.totalAmount * 100,
-              orderDetails: {
-                items: orderDetails!.orderItems,
-                customerInfo: {
-                  name: orderDetails!.customerName,
-                  email: orderDetails!.email,
-                  address: orderDetails!.address,
-                  city: orderDetails!.city,
-                  zipCode: orderDetails!.zipCode,
-                  phone: orderDetails!.phone,
-                },
-                deliveryDate: orderDetails!.deliveryDate,
-                comments: orderDetails!.comments,
-              }
-            })
-          });
+        // All scenarios now use setup intent
+        const isRecurring = orderDetails.isRecurring || false;
+        const isGuest = !currentUser;
 
-          if (!response.ok) {
-            throw new Error('Failed to create payment intent');
-          }
+        console.log(`Payment Flow: ${isGuest ? 'Guest' : 'Logged-in'} user - ${isRecurring ? 'Recurring' : 'One-time'} order - setup intent`);
 
-          const responseData = await response.json();
-          setClientSecret(responseData.clientSecret);
-          setIntentId(responseData.id);
-          setPaymentFlow('guest-payment-intent');
-          return;
-        }
-
-        // Scenario 2: Subscription order
-        if (orderDetails.isRecurring) {
-          console.log('Payment Flow: Subscription - setup intent');
-          const response = await fetch('/api/stripe/setup-intent/create', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({  
-              customerId: userProfile!.stripeCustomerId!,
-              orderDetails: {
-                items: orderDetails.orderItems,
-                customerInfo: {
-                  name: orderDetails.customerName,
-                  email: orderDetails.email,
-                  address: orderDetails.address,
-                  city: orderDetails.city,
-                  zipCode: orderDetails.zipCode,
-                  phone: orderDetails.phone,
-                },
-                deliveryDate: orderDetails.deliveryDate,
-                comments: orderDetails.comments,
-              },
-              frequency: orderDetails.frequency || 'weekly',
-              userId: currentUser.uid
-            })
-          });
-
-          if (!response.ok) {
-            throw new Error('Failed to create setup intent');
-          }
-
-          const responseData = await response.json();
-          setClientSecret(responseData.clientSecret);
-          setIntentId(responseData.id);
-          if (pms?.length > 0) {
-            setPaymentFlow('subscription-setup-intent-saved-method');
-          } else {
-            setPaymentFlow('subscription-setup-intent');
-          }
-          return;
-        }
-
-        // Scenario 3: One-time order signed-in user
-        console.log('Payment Flow: One-time order signed user - payment intent');
-        const response = await fetch('/api/stripe/payment-intent/create', {
+        const response = await fetch('/api/stripe/setup-intent/create', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
-            amount: orderDetails.totalAmount * 100,
+            customerId: isGuest ? null : userProfile?.stripeCustomerId,
             orderDetails: {
               items: orderDetails.orderItems,
               customerInfo: {
@@ -187,21 +115,36 @@ export default function PaymentPage() {
               deliveryDate: orderDetails.deliveryDate,
               comments: orderDetails.comments,
             },
-            userId: currentUser.uid
+            userId: currentUser?.uid,
+            frequency: orderDetails.frequency || 'weekly',
+            isRecurring: isRecurring,
+            isGuest: isGuest,
           })
         });
 
         if (!response.ok) {
-          throw new Error('Failed to create payment intent');
+          throw new Error('Failed to create setup intent');
         }
 
         const responseData = await response.json();
         setClientSecret(responseData.clientSecret);
         setIntentId(responseData.id);
-        if (pms?.length > 0) {
-          setPaymentFlow('saved-method-payment-intent');
+
+        // Determine payment flow based on user type, order type, and saved payment methods
+        if (isRecurring) {
+          if (pms?.length > 0) {
+            setPaymentFlow('subscription-setup-intent-saved-method');
+          } else {
+            setPaymentFlow('subscription-setup-intent');
+          }
         } else {
-          setPaymentFlow('signed-in-payment-intent');
+          if (isGuest) {
+            setPaymentFlow('guest-setup-intent');
+          } else if (pms?.length > 0) {
+            setPaymentFlow('one-time-setup-intent-saved-method');
+          } else {
+            setPaymentFlow('one-time-setup-intent');
+          }
         }
         return;
       } catch (error) {
@@ -215,63 +158,16 @@ export default function PaymentPage() {
   }, [orderDetails, currentUser, userProfile, loading]);
 
   const handleConfirmOrder = async () => {
-    if (!paymentMethods.length || !userProfile?.stripeCustomerId) return;
+    if (!paymentMethods.length || (!userProfile?.stripeCustomerId && paymentFlow !== 'one-time-setup-intent-saved-method')) return;
 
     setIsProcessing(true);
     setMessage('');
     let response= null, result = null;
 
     switch(paymentFlow) {
-      // Scenario 3: One-time order signed-in user with saved method
-      case 'saved-method-payment-intent':
-        response = await fetch(`/api/stripe/payment-intent/${intentId}/update`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            paymentMethodId: paymentMethods[0].id
-          })
-        }); 
-
-        if (!response.ok) {
-          throw new Error('Failed to update payment intent');
-        }
-
-        result = await fetch(`/api/stripe/payment-intent/${intentId}/confirm`, {
-          method: 'GET',
-          headers: { 'Content-Type': 'application/json' },
-        });
-
-        if (!result.ok) {
-          throw new Error('Failed to confirm payment intent');
-        }
-        const paymentIntent = await result.json();
-
-        if (paymentIntent.status === 'succeeded' || paymentIntent.status === 'requires_capture') {
-          const successMessage = paymentIntent.status === 'requires_capture' 
-            ? 'Payment authorized! Your order will be captured when delivered. Redirecting to home page...'
-            : 'Payment successful! Redirecting to home page...';
-
-          setMessage(successMessage);
-        
-          // Store success data for the modal on home page
-          sessionStorage.setItem('paymentSuccess', JSON.stringify({
-            orderDetails: orderDetails,
-            paymentIntentId: paymentIntent.id,
-            timestamp: new Date().toISOString(),
-            status: paymentIntent.status
-          }));
-          
-          // Clear order data
-          sessionStorage.removeItem('orderData');
-          
-          setTimeout(() => {
-            router.push('/');
-          }, 2000);
-        } else {
-          setMessage(`Payment status: ${paymentIntent.status}. Please try again.`);
-        }
-        break;
-      // Scenario 2: Subscription order
+      // One-time order with saved method
+      case 'one-time-setup-intent-saved-method':
+      // Subscription order with saved method
       case 'subscription-setup-intent-saved-method':
         response = await fetch(`/api/stripe/setup-intent/${intentId}/update`, {
           method: 'POST',
@@ -296,26 +192,30 @@ export default function PaymentPage() {
         const setupIntent = await result.json();
 
         if (setupIntent.status === 'succeeded') {
-          setMessage('Subscription confirmed! Redirecting to dashboard...');
+          const isRecurring = paymentFlow === 'subscription-setup-intent-saved-method';
+          const successMessage = isRecurring 
+            ? 'Subscription confirmed!'
+            : 'Order confirmed! Your payment will be charged when delivered.';
+
+          setMessage(successMessage);
         
-            // Store success data for the modal on home page
-            sessionStorage.setItem('paymentSuccess', JSON.stringify({
-              orderDetails: orderDetails,
-              setupIntentId: setupIntent.id,
-              timestamp: new Date().toISOString(),
-              status: 'setup_completed',
-              isRecurring: true
-            }));
-            
-            // Clear order data
-            sessionStorage.removeItem('orderData');
-            
-            setTimeout(() => {
-              router.push('/');
-            }, 1500);
-          } else {
-            setMessage(`Setup status: ${setupIntent.status}. Please try again.`);
-          }
+          // Store success data for the modal on home page
+          sessionStorage.setItem('paymentSuccess', JSON.stringify({
+            orderDetails: orderDetails,
+            setupIntentId: setupIntent.id,
+            timestamp: new Date().toISOString(),
+            status: 'setup_completed',
+            isRecurring: isRecurring
+          }));
+          
+          // Clear order data
+          sessionStorage.removeItem('orderData');
+          
+          // Redirect to home page to show the modal
+          router.push('/');
+        } else {
+          setMessage(`Setup status: ${setupIntent.status}. Please try again.`);
+        }
         break;
       default:
         throw new Error('Invalid payment flow');
@@ -324,27 +224,27 @@ export default function PaymentPage() {
     setIsProcessing(false);
   };
 
-  const handlePaymentSuccess = (paymentIntentId: string, status: string) => {
-    const successMessage = status === 'requires_capture' 
-      ? 'Payment authorized! Your order will be captured when delivered. Redirecting to home page...'
-      : 'Payment successful! Redirecting to home page...';
+  const handlePaymentSuccess = (setupIntentId: string, status: string, isRecurring: boolean = false) => {
+    const successMessage = isRecurring
+      ? 'Subscription confirmed!'
+      : 'Order confirmed! Your payment will be charged when delivered.';
 
     setMessage(successMessage);
     
     // Store success data
     sessionStorage.setItem('paymentSuccess', JSON.stringify({
       orderDetails: orderDetails,
-      paymentIntentId: paymentIntentId,
+      setupIntentId: setupIntentId,
       timestamp: new Date().toISOString(),
-      status: status
+      status: status,
+      isRecurring: isRecurring
     }));
     
     // Clear order data
     sessionStorage.removeItem('orderData');
     
-    setTimeout(() => {
-      router.push('/');
-    }, 2000);
+    // Redirect to home page to show the modal
+    router.push('/');
   };
 
   // Check if Stripe key is available
@@ -461,8 +361,8 @@ export default function PaymentPage() {
             <div className="bg-white rounded-lg shadow-md p-6 mb-8 border border-bakery-light">
             {/* <h2 className="text-2xl font-semibold text-bakery-primary mb-6">Payment Information</h2> */}
               
-              {/* Scenario 1: Guest user - Payment Intent */}
-              {paymentFlow === 'guest-payment-intent' && clientSecret && (
+              {/* Guest user - Setup Intent (one-time) */}
+              {paymentFlow === 'guest-setup-intent' && clientSecret && (
                 <div className="space-y-6">
                   <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
                     <div className="flex items-start">
@@ -477,16 +377,16 @@ export default function PaymentPage() {
                     </div>
                   </div>
                   <Elements stripe={stripePromise} options={{ clientSecret }}>
-                    <PaymentForm 
+                    <SetupForm 
                       orderDetails={orderDetails}
-                      onSuccess={handlePaymentSuccess}
+                      onSuccess={() => handlePaymentSuccess(intentId, 'setup_completed', false)}
                     />
                   </Elements>
                 </div>
               )}
 
-              {/* Scenario 2: Signed-in user without saved method - Payment Intent */}
-              {paymentFlow === 'signed-in-payment-intent' && clientSecret && (
+              {/* Signed-in user without saved method - Setup Intent (one-time) */}
+              {paymentFlow === 'one-time-setup-intent' && clientSecret && (
                 <div className="space-y-6">
                   <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
                     <div className="flex items-start">
@@ -501,16 +401,16 @@ export default function PaymentPage() {
                     </div>
                   </div>
                   <Elements stripe={stripePromise} options={{ clientSecret }}>
-                    <PaymentForm 
+                    <SetupForm 
                       orderDetails={orderDetails}
-                      onSuccess={handlePaymentSuccess}
+                      onSuccess={() => handlePaymentSuccess(intentId, 'setup_completed', false)}
                     />
                   </Elements>
                 </div>
               )}
 
-              {/* Scenario 3: Signed-in user with saved method - Payment Intent */}
-              {paymentFlow === 'saved-method-payment-intent' && (
+              {/* Signed-in user with saved method - Setup Intent (one-time) */}
+              {paymentFlow === 'one-time-setup-intent-saved-method' && (
                 <div className="space-y-6">
                   <div className="bg-green-50 border border-green-200 rounded-lg p-4">
                     <div className="flex items-start">
@@ -538,12 +438,12 @@ export default function PaymentPage() {
                     disabled={isProcessing}
                     className="w-full btn-primary"
                   >
-                    {isProcessing ? 'Processing Payment...' : 'Confirm Payment'}
+                    {isProcessing ? 'Processing...' : 'Confirm Order'}
                   </button>
                 </div>
               )}
 
-              {/* Scenario 4: Subscription without saved method - Setup Intent */}
+              {/* Subscription without saved method - Setup Intent */}
               {paymentFlow === 'subscription-setup-intent' && clientSecret && (
                 <div className="space-y-6">
                   <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
@@ -561,11 +461,7 @@ export default function PaymentPage() {
                   <Elements stripe={stripePromise} options={{ clientSecret }}>
                     <SetupForm 
                       orderDetails={orderDetails}
-                      onSuccess={() => {
-                        setMessage('Subscription set up successfully! Redirecting to home page...');
-                        sessionStorage.removeItem('orderData');
-                        setTimeout(() => router.push('/'), 2000);
-                      }}
+                      onSuccess={() => handlePaymentSuccess(intentId, 'setup_completed', true)}
                     />
                   </Elements>
                 </div>
@@ -603,7 +499,7 @@ export default function PaymentPage() {
               )}
 
               {/* Loading state for payment form */}
-              {!clientSecret && paymentFlow !== 'saved-method-payment-intent' && (
+              {!clientSecret && paymentFlow !== 'one-time-setup-intent-saved-method' && paymentFlow !== 'subscription-setup-intent-saved-method' && (
                 <div className="text-center py-8">
                   <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600 mx-auto mb-4"></div>
                   <p className="text-gray-600">Setting up payment form...</p>
@@ -628,92 +524,12 @@ export default function PaymentPage() {
   );
 }
 
-// Payment Form Component for Payment Intents
-function PaymentForm({ orderDetails, onSuccess }: { orderDetails: OrderDetails; onSuccess: (paymentIntentId: string, status: string) => void }) {
-  const [isProcessing, setIsProcessing] = useState(false);
-  const [message, setMessage] = useState('');
-  const router = useRouter();
-  const stripe = useStripe();
-  const elements = useElements();
+// Payment Form Component removed - all flows now use SetupForm
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsProcessing(true);
-    setMessage('');
-
-    if (!stripe || !elements) {
-      setMessage('Stripe is not loaded. Please refresh the page.');
-      setIsProcessing(false);
-      return;
-    }
-
-    try {
-      const { error, paymentIntent } = await stripe.confirmPayment({
-        elements,
-        redirect: 'if_required',
-      });
-
-      if (error) {
-        setMessage(error.message || 'Payment failed. Please try again.');
-        setIsProcessing(false);
-      } else if (paymentIntent) {
-        // Payment successful
-        setMessage('Payment completed successfully! Redirecting to home page...');
-        
-        // Store success data for the modal on home page
-        sessionStorage.setItem('paymentSuccess', JSON.stringify({
-          orderDetails: orderDetails,
-          paymentIntentId: paymentIntent.id,
-          isRecurring: false,
-          timestamp: new Date().toISOString(),
-          status: 'payment_completed'
-        }));
-        
-        // Clear order data from session storage
-        sessionStorage.removeItem('orderData');
-        
-        // Redirect to home page after a short delay
-        setTimeout(() => {
-          router.push('/');
-        }, 2000);
-      }
-    } catch (error) {
-      console.error('Payment error:', error);
-      setMessage('An unexpected error occurred. Please try again.');
-      setIsProcessing(false);
-    }
-  };
-
-  return (
-    <form onSubmit={handleSubmit} className="space-y-6">
-      <PaymentElement />
-      
-      <button
-        type="submit"
-        disabled={isProcessing}
-        className="w-full bg-bakery-primary text-white px-6 py-3 rounded-md hover:bg-bakery-primary-dark transition-colors font-medium disabled:opacity-50 disabled:cursor-not-allowed"
-      >
-        {isProcessing ? 'Processing Payment...' : 'Complete Order'}
-      </button>
-      
-      {message && (
-        <div className={`p-4 rounded-lg ${
-          message.includes('successfully') || message.includes('authorized') || message.includes('Redirecting')
-            ? 'bg-green-100 text-green-700' 
-            : 'bg-red-100 text-red-700'
-        }`}>
-          {message}
-        </div>
-      )}
-    </form>
-  );
-}
-
-// Setup Form Component for Setup Intents
+// Setup Form Component for Setup Intents (used for both one-time and recurring orders)
 function SetupForm({ orderDetails, onSuccess }: { orderDetails: OrderDetails; onSuccess: () => void }) {
   const [isProcessing, setIsProcessing] = useState(false);
   const [message, setMessage] = useState('');
-  const router = useRouter();
   const stripe = useStripe();
   const elements = useElements();
 
@@ -739,24 +555,8 @@ function SetupForm({ orderDetails, onSuccess }: { orderDetails: OrderDetails; on
         setIsProcessing(false);
       } else if (setupIntent) {
         // Setup successful
-        setMessage('Subscription confirmed! Redirecting to dashboard...');
-        
-        // Store success data for the modal on home page
-        sessionStorage.setItem('paymentSuccess', JSON.stringify({
-          orderDetails: orderDetails,
-          setupIntentId: setupIntent.id,
-          isRecurring: true,
-          timestamp: new Date().toISOString(),
-          status: 'setup_completed'
-        }));
-        
-        // Clear order data from session storage
-        sessionStorage.removeItem('orderData');
-        
-        // Redirect to home page after a short delay (modal will handle dashboard redirect)
-        setTimeout(() => {
-          router.push('/');
-        }, 1500);
+        setMessage('Order confirmed! Redirecting...');
+        onSuccess();
       }
     } catch (error) {
       console.error('Setup error:', error);
@@ -764,6 +564,11 @@ function SetupForm({ orderDetails, onSuccess }: { orderDetails: OrderDetails; on
       setIsProcessing(false);
     }
   };
+
+  const isRecurring = orderDetails.isRecurring || false;
+  const buttonText = isRecurring 
+    ? (isProcessing ? 'Setting Up Weekly Delivery...' : 'Set Up Weekly Delivery')
+    : (isProcessing ? 'Processing Order...' : 'Complete Order');
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
@@ -774,12 +579,12 @@ function SetupForm({ orderDetails, onSuccess }: { orderDetails: OrderDetails; on
         disabled={isProcessing}
         className="w-full bg-bakery-primary text-white px-6 py-3 rounded-md hover:bg-bakery-primary-dark transition-colors font-medium disabled:opacity-50 disabled:cursor-not-allowed"
       >
-        {isProcessing ? 'Setting Up Weekly Delivery...' : 'Set Up Weekly Delivery'}
+        {buttonText}
       </button>
       
       {message && (
         <div className={`p-4 rounded-lg ${
-          message.includes('successful') || message.includes('set up successfully')
+          message.includes('successful') || message.includes('confirmed') || message.includes('set up')
             ? 'bg-green-100 text-green-700' 
             : 'bg-red-100 text-red-700'
         }`}>

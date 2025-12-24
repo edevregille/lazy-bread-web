@@ -4,6 +4,7 @@ import "./globals.css";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { AuthProvider } from "@/contexts/AuthContext";
+import { ConfigProvider } from "@/contexts/ConfigContext";
 import GoogleAnalytics from "@/components/GoogleAnalytics";
 
 export const metadata: Metadata = {
@@ -93,20 +94,22 @@ export default function RootLayout({
             });
           `}
         </Script>
-        <AuthProvider>
-          <div className="min-h-screen flex flex-col">
-            <div className="flex-grow">
-              <Header />
-              <main className="pt-20 pb-10">
-                <div className="container mx-auto">
-                  {children}
-                </div>
-              </main>
-              <Footer />
+        <ConfigProvider>
+          <AuthProvider>
+            <div className="min-h-screen flex flex-col">
+              <div className="flex-grow">
+                <Header />
+                <main className="pt-20 pb-10">
+                  <div className="container mx-auto">
+                    {children}
+                  </div>
+                </main>
+                <Footer />
+              </div>
             </div>
-          </div>
-          <GoogleAnalytics />
-        </AuthProvider>
+            <GoogleAnalytics />
+          </AuthProvider>
+        </ConfigProvider>
       </body>
     </html>
   );
