@@ -84,7 +84,7 @@ export default function RootLayout({
               site: "datadoghq.com",
               service: "lazy-bread-web",
               env: "${process.env.NEXT_PUBLIC_DD_ENV || ''}",
-              version: "",
+              version: "${process.env.NEXT_PUBLIC_DD_VERSION || ''}",
               sessionSampleRate: 100,
               sessionReplaySampleRate: 20,
               trackUserInteractions: true,
