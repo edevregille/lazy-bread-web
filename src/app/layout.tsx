@@ -86,7 +86,7 @@ export default function RootLayout({
               env: "${process.env.NEXT_PUBLIC_DD_ENV || ''}",
               version: "${process.env.NEXT_PUBLIC_DD_VERSION || ''}",
               sessionSampleRate: 100,
-              sessionReplaySampleRate: 20,
+              sessionReplaySampleRate: 100,
               trackUserInteractions: true,
               trackResources: true,
               trackLongTasks: true,
