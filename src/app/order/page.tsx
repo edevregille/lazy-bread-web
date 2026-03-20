@@ -348,9 +348,7 @@ export default function OrderPage() {
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="bg-white rounded-lg shadow-lg p-6">
           <div className="mb-8">
-            <h2 className="text-4xl font-semibold text-bakery-primary mb-6">
-              Place your order 
-            </h2>
+            <h1 className="text-4xl font-semibold text-bakery-primary mb-6">Place your order</h1>
             <p className="text-lg text-earth-brown">
               Select your favorite focaccias and choose your delivery date, we will bring it to you. 
               <br/>For specific orders or any question, send us an email or reach out via instagram.
@@ -380,7 +378,11 @@ export default function OrderPage() {
             </div>
           )}
 
-          <form onSubmit={handleSubmit} className="space-y-8">
+          <form
+            onSubmit={handleSubmit}
+            className="space-y-8"
+            aria-describedby={error ? "form-error-message" : undefined}
+          >
 
             {/* Bread Selection */}
             <div data-field-error={fieldErrors.breadItems ? 'true' : undefined}>
@@ -399,7 +401,7 @@ export default function OrderPage() {
                 </div>
               </div>
               {fieldErrors.breadItems && (
-                <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg">
+                <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg" role="alert">
                   <p className="text-sm text-red-600 flex items-center">
                     <svg className="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
                       <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
@@ -409,7 +411,7 @@ export default function OrderPage() {
                 </div>
               )}
               {fieldErrors.maxQuantity && (
-                <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg">
+                <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg" role="alert">
                   <p className="text-sm text-red-600 flex items-center">
                     <svg className="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
                       <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
@@ -435,10 +437,11 @@ export default function OrderPage() {
                         onClick={() => updateQuantity(bread.name, (breadQuantities[bread.name] || 0) - 1)}
                         disabled={isHolidayMode || (breadQuantities[bread.name] || 0) === 0}
                         className="w-8 h-8 btn-primary rounded-full flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed"
+                        aria-label={`Decrease quantity of ${bread.name}`}
                       >
-                        -
+                        <span aria-hidden="true">−</span>
                       </button>
-                      <span className="text-lg font-semibold min-w-[2rem] text-center">
+                      <span className="text-lg font-semibold min-w-[2rem] text-center" aria-live="polite" aria-atomic="true">
                         {breadQuantities[bread.name] || 0}
                       </span>
                       <button
@@ -455,8 +458,9 @@ export default function OrderPage() {
                             ? `Maximum order quantity is ${BUSINESS_SETTINGS_RUNTIME.maxOrderQuantity} breads`
                             : '';
                         })()}
+                        aria-label={`Increase quantity of ${bread.name}`}
                       >
-                        +
+                        <span aria-hidden="true">+</span>
                       </button>
                     </div>
                   </div>
@@ -470,19 +474,20 @@ export default function OrderPage() {
               <div className="bg-gradient-to-r from-yellow-50 to-orange-50 border-2 border-yellow-200 rounded-lg p-6 hover:border-yellow-300 transition-colors">
                 <div className="flex items-start">
                   <div className="flex-1">
-                    <div className="flex items-center space-x-3 mb-2">
+                    <div className="flex items-start space-x-3 mb-2">
                       <input
+                        id="order-recurring"
                         type="checkbox"
                         checked={isRecurring && !!currentUser}
                         onChange={(e) => handleRecurringToggle(e.target.checked)}
                         disabled={isHolidayMode}
-                        className="w-5 h-5 rounded border-gray-300 text-bakery-primary focus:ring-bakery-primary focus:ring-2 disabled:opacity-50"
+                        className="w-5 h-5 mt-1 shrink-0 rounded border-gray-300 text-bakery-primary focus:ring-bakery-primary focus:ring-2 disabled:opacity-50"
                       />
-                      <h3 className="text-lg font-semibold text-gray-900">
-                        Set up as weekly, bi-weekly or every 4 weeks focaccias delivery
-                      </h3>
-                    </div>
-                    <p className="text-gray-700 mb-3">
+                      <div className="flex-1 min-w-0">
+                        <label htmlFor="order-recurring" className="text-lg font-semibold text-gray-900 cursor-pointer block">
+                          Set up as weekly, bi-weekly or every 4 weeks focaccias delivery
+                        </label>
+                    <p className="text-gray-700 mb-3 mt-2">
                       Get fresh focaccias delivered to your door every week!
                       {isRecurring && !currentUser && (
                         <span className="block mt-2 text-sm text-orange-600 font-medium">
@@ -504,6 +509,8 @@ export default function OrderPage() {
                         <span>Payment is charged only after delivery</span>
                       </div>
                     </div>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -515,10 +522,11 @@ export default function OrderPage() {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {isRecurring && (
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <label htmlFor="order-frequency" className="block text-sm font-medium text-gray-700 mb-2">
                       Delivery Frequency *
                     </label>
                     <select
+                      id="order-frequency"
                       value={frequency}
                       onChange={(e) => setFrequency(e.target.value as 'weekly' | 'bi-weekly' | 'every-4-weeks')}
                       className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-bakery-primary focus:border-transparent"
@@ -535,11 +543,12 @@ export default function OrderPage() {
                   </div>
                 )}
                 <div data-field-error={fieldErrors.deliveryDate ? 'true' : undefined}>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label htmlFor="order-delivery" className="block text-sm font-medium text-gray-700 mb-2">
                     {isRecurring ? 'Delivery Day *' : 'Delivery Date *'}
                   </label>
                   {isRecurring ? (
                     <select
+                      id="order-delivery"
                       value={deliveryDate}
                       onChange={(e) => {
                         setDeliveryDate(e.target.value);
@@ -558,6 +567,8 @@ export default function OrderPage() {
                       }`}
                       required
                       disabled={isHolidayMode}
+                      aria-invalid={fieldErrors.deliveryDate ? 'true' : undefined}
+                      aria-describedby={fieldErrors.deliveryDate ? 'order-err-deliveryDate' : undefined}
                     >
                       <option value="">Select your preferred delivery day</option>
                       {BUSINESS_SETTINGS_RUNTIME.deliveryDays.map((day) => (
@@ -568,6 +579,7 @@ export default function OrderPage() {
                     </select>
                   ) : (
                     <select
+                      id="order-delivery"
                       value={deliveryDate}
                       onChange={(e) => {
                         setDeliveryDate(e.target.value);
@@ -586,6 +598,8 @@ export default function OrderPage() {
                       }`}
                       required
                       disabled={isHolidayMode}
+                      aria-invalid={fieldErrors.deliveryDate ? 'true' : undefined}
+                      aria-describedby={fieldErrors.deliveryDate ? 'order-err-deliveryDate' : undefined}
                     >
                       <option value="">Select a delivery date</option>
                       {availableDates.map((date) => (
@@ -596,8 +610,8 @@ export default function OrderPage() {
                     </select>
                   )}
                   {fieldErrors.deliveryDate && (
-                    <p className="text-sm text-red-600 mt-1 flex items-center">
-                      <svg className="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                    <p id="order-err-deliveryDate" className="text-sm text-red-600 mt-1 flex items-center" role="alert">
+                      <svg className="w-4 h-4 mr-1 shrink-0" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
                         <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
                       </svg>
                       {fieldErrors.deliveryDate}
@@ -611,10 +625,11 @@ export default function OrderPage() {
                 </div>
 
                 <div data-field-error={fieldErrors.customerName ? 'true' : undefined}>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label htmlFor="order-customer-name" className="block text-sm font-medium text-gray-700 mb-2">
                     Full Name *
                   </label>
                   <input
+                    id="order-customer-name"
                     type="text"
                     value={customerName}
                     onChange={(e) => {
@@ -635,10 +650,13 @@ export default function OrderPage() {
                     }`}
                     placeholder="Enter your full name"
                     required
+                    autoComplete="name"
+                    aria-invalid={fieldErrors.customerName ? 'true' : undefined}
+                    aria-describedby={fieldErrors.customerName ? 'order-err-customerName' : undefined}
                   />
                   {fieldErrors.customerName && (
-                    <p className="text-sm text-red-600 mt-1 flex items-center">
-                      <svg className="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                    <p id="order-err-customerName" className="text-sm text-red-600 mt-1 flex items-center" role="alert">
+                      <svg className="w-4 h-4 mr-1 shrink-0" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
                         <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
                       </svg>
                       {fieldErrors.customerName}
@@ -647,10 +665,11 @@ export default function OrderPage() {
                 </div>
 
                 <div data-field-error={fieldErrors.email ? 'true' : undefined}>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label htmlFor="order-email" className="block text-sm font-medium text-gray-700 mb-2">
                     Email *
                   </label>
                   <input
+                    id="order-email"
                     type="email"
                     value={email}
                     onChange={(e) => {
@@ -671,10 +690,13 @@ export default function OrderPage() {
                     }`}
                     placeholder="Enter your email address"
                     required
+                    autoComplete="email"
+                    aria-invalid={fieldErrors.email ? 'true' : undefined}
+                    aria-describedby={fieldErrors.email ? 'order-err-email' : undefined}
                   />
                   {fieldErrors.email && (
-                    <p className="text-sm text-red-600 mt-1 flex items-center">
-                      <svg className="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                    <p id="order-err-email" className="text-sm text-red-600 mt-1 flex items-center" role="alert">
+                      <svg className="w-4 h-4 mr-1 shrink-0" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
                         <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
                       </svg>
                       {fieldErrors.email}
@@ -683,10 +705,11 @@ export default function OrderPage() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label htmlFor="order-phone" className="block text-sm font-medium text-gray-700 mb-2">
                     Phone Number
                   </label>
                   <input
+                    id="order-phone"
                     type="tel"
                     value={phone}
                     onChange={handlePhoneChange}
@@ -694,14 +717,16 @@ export default function OrderPage() {
                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-bakery-primary focus:border-transparent disabled:opacity-50 disabled:cursor-not-allowed"
                     placeholder="555-123-4567"
                     maxLength={12}
+                    autoComplete="tel"
                   />
                 </div>
 
                 <div className="md:col-span-2" data-field-error={fieldErrors.address ? 'true' : undefined}>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label htmlFor="order-address" className="block text-sm font-medium text-gray-700 mb-2">
                     Delivery Address *
                   </label>
                   <input
+                    id="order-address"
                     type="text"
                     value={address}
                     onChange={(e) => {
@@ -722,10 +747,13 @@ export default function OrderPage() {
                     }`}
                     placeholder="Enter your street address"
                     required
+                    autoComplete="street-address"
+                    aria-invalid={fieldErrors.address ? 'true' : undefined}
+                    aria-describedby={fieldErrors.address ? 'order-err-address' : undefined}
                   />
                   {fieldErrors.address && (
-                    <p className="text-sm text-red-600 mt-1 flex items-center">
-                      <svg className="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                    <p id="order-err-address" className="text-sm text-red-600 mt-1 flex items-center" role="alert">
+                      <svg className="w-4 h-4 mr-1 shrink-0" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
                         <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
                       </svg>
                       {fieldErrors.address}
@@ -734,24 +762,27 @@ export default function OrderPage() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label htmlFor="order-city" className="block text-sm font-medium text-gray-700 mb-2">
                     City *
                   </label>
                   <input
+                    id="order-city"
                     type="text"
                     value={city}
                     readOnly
                     className="w-full px-3 py-2 border border-gray-300 rounded-md bg-gray-50 text-gray-700 cursor-not-allowed"
                     placeholder="Portland"
+                    aria-readonly="true"
                   />
                   <p className="text-xs text-gray-500 mt-1">We currently only deliver to Portland, Oregon</p>
                 </div>
 
                 <div data-field-error={fieldErrors.zipCode ? 'true' : undefined}>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label htmlFor="order-zip" className="block text-sm font-medium text-gray-700 mb-2">
                     ZIP Code *
                   </label>
                   <input
+                    id="order-zip"
                     type="text"
                     value={zipCode}
                     onChange={(e) => {
@@ -772,16 +803,21 @@ export default function OrderPage() {
                     }`}
                     placeholder="Enter your Portland ZIP code"
                     required
+                    autoComplete="postal-code"
+                    aria-invalid={fieldErrors.zipCode ? 'true' : undefined}
+                    aria-describedby={
+                      fieldErrors.zipCode ? "order-err-zipCode" : "order-zip-hint"
+                    }
                   />
                   {fieldErrors.zipCode ? (
-                    <p className="text-sm text-red-600 mt-1 flex items-center">
-                      <svg className="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                    <p id="order-err-zipCode" className="text-sm text-red-600 mt-1 flex items-center" role="alert">
+                      <svg className="w-4 h-4 mr-1 shrink-0" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
                         <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
                       </svg>
                       {fieldErrors.zipCode}
                     </p>
                   ) : (
-                    <p className="text-xs text-gray-500 mt-1">We deliver to Multnomah County (Portland area) only</p>
+                    <p id="order-zip-hint" className="text-xs text-gray-500 mt-1">We deliver to Multnomah County (Portland area) only</p>
                   )}
                 </div>
 
@@ -844,10 +880,11 @@ export default function OrderPage() {
                 )}
 
                 <div className="md:col-span-2">
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label htmlFor="order-comments" className="block text-sm font-medium text-gray-700 mb-2">
                     Special Instructions
                   </label>
                   <textarea
+                    id="order-comments"
                     value={comments}
                     onChange={(e) => setComments(e.target.value)}
                     disabled={isHolidayMode}
@@ -883,9 +920,9 @@ export default function OrderPage() {
 
             {/* Error Message */}
             {error && (
-              <div id="form-error-message" className="text-center">
+              <div id="form-error-message" className="text-center" role="alert" aria-live="assertive">
                 <div className="inline-flex items-center p-4 bg-red-50 border-2 border-red-300 rounded-lg max-w-md shadow-md">
-                  <svg className="w-5 h-5 text-red-600 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg className="w-5 h-5 text-red-600 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                   </svg>
                   <p className="text-red-700 font-medium">{error}</p>

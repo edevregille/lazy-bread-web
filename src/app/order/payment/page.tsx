@@ -253,7 +253,7 @@ export default function PaymentPage() {
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
           <div className="text-red-600 text-xl mb-4">⚠️</div>
-          <h2 className="text-xl font-semibold text-gray-900 mb-2">Configuration Error</h2>
+          <h1 className="text-xl font-semibold text-gray-900 mb-2">Configuration Error</h1>
           <p className="text-gray-600">Stripe configuration is missing. Please contact support.</p>
         </div>
       </div>
@@ -278,7 +278,7 @@ export default function PaymentPage() {
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
           <div className="text-red-600 text-xl mb-4">⚠️</div>
-          <h2 className="text-xl font-semibold text-gray-900 mb-2">Payment Setup Error</h2>
+          <h1 className="text-xl font-semibold text-gray-900 mb-2">Payment Setup Error</h1>
           <p className="text-gray-600 mb-4">{error || 'Failed to set up payment'}</p>
           <button
             onClick={() => router.push('/order')}
@@ -296,14 +296,12 @@ export default function PaymentPage() {
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="bg-white rounded-lg shadow-lg p-6">
           <div className="mb-8">
-            <h2 className="text-4xl font-semibold text-bakery-primary mb-6">
-              Complete Your Order
-            </h2>
+            <h1 className="text-4xl font-semibold text-bakery-primary mb-6">Complete your order</h1>
 
             {/* Order Summary */}
             <div className="bg-white rounded-lg shadow-md p-6 mb-8 border border-bakery-light">
               <div className="flex items-center justify-between mb-4">
-              <h2 className="text-2xl font-semibold text-bakery-primary mb-6">Order Summary</h2>
+              <h2 className="text-2xl font-semibold text-bakery-primary">Order summary</h2>
                 {orderDetails.isRecurring && (
                   <span className="px-3 py-1 bg-yellow-100 text-yellow-800 text-sm font-semibold rounded-full">
                     🔄 {getFrequencyLabel(orderDetails.frequency)} Delivery
@@ -337,7 +335,7 @@ export default function PaymentPage() {
 
             {/* Delivery Information */}
             <div className="bg-white rounded-lg shadow-md p-6 mb-8 border border-bakery-light">
-            <h2 className="text-2xl font-semibold text-bakery-primary mb-6">Delivery Information</h2>
+            <h2 className="text-2xl font-semibold text-bakery-primary mb-6">Delivery information</h2>
               <div className="space-y-2 text-gray-700">
                 <p><strong>Name:</strong> {orderDetails.customerName}</p>
                 <p><strong>Address:</strong> {orderDetails.address}</p>

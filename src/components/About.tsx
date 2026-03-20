@@ -5,6 +5,7 @@ export default function About() {
     return (
         <section id="about" className="background-gradient-warm py-16">
             <div className="max-w-6xl mx-auto px-8">
+                <h1 className="sr-only">About Lazy Bread PDX</h1>
                 <div className="w-full">
                     <Title title="About">
                         <div className="flex sm:gap-x-20">               

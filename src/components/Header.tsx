@@ -30,11 +30,7 @@ export default function Header() {
         setShowAuthModal(true);
     };
 
-    const handleUserClick = () => {
-        setShowUserProfile(true);
-    };
-
-    // Close dropdown when clicking outside
+    // Close dropdown when clicking outside or pressing Escape
     useEffect(() => {
         const handleClickOutside = (event: MouseEvent) => {
             if (userDropdownRef.current && !userDropdownRef.current.contains(event.target as Node)) {
@@ -42,12 +38,20 @@ export default function Header() {
             }
         };
 
+        const handleEscape = (event: KeyboardEvent) => {
+            if (event.key === "Escape") {
+                setShowUserProfile(false);
+            }
+        };
+
         if (showUserProfile) {
-            document.addEventListener('mousedown', handleClickOutside);
+            document.addEventListener("mousedown", handleClickOutside);
+            document.addEventListener("keydown", handleEscape);
         }
 
         return () => {
-            document.removeEventListener('mousedown', handleClickOutside);
+            document.removeEventListener("mousedown", handleClickOutside);
+            document.removeEventListener("keydown", handleEscape);
         };
     }, [showUserProfile]);
 
@@ -61,7 +65,7 @@ export default function Header() {
                         <Link href="/" className="text-2xl font-semibold">
                             <Image 
                                 src="/logo-lazy-bread.png" 
-                                alt="Artisanal Organic Focaccia" 
+                                alt="Lazy Bread PDX — Home" 
                                 className="w-28 h-28 hover:animate-warm-glow transition-all duration-300"
                                 width={112}
                                 height={112}
@@ -70,12 +74,12 @@ export default function Header() {
                     </div>
 
                     {/* Desktop Navigation */}
-                    <nav className="hidden md:block">
+                    <nav className="hidden md:block" aria-label="Main">
                         <div className="flex items-center space-x-8">
                             {(currentUser ? AUTH_NAV_ITEMS : NAV_ITEMS).map((item) => {
                                 const isActive = pathname === item.path;
                                 return (
-                                    <a
+                                    <Link
                                         key={item.name}
                                         href={item.path}
                                         className={`px-4 py-2 rounded-md text-lg font-body font-bold transition-colors duration-300 ${
@@ -83,9 +87,10 @@ export default function Header() {
                                                 ? 'text-bakery-primary bg-warm-cream border-b-2 border-bakery-primary' 
                                                 : 'text-earth-brown hover:text-bakery-primary hover:bg-warm-cream'
                                         }`}
+                                        aria-current={isActive ? "page" : undefined}
                                     >
                                         {item.name}
-                                    </a>
+                                    </Link>
                                 );
                             })}
                             
@@ -94,9 +99,13 @@ export default function Header() {
                                 {currentUser ? (
                                     <div className="relative" ref={userDropdownRef}>
                                         <button
-                                            onClick={handleUserClick}
+                                            type="button"
+                                            onClick={() => setShowUserProfile((v) => !v)}
                                             className="flex items-center space-x-2 px-4 py-2 rounded-md text-lg font-body font-medium text-earth-brown hover:text-bakery-primary hover:bg-warm-cream transition-colors duration-300"
                                             title="Account & Settings"
+                                            aria-haspopup="menu"
+                                            aria-expanded={showUserProfile}
+                                            aria-controls="user-menu-dropdown"
                                         >
                                             <div className="w-8 h-8 bg-bakery-primary rounded-full flex items-center justify-center">
                                                 <span className="text-white font-semibold text-sm">
@@ -126,11 +135,14 @@ export default function Header() {
                     {/* Mobile menu button */}
                     <div className="md:hidden">
                         <button 
+                            type="button"
                             className="text-earth-brown hover:text-bakery-primary transition-colors duration-300"
                             onClick={toggleMenu}
-                            aria-label="Toggle mobile menu"
+                            aria-label={isOpen ? "Close menu" : "Open menu"}
+                            aria-expanded={isOpen}
+                            aria-controls="mobile-nav-menu"
                         >
-                            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
                             </svg>
                         </button>
@@ -139,9 +151,11 @@ export default function Header() {
 
                 {/* Mobile Navigation */}
                 <div 
+                    id="mobile-nav-menu"
                     className={`${
                         isOpen ? 'block' : 'hidden'
                     } md:hidden bg-white py-4 px-4 border-t border-bakery-light shadow-bakery`}
+                    hidden={!isOpen}
                 >
                     <div className="space-y-3">
                         {(currentUser ? AUTH_NAV_ITEMS : NAV_ITEMS).map((item) => {
@@ -156,6 +170,7 @@ export default function Header() {
                                     }`}
                                     onClick={toggleMenu}
                                     key={item.name}
+                                    aria-current={isActive ? "page" : undefined}
                                 >
                                     {item.name}
                                 </Link>

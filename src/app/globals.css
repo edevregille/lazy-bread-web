@@ -24,6 +24,10 @@
   --gray-dark: #6B6B6B;
 }
 
+html {
+  scroll-padding-top: 5rem;
+}
+
 body {
   color: var(--foreground);
   background: var(--background);

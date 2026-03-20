@@ -61,6 +61,7 @@ export default function Home() {
 
   return (
     <>
+      <h1 className="sr-only">Lazy Bread PDX — Organic sourdough focaccia bakery in Portland, Oregon</h1>
       {/* Hero Section */}
       <section className="py-8 px-8 bg-warm-cream">
         <div className="max-w-6xl mx-auto">
@@ -95,9 +96,7 @@ export default function Home() {
       <section className="py-8 px-8 pb-16 bg-warm-cream mb-8">
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-12">
-            <h2 className="text-4xl font-semibold text-bakery-primary mb-6">
-              Our Varieties
-            </h2>
+            <h2 className="text-4xl font-semibold text-bakery-primary mb-6">Our Varieties</h2>
             <p className="text-xl md:text-2xl font-body text-earth-brown mb-8 leading-relaxed">
               Each focaccia is crafted with our signature sourdough starter and organic flour, 
               creating unique flavors that celebrate local, seasonal produce.
