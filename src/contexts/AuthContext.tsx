@@ -14,7 +14,6 @@ import {
 import { auth } from '@/lib/firebase';
 import { createUserProfile, getUserProfile, UserProfile } from '@/lib/firebaseService';
 import { createOrFindCustomer } from '@/lib/stripeService';
-import { trackSignup } from '@/lib/gtag';
 
 interface AuthContextType {
   currentUser: User | null;
@@ -60,9 +59,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           displayName: displayName,
           stripeCustomerId: stripeCustomer.id,
         });
-        
-        // Track successful signup
-        trackSignup('email');
       } else {
         throw new Error('Failed to create Stripe customer');
       }

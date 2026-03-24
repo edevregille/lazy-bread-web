@@ -5,8 +5,6 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { ConfigProvider } from "@/contexts/ConfigContext";
-import GoogleAnalytics from "@/components/GoogleAnalytics";
-
 export const metadata: Metadata = {
   title: "Lazy Bread PDX",
   description: "Organic Sourdough Cottage Bakery - Handcrafted sourdough focaccia made with organic ingredients in Portland, Oregon.",
@@ -116,7 +114,6 @@ export default function RootLayout({
                 <Footer />
               </div>
             </div>
-            <GoogleAnalytics />
           </AuthProvider>
         </ConfigProvider>
       </body>
