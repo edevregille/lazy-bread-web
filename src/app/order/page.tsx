@@ -17,7 +17,7 @@ interface OrderItem {
 }
 
 export default function OrderPage() {
-  const { currentUser, userProfile } = useAuth();
+  const { currentUser, userProfile, refreshUserProfile } = useAuth();
   const { config: runtimeConfig } = useConfig();
   const router = useRouter();
   
@@ -183,7 +183,8 @@ export default function OrderPage() {
     setIsRecurring(checked);
   };
 
-  const handleAuthSuccess = () => {
+  const handleAuthSuccess = async () => {
+    await refreshUserProfile();
     setShowAuthModal(false);
     setIsRecurring(true);
   };

@@ -6,7 +6,7 @@ import { Modal } from "@/components/ui/Modal";
 
 interface SignUpProps {
   onSwitchToSignIn: () => void;
-  onClose: () => void;
+  onClose: () => void | Promise<void>;
   onSuccess?: () => void;
 }
 

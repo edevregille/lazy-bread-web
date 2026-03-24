@@ -18,7 +18,7 @@ export default function Header() {
     const [authMode, setAuthMode] = useState<'signin' | 'signup'>('signin');
     const pathname = usePathname();
     const router = useRouter();
-    const { currentUser, logout } = useAuth();
+    const { currentUser, logout, refreshUserProfile } = useAuth();
     const userDropdownRef = useRef<HTMLDivElement>(null);
 
     const toggleMenu = () => {
@@ -236,11 +236,16 @@ export default function Header() {
         </header>
 
         {/* Authentication Modal */}
-        {ACTIVATE_ORDER && <AuthModal
-            isOpen={showAuthModal}
-            onClose={() => setShowAuthModal(false)}
-            initialMode={authMode}
-        />}
+        {ACTIVATE_ORDER && (
+            <AuthModal
+                isOpen={showAuthModal}
+                onClose={() => setShowAuthModal(false)}
+                initialMode={authMode}
+                onAuthSuccess={async () => {
+                    await refreshUserProfile();
+                }}
+            />
+        )}
     </>
     );
 }

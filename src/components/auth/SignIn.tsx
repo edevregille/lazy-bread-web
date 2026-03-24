@@ -8,7 +8,7 @@ import { Modal } from "@/components/ui/Modal";
 interface SignInProps {
   onSwitchToSignUp: () => void;
   onSwitchToForgotPassword: () => void;
-  onClose: () => void;
+  onClose: () => void | Promise<void>;
 }
 
 export default function SignIn({ onSwitchToSignUp, onSwitchToForgotPassword, onClose }: SignInProps) {

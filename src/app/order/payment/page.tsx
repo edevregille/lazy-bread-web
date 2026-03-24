@@ -96,6 +96,7 @@ export default function PaymentPage() {
         const isGuest = !currentUser;
 
         console.log(`Payment Flow: ${isGuest ? 'Guest' : 'Logged-in'} user - ${isRecurring ? 'Recurring' : 'One-time'} order - setup intent`);
+        console.log('orderDetails', orderDetails);
 
         const response = await fetch('/api/stripe/setup-intent/create', {
           method: 'POST',
