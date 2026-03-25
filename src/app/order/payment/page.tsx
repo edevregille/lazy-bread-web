@@ -98,9 +98,15 @@ export default function PaymentPage() {
         console.log(`Payment Flow: ${isGuest ? 'Guest' : 'Logged-in'} user - ${isRecurring ? 'Recurring' : 'One-time'} order - setup intent`);
         console.log('orderDetails', orderDetails);
 
+        const headers: Record<string, string> = { 'Content-Type': 'application/json' };
+        if (currentUser) {
+          const idToken = await currentUser.getIdToken();
+          headers.Authorization = `Bearer ${idToken}`;
+        }
+
         const response = await fetch('/api/stripe/setup-intent/create', {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          headers,
           body: JSON.stringify({
             customerId: isGuest ? null : userProfile?.stripeCustomerId,
             orderDetails: {

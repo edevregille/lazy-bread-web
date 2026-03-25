@@ -124,43 +124,46 @@ export default function AddPaymentMethodPage({ onClose }: AddPaymentMethodPagePr
         return;
       }
 
-      if (currentUser) {
-        if (userProfile?.stripeCustomerId && !clientSecret) {
-          // User has a Stripe customer, create setup intent
-          try {
-            const response = await fetch('/api/stripe/setup-intent/create', {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/json',
-              },
-              body: JSON.stringify({
-                customerId: userProfile.stripeCustomerId
-              })
-            });
-            
-            if (!response.ok) {
-              throw new Error('Failed to create setup intent');
-            }
-            
-            const data = await response.json();
-            if (data.clientSecret) {
-              setClientSecret(data.clientSecret);
-            }
-            setSetupLoading(false);
-          } catch (error) {
-            console.error('Error creating setup intent:', error);
-            setSetupError('Failed to initialize payment form. Please try again.');
-            setSetupLoading(false);
+      if (currentUser && !clientSecret) {
+        try {
+          const idToken = await currentUser.getIdToken();
+          const hasStripeCustomer = !!userProfile?.stripeCustomerId;
+          const response = await fetch('/api/stripe/setup-intent/create', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: `Bearer ${idToken}`,
+            },
+            body: JSON.stringify(
+              hasStripeCustomer && userProfile?.stripeCustomerId
+                ? { customerId: userProfile.stripeCustomerId }
+                : {
+                    userId: currentUser.uid,
+                    isGuest: false,
+                    isRecurring: false,
+                  }
+            ),
+          });
+
+          if (!response.ok) {
+            throw new Error('Failed to create setup intent');
           }
-        } else {
-          // User doesn't have a Stripe customer
-        
+
+          const data = await response.json();
+          if (data.clientSecret) {
+            setClientSecret(data.clientSecret);
+          }
+          setSetupLoading(false);
+        } catch (error) {
+          console.error('Error creating setup intent:', error);
+          setSetupError('Failed to initialize payment form. Please try again.');
+          setSetupLoading(false);
         }
       }
     };
 
     initializeSetup();
-  }, [currentUser, loading, userProfile, router]);
+  }, [currentUser, loading, userProfile, router, clientSecret]);
 
  
 
