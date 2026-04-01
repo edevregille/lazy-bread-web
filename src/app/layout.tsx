@@ -5,6 +5,7 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { ConfigProvider } from "@/contexts/ConfigContext";
+import DatadogRumInit from "@/components/DatadogRumInit";
 export const metadata: Metadata = {
   title: "Lazy Bread PDX",
   description: "Organic Sourdough Cottage Bakery - Handcrafted sourdough focaccia made with organic ingredients in Portland, Oregon.",
@@ -73,24 +74,7 @@ export default function RootLayout({
           type="text/javascript"
           strategy="beforeInteractive"
         />
-        <Script id="datadog-rum">
-          {`
-            window.DD_RUM && window.DD_RUM.init({
-              applicationId: "${process.env.NEXT_PUBLIC_DD_RUM_APPLICATION_ID || ''}",
-              clientToken: "${process.env.NEXT_PUBLIC_DD_RUM_CLIENT_TOKEN || ''}",
-              site: "datadoghq.com",
-              service: "lazy-bread-web",
-              env: "${process.env.NEXT_PUBLIC_DD_ENV || ''}",
-              version: "${process.env.NEXT_PUBLIC_DD_VERSION || ''}",
-              sessionSampleRate: 100,
-              sessionReplaySampleRate: 100,
-              trackUserInteractions: true,
-              trackResources: true,
-              trackLongTasks: true,
-              defaultPrivacyLevel: "mask-user-input",
-            });
-          `}
-        </Script>
+        <DatadogRumInit />
         <ConfigProvider>
           <AuthProvider>
             <div className="min-h-screen flex flex-col">
