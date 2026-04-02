@@ -16,7 +16,7 @@ export default function FindUs() {
             <Title
               key={location.id}
               title={location.name}
-              titleClassName="text-2xl sm:text-3xl font-semibold text-bakery-primary mb-5 font-body"
+              titleClassName="text-center text-2xl sm:text-3xl font-semibold text-bakery-primary mb-5 font-body"
             >
               <div className="flex justify-center">
                 <Image
