@@ -8,10 +8,16 @@ export default function FindUs() {
   return (
     <section className="background-gradient-warm py-16">
       <div className="max-w-6xl mx-auto px-8">
-        <h1 className="text-4xl font-semibold text-bakery-primary mb-10 text-center font-body">Find us</h1>
+        <h1 className="text-3xl font-semibold text-bakery-primary mb-8 text-center font-body">
+          Find us
+        </h1>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
           {FIND_US_LOCATIONS.filter((location) => location.active).map((location) => (
-            <Title key={location.id} title={location.name}>
+            <Title
+              key={location.id}
+              title={location.name}
+              titleClassName="text-2xl sm:text-3xl font-semibold text-bakery-primary mb-5 font-body"
+            >
               <div className="flex justify-center">
                 <Image
                   src={location.image}
