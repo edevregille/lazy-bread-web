@@ -9,34 +9,26 @@ import {
 
 type MapAddressLinkProps = {
   address: string;
-  placeName?: string;
   className?: string;
 };
 
 export default function MapAddressLink({
   address,
-  placeName,
   className = '',
 }: MapAddressLinkProps) {
-  const params = {
-    address,
-    label: placeName,
-  };
+  const params = { address };
 
   const [href, setHref] = useState(() => buildGoogleMapsSearchUrl(params));
 
   useEffect(() => {
     if (typeof navigator === 'undefined') return;
-    const nextParams = {
-      address,
-      label: placeName,
-    };
+    const nextParams = { address };
     setHref(
       isIOSUserAgent(navigator.userAgent)
         ? buildAppleMapsUrl(nextParams)
         : buildGoogleMapsSearchUrl(nextParams),
     );
-  }, [address, placeName]);
+  }, [address]);
 
   return (
     <a
