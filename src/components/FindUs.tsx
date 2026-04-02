@@ -24,11 +24,7 @@ export default function FindUs() {
               <div className="mt-4 text-center">
                 <p className="text-gray-700 mb-2 font-medium font-body">
                   <span aria-hidden="true">📍 </span>
-                  <MapAddressLink
-                    address={location.address}
-                    coordinates={location.coordinates}
-                    placeName={location.name}
-                  />
+                  <MapAddressLink address={location.address} placeName={location.name} />
                 </p>
                 <p className="text-amber-700 mb-4 font-semibold font-body bg-amber-50 px-3 py-1 rounded-full inline-block">
                   <span aria-hidden="true">🕒 </span>
