@@ -152,7 +152,7 @@ export let FIND_US_LOCATIONS = [
   },{
     id: 'woodlawn-farmers-market',
     name: 'Woodlawn Farmers Market',
-    address: 'Woodlawn Triangle, Portland OR',
+    address: 'Woodlawn Farmers Market, Portland OR',
     image: '/contact-market.png',
     imageAlt: 'Woodlawn Farmers Market',
     schedule: 'Most Saturdays June - October',
@@ -164,7 +164,7 @@ export let FIND_US_LOCATIONS = [
   },{
     id: 'cafe-eleven',
     name: 'Café Eleven',
-    address: '435 NE Rosa Parks, Portland OR 97211',
+    address: '435 NE Rosa Parks Way, Portland OR 97211',
     image: '/contact-cafe11.png',
     imageAlt: 'Café Eleven location',
     schedule: 'Weekends',

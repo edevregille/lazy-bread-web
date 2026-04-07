@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useLayoutEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
 import { BREAD_TYPES, getAvailableDeliveryDates, formatDeliveryDate, DELIVERY_ZONES, BUSINESS_SETTINGS } from '@/config/app-config';
@@ -46,6 +46,60 @@ export default function OrderPage() {
   const [savingAddress, setSavingAddress] = useState(false);
   const [addressSaved, setAddressSaved] = useState(false);
 
+  /** When true, skip profile-based prefill so a restored checkout draft is not overwritten. */
+  const suppressProfilePrefillRef = useRef(false);
+
+  const ORDER_DATA_STORAGE_KEY = 'orderData';
+
+  // Restore form from sessionStorage when returning from payment (browser back or /order revisit)
+  useLayoutEffect(() => {
+    if (typeof window === 'undefined') return;
+    const raw = sessionStorage.getItem(ORDER_DATA_STORAGE_KEY);
+    if (!raw) return;
+    try {
+      const d = JSON.parse(raw) as Record<string, unknown>;
+      const items = d.items;
+      if (!Array.isArray(items)) return;
+
+      const quantities: Record<string, number> = {};
+      for (const row of items) {
+        if (
+          row &&
+          typeof row === 'object' &&
+          'name' in row &&
+          'quantity' in row &&
+          typeof (row as { name: unknown }).name === 'string' &&
+          typeof (row as { quantity: unknown }).quantity === 'number'
+        ) {
+          const { name, quantity } = row as { name: string; quantity: number };
+          quantities[name] = quantity;
+        }
+      }
+      setBreadQuantities(quantities);
+
+      if (typeof d.deliveryDate === 'string') setDeliveryDate(d.deliveryDate);
+      if (typeof d.address === 'string') setAddress(d.address);
+      if (typeof d.city === 'string') setCity(d.city);
+      if (typeof d.zipCode === 'string') setZipCode(d.zipCode);
+      if (typeof d.customerName === 'string') setCustomerName(d.customerName);
+      if (typeof d.email === 'string') setEmail(d.email);
+      if (typeof d.phone === 'string') setPhone(d.phone);
+      if (typeof d.comments === 'string') setComments(d.comments);
+      if (typeof d.isRecurring === 'boolean') setIsRecurring(d.isRecurring);
+      if (
+        d.frequency === 'weekly' ||
+        d.frequency === 'bi-weekly' ||
+        d.frequency === 'every-4-weeks'
+      ) {
+        setFrequency(d.frequency);
+      }
+
+      suppressProfilePrefillRef.current = true;
+    } catch {
+      // ignore corrupt storage
+    }
+  }, []);
+
   // Phone number formatter function
   const formatPhoneNumber = (value: string): string => {
     // Remove all non-numeric characters
@@ -70,8 +124,11 @@ export default function OrderPage() {
     setPhone(formatted);
   };
 
-  // Pre-fill form with user profile data if available
+  // Pre-fill form with user profile data if available (skip when restoring a payment draft)
   useEffect(() => {
+    if (suppressProfilePrefillRef.current) {
+      return;
+    }
     if (userProfile) {
       setAddress(userProfile.deliveryAddress || '');
       setCity('Portland'); // Always set to Portland
@@ -329,7 +386,7 @@ export default function OrderPage() {
       };
 
       // Store order data in session storage for payment page
-      sessionStorage.setItem('orderData', JSON.stringify(orderData));
+      sessionStorage.setItem(ORDER_DATA_STORAGE_KEY, JSON.stringify(orderData));
       
       // Redirect to payment page
       router.push('/order/payment');
