@@ -388,6 +388,8 @@ export async function createSetupIntent(
     };
     deliveryDate: string;
     comments?: string;
+    fulfillmentType?: 'pickup' | 'delivery';
+    pickupLocation?: string;
   },
   userId?: string,
   frequency?: 'weekly' | 'bi-weekly' | 'every-4-weeks',
@@ -413,6 +415,8 @@ export async function createSetupIntent(
       phone: orderDetails.customerInfo.phone || '',
       deliveryDate: orderDetails.deliveryDate,
       comments: orderDetails.comments || '',
+      fulfillmentType: orderDetails.fulfillmentType ?? 'delivery',
+      pickupLocation: orderDetails.pickupLocation ?? '',
       isRecurring: isRecurring ? 'true' : 'false',
       userId: userId || '',
       ...(isRecurring && frequency ? { frequency: frequency } : {}),

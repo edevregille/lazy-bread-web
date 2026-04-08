@@ -9,6 +9,8 @@ export interface AppConfig {
     price: number;
     description: string;
     availableForOrders: boolean;
+    /** Filename under public/breads (e.g. rosemary.jpg). Omit to use default.jpg */
+    image_name?: string;
   }>;
   BUSINESS_SETTINGS: {
     isHolidayMode: boolean;

@@ -8,6 +8,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { OrderDetails, PaymentFlow, PaymentMethod } from '@/lib/types';
 import ShowSavedPaymentMethod from '@/components/payment/ShowSavedPaymentMethod';
 import { formatDeliveryDate } from '@/config/app-config';
+import { isSubscriptionEnabled } from '@/config/feature-flags';
 
 // Load Stripe
 const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!);
@@ -91,8 +92,8 @@ export default function PaymentPage() {
           }
         }
 
-        // All scenarios now use setup intent
-        const isRecurring = orderDetails.isRecurring || false;
+        // All scenarios now use setup intent (subscription flow only if env allows)
+        const isRecurring = isSubscriptionEnabled && (orderDetails.isRecurring || false);
         const isGuest = !currentUser;
 
         console.log(`Payment Flow: ${isGuest ? 'Guest' : 'Logged-in'} user - ${isRecurring ? 'Recurring' : 'One-time'} order - setup intent`);
@@ -121,6 +122,8 @@ export default function PaymentPage() {
               },
               deliveryDate: orderDetails.deliveryDate,
               comments: orderDetails.comments,
+              fulfillmentType: orderDetails.fulfillmentType,
+              pickupLocation: orderDetails.pickupLocation,
             },
             userId: currentUser?.uid,
             frequency: orderDetails.frequency || 'weekly',
@@ -232,9 +235,12 @@ export default function PaymentPage() {
   };
 
   const handlePaymentSuccess = (setupIntentId: string, status: string, isRecurring: boolean = false) => {
+    const pickup = orderDetails?.fulfillmentType === 'pickup';
     const successMessage = isRecurring
       ? 'Subscription confirmed!'
-      : 'Order confirmed! Your payment will be charged when delivered.';
+      : pickup
+        ? 'Order confirmed! Your payment will be charged when your order is ready for pickup.'
+        : 'Order confirmed! Your payment will be charged when delivered.';
 
     setMessage(successMessage);
     
@@ -298,6 +304,9 @@ export default function PaymentPage() {
     );
   }
 
+  const recurringOrderActive = isSubscriptionEnabled && !!orderDetails.isRecurring;
+  const isPickup = orderDetails.fulfillmentType === 'pickup';
+
   return (
     <div className="min-h-screen py-20 bg-warm-cream">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -309,7 +318,7 @@ export default function PaymentPage() {
             <div className="bg-white rounded-lg shadow-md p-6 mb-8 border border-bakery-light">
               <div className="flex items-center justify-between mb-4">
               <h2 className="text-2xl font-semibold text-bakery-primary">Order summary</h2>
-                {orderDetails.isRecurring && (
+                {recurringOrderActive && (
                   <span className="px-3 py-1 bg-yellow-100 text-yellow-800 text-sm font-semibold rounded-full">
                     🔄 {getFrequencyLabel(orderDetails.frequency)} Delivery
                   </span>
@@ -331,7 +340,7 @@ export default function PaymentPage() {
                     <span className="text-lg font-bold text-gray-900">Total</span>
                     <span className="text-xl font-bold text-indigo-600">${orderDetails.totalAmount.toFixed(2)}</span>
                   </div>
-                  {orderDetails.isRecurring && (
+                  {recurringOrderActive && (
                     <div className="mt-2 text-sm text-gray-600">
                       This amount will be charged at delivery time {orderDetails.frequency === 'bi-weekly' ? 'every 2 weeks' : orderDetails.frequency === 'every-4-weeks' ? 'every 4 weeks' : 'every week'}.
                     </div>
@@ -340,17 +349,28 @@ export default function PaymentPage() {
               </div>
             </div>
 
-            {/* Delivery Information */}
+            {/* Pickup / delivery */}
             <div className="bg-white rounded-lg shadow-md p-6 mb-8 border border-bakery-light">
-            <h2 className="text-2xl font-semibold text-bakery-primary mb-6">Delivery information</h2>
+            <h2 className="text-2xl font-semibold text-bakery-primary mb-6">
+              {isPickup ? 'Pickup information' : 'Delivery information'}
+            </h2>
               <div className="space-y-2 text-gray-700">
                 <p><strong>Name:</strong> {orderDetails.customerName}</p>
-                <p><strong>Address:</strong> {orderDetails.address}</p>
-                <p><strong>City:</strong> {orderDetails.city}, {orderDetails.zipCode}</p>
-                {orderDetails.isRecurring && orderDetails.frequency && (
+                {isPickup ? (
+                  <p><strong>Pickup location:</strong> {orderDetails.pickupLocation || orderDetails.address}</p>
+                ) : (
+                  <>
+                    <p><strong>Address:</strong> {orderDetails.address}</p>
+                    <p><strong>City:</strong> {orderDetails.city}, {orderDetails.zipCode}</p>
+                  </>
+                )}
+                {recurringOrderActive && orderDetails.frequency && (
                   <p><strong>Frequency:</strong> {getFrequencyLabel(orderDetails.frequency)}</p>
                 )}
-                <p><strong>Delivery Date:</strong> {orderDetails.isRecurring ? `Every ${orderDetails.deliveryDate}` : formatDeliveryDate(orderDetails.deliveryDate)}</p>
+                <p>
+                  <strong>{isPickup ? 'Pickup date' : 'Delivery date'}:</strong>{' '}
+                  {recurringOrderActive ? `Every ${orderDetails.deliveryDate}` : formatDeliveryDate(orderDetails.deliveryDate)}
+                </p>
                 <p><strong>Email:</strong> {orderDetails.email}</p>
                 <p><strong>Phone:</strong> {orderDetails.phone}</p>
                 {orderDetails.comments && (
@@ -376,7 +396,10 @@ export default function PaymentPage() {
                       </svg>
                       <div className="ml-2">
                         <p className="text-sm text-blue-800">
-                          <strong>Complete your order:</strong> provide a payment method and we will charge you only when the order is delivered.
+                          <strong>Complete your order:</strong>{' '}
+                          {isPickup
+                            ? 'provide a payment method and we will charge you only when your order is ready for pickup.'
+                            : 'provide a payment method and we will charge you only when the order is delivered.'}
                         </p>
                       </div>
                     </div>
@@ -400,7 +423,10 @@ export default function PaymentPage() {
                       </svg>
                       <div className="ml-2">
                         <p className="text-sm text-blue-800">
-                          <strong>Complete your order:</strong> provide a payment method and we will charge you only when the order is delivered.
+                          <strong>Complete your order:</strong>{' '}
+                          {isPickup
+                            ? 'provide a payment method and we will charge you only when your order is ready for pickup.'
+                            : 'provide a payment method and we will charge you only when the order is delivered.'}
                         </p>
                       </div>
                     </div>
@@ -424,7 +450,9 @@ export default function PaymentPage() {
                       </svg>
                       <div className="ml-2">
                         <p className="text-sm text-green-800">
-                          We will charge your saved payment method only once we have delivered.
+                          {isPickup
+                            ? 'We will charge your saved payment method only once your order is ready for pickup.'
+                            : 'We will charge your saved payment method only once we have delivered.'}
                         </p>
                       </div>
                     </div>
@@ -570,8 +598,8 @@ function SetupForm({ orderDetails, onSuccess }: { orderDetails: OrderDetails; on
     }
   };
 
-  const isRecurring = orderDetails.isRecurring || false;
-  const buttonText = isRecurring 
+  const isRecurringOrder = isSubscriptionEnabled && (orderDetails.isRecurring || false);
+  const buttonText = isRecurringOrder 
     ? (isProcessing ? 'Setting Up Weekly Delivery...' : 'Set Up Weekly Delivery')
     : (isProcessing ? 'Processing Order...' : 'Complete Order');
 

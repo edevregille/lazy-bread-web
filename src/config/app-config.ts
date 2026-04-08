@@ -60,7 +60,24 @@ export let AUTH_NAV_ITEMS = [
   { name: "Find Us", path: "/find-us" },
 ];
 
-export let BREAD_TYPES = [
+export type BreadType = {
+  id: string;
+  name: string;
+  price: number;
+  description: string;
+  availableForOrders: boolean;
+  /** Filename in public/breads (e.g. rosemary.jpg). Omit to use default.jpg */
+  image_name?: string;
+};
+
+/** In-store pickup address (order flow). */
+export const PICKUP_ADDRESS_LINE = '55 NE Holman Street';
+export const PICKUP_ADDRESS_CITY = 'Portland';
+export const PICKUP_ADDRESS_STATE = 'OR';
+export const PICKUP_ADDRESS_ZIP = '97218';
+export const PICKUP_ADDRESS_DISPLAY = `${PICKUP_ADDRESS_LINE}, ${PICKUP_ADDRESS_CITY}, ${PICKUP_ADDRESS_STATE} ${PICKUP_ADDRESS_ZIP}`;
+
+export let BREAD_TYPES: BreadType[] = [
   { 
     id: 'classic-salt', 
     name: 'Classic Salt Loaf', 

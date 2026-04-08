@@ -4,38 +4,7 @@ import React from 'react';
 import { useRouter } from 'next/navigation';
 import { Modal } from './ui/Modal';
 import { formatDeliveryDate } from '@/config/app-config';
-
-interface OrderItem {
-  id: string;
-  name: string;
-  price: number;
-  quantity: number;
-  total: number;
-}
-
-interface OrderDetails {
-  breadQuantities: Record<string, number>;
-  deliveryDate: string;
-  address: string;
-  city: string;
-  zipCode: string;
-  customerName: string;
-  email: string;
-  phone: string;
-  comments: string;
-  orderItems: OrderItem[];
-  totalAmount: number;
-  frequency?: 'weekly' | 'bi-weekly' | 'every-4-weeks';
-}
-
-interface PaymentSuccessData {
-  orderDetails: OrderDetails;
-  paymentIntentId?: string;
-  setupIntentId?: string;
-  isRecurring: boolean;
-  timestamp: string;
-  status: 'payment_completed' | 'setup_completed';
-}
+import type { OrderDetails, PaymentSuccessData } from '@/lib/types';
 
 interface PaymentSuccessModalProps {
   isOpen: boolean;
@@ -51,6 +20,7 @@ export const PaymentSuccessModal: React.FC<PaymentSuccessModalProps> = ({
   const router = useRouter();
   const { orderDetails, isRecurring, status } = paymentData;
   const isSetupIntent = status === 'setup_completed';
+  const isPickup = orderDetails.fulfillmentType === 'pickup';
 
   const handleClose = () => {
     if (isRecurring) {
@@ -125,17 +95,35 @@ export const PaymentSuccessModal: React.FC<PaymentSuccessModalProps> = ({
           </div>
         </div>
 
-        {/* Delivery Information */}
+        {/* Pickup / delivery */}
         <div className="bg-gray-50 rounded-lg p-4">
-          <h3 className="text-lg font-semibold text-gray-900 mb-3">Delivery Information</h3>
+          <h3 className="text-lg font-semibold text-gray-900 mb-3">
+            {isPickup ? 'Pickup' : 'Delivery'} information
+          </h3>
           <div className="space-y-1 text-sm text-gray-700">
             <p><strong>Name:</strong> {orderDetails.customerName}</p>
-            <p><strong>Address:</strong> {orderDetails.address}</p>
-            <p><strong>City:</strong> {orderDetails.city}, {orderDetails.zipCode}</p>
+            {isPickup ? (
+              <p><strong>Pickup location:</strong> {orderDetails.pickupLocation || orderDetails.address}</p>
+            ) : (
+              <>
+                <p><strong>Address:</strong> {orderDetails.address}</p>
+                <p><strong>City:</strong> {orderDetails.city}, {orderDetails.zipCode}</p>
+              </>
+            )}
             {isRecurring && orderDetails.frequency && (
               <p><strong>Frequency:</strong> {getFrequencyLabel(orderDetails.frequency)}</p>
             )}
-            <p><strong>Delivery {isRecurring ? 'Day' : 'Date'}:</strong> {isRecurring ? `Every ${orderDetails.deliveryDate}` : formatDeliveryDate(orderDetails.deliveryDate)}</p>
+            <p>
+              <strong>
+                {isPickup
+                  ? 'Pickup date'
+                  : isRecurring
+                    ? 'Delivery day'
+                    : 'Delivery date'}
+                :
+              </strong>{' '}
+              {isRecurring ? `Every ${orderDetails.deliveryDate}` : formatDeliveryDate(orderDetails.deliveryDate)}
+            </p>
             <p><strong>Email:</strong> {orderDetails.email}</p>
             <p><strong>Phone:</strong> {orderDetails.phone}</p>
             {orderDetails.comments && (
@@ -162,7 +150,11 @@ export const PaymentSuccessModal: React.FC<PaymentSuccessModalProps> = ({
                 <div className="flex-shrink-0 w-5 h-5 bg-green-500 text-white rounded-full flex items-center justify-center text-xs font-bold mr-2 mt-0.5">
                   2
                 </div>
-                <p className="text-gray-700">We&apos;ll deliver to your doorstep on the day you selected.</p>
+                <p className="text-gray-700">
+                  {isPickup
+                    ? 'We will have your order ready for pickup on the date you selected.'
+                    : 'We will deliver to your doorstep on the day you selected.'}
+                </p>
               </div>
             </div>
           </div>

@@ -18,6 +18,7 @@ import SubscriptionScheduleEditModal from '@/components/payment/SubscriptionSche
 import ConfirmationModal from '@/components/ui/ConfirmationModal';
 import ShowSavedPaymentMethod from '@/components/payment/ShowSavedPaymentMethod';
 import { DELIVERY_ZONES, formatDeliveryDate } from '@/config/app-config';
+import { isSubscriptionEnabled } from '@/config/feature-flags';
 import { PaymentMethod, Subscription, Order } from '@/lib/types';
 
 export default function DashboardPage() {
@@ -26,7 +27,7 @@ export default function DashboardPage() {
   const [subscriptions, setSubscriptions] = useState<Subscription[]>([]);
   const [paymentMethods, setPaymentMethods] = useState<PaymentMethod[]>([]);
   const [ordersLoading, setOrdersLoading] = useState(true);
-  const [subscriptionsLoading, setSubscriptionsLoading] = useState(true);
+  const [subscriptionsLoading, setSubscriptionsLoading] = useState(isSubscriptionEnabled);
 
   const [editingAddress, setEditingAddress] = useState(false);
   const [addressForm, setAddressForm] = useState({
@@ -62,10 +63,10 @@ export default function DashboardPage() {
     }
 
     if (currentUser && !signingOut) {
-      // Only fetch orders, subscriptions and payment methods once when user is available
       fetchUserOrders();
-      fetchUserSubscriptions();
-      // Don't call refreshUserProfile here as it causes infinite loops
+      if (isSubscriptionEnabled) {
+        fetchUserSubscriptions();
+      }
     }
   }, [currentUser, loading, router, signingOut]); // Added signingOut to dependencies
 
@@ -571,7 +572,7 @@ export default function DashboardPage() {
 
           {/* Right Column - Subscriptions & Orders */}
           <div className="lg:col-span-2 space-y-8">
-            {/* Subscriptions */}
+            {isSubscriptionEnabled && (
             <div className="bg-white rounded-lg shadow-lg p-6">
               <h2 className="text-2xl font-semibold text-bakery-primary mb-6">
                 🔄 Your Subscriptions
@@ -742,6 +743,7 @@ export default function DashboardPage() {
                 </div>
               )}
             </div>
+            )}
 
             {/* Orders (Last 30 days) - Merged Pending and History */}
             <div className="bg-white rounded-lg shadow-lg p-6">
@@ -851,8 +853,7 @@ export default function DashboardPage() {
 
       {/* Payment Methods Modal is now handled in ShowSavedPaymentMethod component */}
       
-      {/* Subscription Address Edit Modal */}
-      {selectedSubscription && (
+      {isSubscriptionEnabled && selectedSubscription && (
         <SubscriptionAddressEditModal
           isOpen={editingSubscriptionAddress}
           onClose={handleCloseAddressModal}
@@ -861,8 +862,7 @@ export default function DashboardPage() {
         />
       )}
 
-      {/* Subscription Content Edit Modal */}
-      {selectedSubscription && (
+      {isSubscriptionEnabled && selectedSubscription && (
         <SubscriptionContentEditModal
           isOpen={editingSubscriptionContent}
           onClose={handleCloseContentModal}
@@ -871,8 +871,7 @@ export default function DashboardPage() {
         />
       )}
 
-      {/* Subscription Schedule Edit Modal */}
-      {selectedSubscription && (
+      {isSubscriptionEnabled && selectedSubscription && (
         <SubscriptionScheduleEditModal
           isOpen={editingSubscriptionSchedule}
           onClose={handleCloseScheduleModal}
@@ -881,8 +880,7 @@ export default function DashboardPage() {
         />
       )}
 
-      {/* Confirmation Modal */}
-      {confirmationModal.isOpen && confirmationModal.subscription && (
+      {isSubscriptionEnabled && confirmationModal.isOpen && confirmationModal.subscription && (
         <ConfirmationModal
           isOpen={confirmationModal.isOpen}
           onClose={handleCloseConfirmationModal}

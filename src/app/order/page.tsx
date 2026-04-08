@@ -1,9 +1,23 @@
 "use client";
 
 import { useState, useEffect, useLayoutEffect, useRef } from 'react';
+import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
-import { BREAD_TYPES, getAvailableDeliveryDates, formatDeliveryDate, DELIVERY_ZONES, BUSINESS_SETTINGS } from '@/config/app-config';
+import {
+  BREAD_TYPES,
+  getAvailableDeliveryDates,
+  formatDeliveryDate,
+  DELIVERY_ZONES,
+  BUSINESS_SETTINGS,
+  PICKUP_ADDRESS_DISPLAY,
+  PICKUP_ADDRESS_LINE,
+  PICKUP_ADDRESS_CITY,
+  PICKUP_ADDRESS_ZIP,
+  type BreadType,
+} from '@/config/app-config';
+import { isSubscriptionEnabled } from '@/config/feature-flags';
+import type { FulfillmentType } from '@/lib/types';
 import { useConfig } from '@/contexts/ConfigContext';
 import { updateUserProfile } from '@/lib/firebaseService';
 import AuthModal from '@/components/auth/AuthModal';
@@ -14,6 +28,11 @@ interface OrderItem {
   price: number;
   quantity: number;
   total: number;
+}
+
+function breadImageSrc(bread: BreadType) {
+  const name = bread.image_name?.trim();
+  return `/breads/${name || 'default.jpg'}`;
 }
 
 export default function OrderPage() {
@@ -45,6 +64,7 @@ export default function OrderPage() {
   const [showSaveAddressPrompt, setShowSaveAddressPrompt] = useState(false);
   const [savingAddress, setSavingAddress] = useState(false);
   const [addressSaved, setAddressSaved] = useState(false);
+  const [fulfillmentType, setFulfillmentType] = useState<FulfillmentType>('delivery');
 
   /** When true, skip profile-based prefill so a restored checkout draft is not overwritten. */
   const suppressProfilePrefillRef = useRef(false);
@@ -85,7 +105,9 @@ export default function OrderPage() {
       if (typeof d.email === 'string') setEmail(d.email);
       if (typeof d.phone === 'string') setPhone(d.phone);
       if (typeof d.comments === 'string') setComments(d.comments);
-      if (typeof d.isRecurring === 'boolean') setIsRecurring(d.isRecurring);
+      if (isSubscriptionEnabled && typeof d.isRecurring === 'boolean') {
+        setIsRecurring(d.isRecurring);
+      }
       if (
         d.frequency === 'weekly' ||
         d.frequency === 'bi-weekly' ||
@@ -93,12 +115,29 @@ export default function OrderPage() {
       ) {
         setFrequency(d.frequency);
       }
+      if (d.fulfillmentType === 'pickup' || d.fulfillmentType === 'delivery') {
+        setFulfillmentType(d.fulfillmentType);
+      }
 
       suppressProfilePrefillRef.current = true;
     } catch {
       // ignore corrupt storage
     }
   }, []);
+
+  useEffect(() => {
+    if (!isSubscriptionEnabled) {
+      setIsRecurring(false);
+    }
+  }, []);
+
+  const recurringActive = isSubscriptionEnabled && isRecurring;
+
+  useEffect(() => {
+    if (recurringActive) {
+      setFulfillmentType('delivery');
+    }
+  }, [recurringActive]);
 
   // Phone number formatter function
   const formatPhoneNumber = (value: string): string => {
@@ -130,9 +169,11 @@ export default function OrderPage() {
       return;
     }
     if (userProfile) {
-      setAddress(userProfile.deliveryAddress || '');
-      setCity('Portland'); // Always set to Portland
-      setZipCode(userProfile.deliveryZipCode || '');
+      if (fulfillmentType === 'delivery') {
+        setAddress(userProfile.deliveryAddress || '');
+        setCity('Portland');
+        setZipCode(userProfile.deliveryZipCode || '');
+      }
       setCustomerName(userProfile.displayName || '');
       setEmail(userProfile.email || '');
       setPhone(userProfile.phone || '');
@@ -140,7 +181,7 @@ export default function OrderPage() {
       setCustomerName(currentUser.displayName || '');
       setEmail(currentUser.email || '');
     }
-  }, [userProfile, currentUser]);
+  }, [userProfile, currentUser, fulfillmentType]);
 
   // Reset loading state on component unmount or route change
   useEffect(() => {
@@ -149,19 +190,25 @@ export default function OrderPage() {
     };
   }, []);
 
-  // Show save address prompt when user fills in address fields
+  // Show save address prompt when user fills in address fields (delivery only)
   useEffect(() => {
-    if (currentUser && userProfile && address.trim() && zipCode.trim() && !showSaveAddressPrompt) {
-      // Only show if the address is different from what's already saved
-      const currentAddress = userProfile.deliveryAddress || '';
-      const currentZipCode = userProfile.deliveryZipCode || '';
-      
-      if (address.trim() !== currentAddress || zipCode.trim() !== currentZipCode) {
-        setShowSaveAddressPrompt(true);
-        setAddressSaved(false); // Reset saved state when address changes
-      }
+    if (
+      fulfillmentType !== 'delivery' ||
+      !currentUser ||
+      !userProfile ||
+      !address.trim() ||
+      !zipCode.trim() ||
+      showSaveAddressPrompt
+    ) {
+      return;
     }
-  }, [address, zipCode, currentUser, userProfile, showSaveAddressPrompt]);
+    const currentAddress = userProfile.deliveryAddress || '';
+    const currentZipCode = userProfile.deliveryZipCode || '';
+    if (address.trim() !== currentAddress || zipCode.trim() !== currentZipCode) {
+      setShowSaveAddressPrompt(true);
+      setAddressSaved(false);
+    }
+  }, [address, zipCode, currentUser, userProfile, showSaveAddressPrompt, fulfillmentType]);
 
   const availableDates = getAvailableDeliveryDates();
 
@@ -243,7 +290,9 @@ export default function OrderPage() {
   const handleAuthSuccess = async () => {
     await refreshUserProfile();
     setShowAuthModal(false);
-    setIsRecurring(true);
+    if (isSubscriptionEnabled) {
+      setIsRecurring(true);
+    }
   };
 
   const calculateTotal = () => {
@@ -285,7 +334,7 @@ export default function OrderPage() {
       hasErrors = true;
     }
     
-    if (isRecurring && !currentUser) {
+    if (recurringActive && !currentUser) {
       setError('Please sign in to place a recurring order');
       return false;
     }
@@ -294,19 +343,25 @@ export default function OrderPage() {
       hasErrors = true;
     }
     if (!deliveryDate) {
-      errors.deliveryDate = isRecurring ? 'Please select a delivery day' : 'Please select a delivery date';
+      errors.deliveryDate = recurringActive
+        ? 'Please select a delivery day'
+        : fulfillmentType === 'pickup'
+          ? 'Please select a pickup date'
+          : 'Please select a delivery date';
       hasErrors = true;
     }
-    if (!address.trim()) {
-      errors.address = 'Please enter your delivery address';
-      hasErrors = true;
-    }
-    if (!zipCode.trim()) {
-      errors.zipCode = 'Please enter your ZIP code';
-      hasErrors = true;
-    } else if (!validateZipCode(zipCode)) {
-      errors.zipCode = 'We only deliver to Multnomah County (Portland area). Please enter a valid Portland ZIP code.';
-      hasErrors = true;
+    if (fulfillmentType === 'delivery') {
+      if (!address.trim()) {
+        errors.address = 'Please enter your delivery address';
+        hasErrors = true;
+      }
+      if (!zipCode.trim()) {
+        errors.zipCode = 'Please enter your ZIP code';
+        hasErrors = true;
+      } else if (!validateZipCode(zipCode)) {
+        errors.zipCode = 'We only deliver to Multnomah County (Portland area). Please enter a valid Portland ZIP code.';
+        hasErrors = true;
+      }
     }
     if (!customerName.trim()) {
       errors.customerName = 'Please enter your name';
@@ -369,20 +424,31 @@ export default function OrderPage() {
     try {
       const orderItems = getOrderItems();
       const totalAmount = calculateTotal();
+      const isDelivery = fulfillmentType === 'delivery';
 
       const orderData = {
         items: orderItems,
         deliveryDate,
-        address: address.trim(),
-        city: city.trim(),
-        zipCode: zipCode.trim(),
+        fulfillmentType,
+        ...(isDelivery
+          ? {
+              address: address.trim(),
+              city: city.trim(),
+              zipCode: zipCode.trim(),
+            }
+          : {
+              pickupLocation: PICKUP_ADDRESS_DISPLAY,
+              address: PICKUP_ADDRESS_LINE,
+              city: PICKUP_ADDRESS_CITY,
+              zipCode: PICKUP_ADDRESS_ZIP,
+            }),
         customerName: customerName.trim(),
         email: email.trim(),
         phone: phone.trim(),
         comments: comments.trim(),
         totalAmount,
-        isRecurring,
-        frequency: isRecurring ? frequency : undefined
+        isRecurring: recurringActive,
+        frequency: recurringActive ? frequency : undefined
       };
 
       // Store order data in session storage for payment page
@@ -402,12 +468,12 @@ export default function OrderPage() {
   };
 
   return (
-    <div className="min-h-screen py-20 bg-warm-cream">
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="bg-white rounded-lg shadow-lg p-6">
+    <div className="min-h-screen py-12 sm:py-20 bg-warm-cream overflow-x-hidden">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="bg-white rounded-lg shadow-lg p-4 sm:p-6">
           <div className="mb-8">
-            <h1 className="text-4xl font-semibold text-bakery-primary mb-6">Place your order</h1>
-            <p className="text-lg text-earth-brown">
+            <h1 className="text-3xl sm:text-4xl font-semibold text-bakery-primary mb-4 sm:mb-6">Place your order</h1>
+            <p className="text-base sm:text-lg text-earth-brown">
               Select your favorite focaccias and choose your delivery date, we will bring it to you. 
               <br/>For specific orders or any question, send us an email or reach out via instagram.
             </p>
@@ -444,9 +510,9 @@ export default function OrderPage() {
 
             {/* Bread Selection */}
             <div data-field-error={fieldErrors.breadItems ? 'true' : undefined}>
-              <div className="flex justify-between items-center mb-6">
-                <h2 className="text-2xl font-semibold text-bakery-primary">Select your focaccias</h2>
-                <div className="text-sm text-gray-600">
+              <div className="flex flex-col gap-2 sm:flex-row sm:justify-between sm:items-center mb-6">
+                <h2 className="text-xl sm:text-2xl font-semibold text-bakery-primary">Select your focaccias</h2>
+                <div className="text-sm text-gray-600 shrink-0">
                   Max {BUSINESS_SETTINGS_RUNTIME.maxOrderQuantity} per order
                   {(() => {
                     const totalQuantity = Object.values(breadQuantities).reduce((sum, qty) => sum + qty, 0);
@@ -478,28 +544,39 @@ export default function OrderPage() {
                   </p>
                 </div>
               )}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="space-y-4">
                 {BREAD_TYPES_RUNTIME.filter(bread => bread.availableForOrders).map((bread) => (
-                  <div key={bread.name} className="bg-white rounded-lg shadow-md p-6 border border-bakery-light">
-                    <div className="flex justify-between items-start mb-4">
-                      <div>
-                        <h3 className="text-lg font-semibold text-bakery-primary">{bread.name}</h3>
-                        <p className="text-sm text-gray-600 mt-1">{bread.description}</p>
-                        <p className="text-lg font-bold text-bakery-primary mt-2">${bread.price.toFixed(2)}</p>
+                  <div
+                    key={bread.name}
+                    className="bg-white rounded-lg shadow-md p-3 sm:p-4 border border-bakery-light flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-4"
+                  >
+                    <div className="flex flex-row gap-3 min-w-0 flex-1 items-start sm:items-center">
+                      <div className="relative w-24 h-24 sm:w-40 sm:h-40 shrink-0 rounded-lg overflow-hidden bg-gray-100">
+                        <Image
+                          src={breadImageSrc(bread)}
+                          alt={bread.name}
+                          fill
+                          sizes="(max-width: 640px) 6rem, 10rem"
+                          className="object-cover"
+                        />
+                      </div>
+                      <div className="flex-1 min-w-0 pt-0.5 sm:pt-0">
+                        <h3 className="text-base sm:text-lg font-semibold text-bakery-primary leading-tight">{bread.name}</h3>
+                        <p className="text-sm text-gray-600 mt-1 line-clamp-4 sm:line-clamp-none">{bread.description}</p>
+                        <p className="text-base sm:text-lg font-bold text-bakery-primary mt-2">${bread.price.toFixed(2)}</p>
                       </div>
                     </div>
-                    
-                    <div className="flex items-center space-x-3">
+                    <div className="flex items-center justify-center gap-4 sm:gap-3 shrink-0 sm:pl-0 pt-1 border-t border-gray-100 sm:border-0 sm:pt-0">
                       <button
                         type="button"
                         onClick={() => updateQuantity(bread.name, (breadQuantities[bread.name] || 0) - 1)}
                         disabled={isHolidayMode || (breadQuantities[bread.name] || 0) === 0}
-                        className="w-8 h-8 btn-primary rounded-full flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed"
+                        className="h-10 w-10 sm:h-8 sm:w-8 btn-primary rounded-full flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed touch-manipulation"
                         aria-label={`Decrease quantity of ${bread.name}`}
                       >
                         <span aria-hidden="true">−</span>
                       </button>
-                      <span className="text-lg font-semibold min-w-[2rem] text-center" aria-live="polite" aria-atomic="true">
+                      <span className="text-lg font-semibold min-w-[2.5rem] text-center tabular-nums" aria-live="polite" aria-atomic="true">
                         {breadQuantities[bread.name] || 0}
                       </span>
                       <button
@@ -509,7 +586,7 @@ export default function OrderPage() {
                           const totalQuantity = Object.values(breadQuantities).reduce((sum, qty) => sum + qty, 0);
                           return totalQuantity >= BUSINESS_SETTINGS_RUNTIME.maxOrderQuantity;
                         })()}
-                        className="w-8 h-8 btn-primary rounded-full flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed"
+                        className="h-10 w-10 sm:h-8 sm:w-8 btn-primary rounded-full flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed touch-manipulation"
                         title={(() => {
                           const totalQuantity = Object.values(breadQuantities).reduce((sum, qty) => sum + qty, 0);
                           return totalQuantity >= BUSINESS_SETTINGS_RUNTIME.maxOrderQuantity 
@@ -526,9 +603,9 @@ export default function OrderPage() {
               </div>
             </div>
 
-            {/* Order Type Selection */}
+            {/* Order Type Selection — NEXT_PUBLIC_ENABLE_SUBSCRIPTION === "true" */}
+            {isSubscriptionEnabled && (
             <div>
-              {/* <h2 className="text-2xl font-semibold text-bakery-primary mb-6">Order Type</h2> */}
               <div className="bg-gradient-to-r from-yellow-50 to-orange-50 border-2 border-yellow-200 rounded-lg p-6 hover:border-yellow-300 transition-colors">
                 <div className="flex items-start">
                   <div className="flex-1">
@@ -573,12 +650,61 @@ export default function OrderPage() {
                 </div>
               </div>
             </div>
+            )}
 
-            {/* Delivery Information */}
+            {/* Pickup or delivery */}
             <div>
-              <h2 className="text-2xl font-semibold text-bakery-primary mb-6">Delivery information</h2>
+              <h2 className="text-2xl font-semibold text-bakery-primary mb-6">Pickup or delivery</h2>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {isRecurring && (
+                <div className="md:col-span-2">
+                  <fieldset>
+                    <legend className="block text-sm font-medium text-gray-700 mb-3">
+                      How do you want to receive your order? *
+                    </legend>
+                    <div className="flex flex-col sm:flex-row gap-4">
+                      <label className="flex items-start gap-3 cursor-pointer rounded-lg border border-bakery-light p-4 flex-1 has-[:checked]:border-bakery-primary has-[:checked]:bg-bakery-primary/5">
+                        <input
+                          type="radio"
+                          name="fulfillment"
+                          className="mt-1"
+                          checked={fulfillmentType === 'pickup'}
+                          onChange={() => {
+                            setFulfillmentType('pickup');
+                            setFieldErrors(prev => {
+                              const next = { ...prev };
+                              delete next.address;
+                              delete next.zipCode;
+                              return next;
+                            });
+                          }}
+                          disabled={isHolidayMode || recurringActive}
+                        />
+                        <span>
+                          <span className="font-semibold text-bakery-primary">Pickup</span>
+                          <span className="block text-sm text-gray-600 mt-1">{PICKUP_ADDRESS_DISPLAY}</span>
+                        </span>
+                      </label>
+                      <label className="flex items-start gap-3 cursor-pointer rounded-lg border border-bakery-light p-4 flex-1 has-[:checked]:border-bakery-primary has-[:checked]:bg-bakery-primary/5">
+                        <input
+                          type="radio"
+                          name="fulfillment"
+                          className="mt-1"
+                          checked={fulfillmentType === 'delivery'}
+                          onChange={() => setFulfillmentType('delivery')}
+                          disabled={isHolidayMode}
+                        />
+                        <span>
+                          <span className="font-semibold text-bakery-primary">Delivery</span>
+                          <span className="block text-sm text-gray-600 mt-1">We bring your order to your Portland-area address.</span>
+                        </span>
+                      </label>
+                    </div>
+                    {recurringActive && (
+                      <p className="text-xs text-gray-500 mt-2">Subscriptions use delivery only.</p>
+                    )}
+                  </fieldset>
+                </div>
+                {recurringActive && (
                   <div>
                     <label htmlFor="order-frequency" className="block text-sm font-medium text-gray-700 mb-2">
                       Delivery Frequency *
@@ -602,9 +728,13 @@ export default function OrderPage() {
                 )}
                 <div data-field-error={fieldErrors.deliveryDate ? 'true' : undefined}>
                   <label htmlFor="order-delivery" className="block text-sm font-medium text-gray-700 mb-2">
-                    {isRecurring ? 'Delivery Day *' : 'Delivery Date *'}
+                    {recurringActive
+                      ? 'Delivery Day *'
+                      : fulfillmentType === 'pickup'
+                        ? 'Pickup date *'
+                        : 'Delivery date *'}
                   </label>
-                  {isRecurring ? (
+                  {recurringActive ? (
                     <select
                       id="order-delivery"
                       value={deliveryDate}
@@ -659,7 +789,9 @@ export default function OrderPage() {
                       aria-invalid={fieldErrors.deliveryDate ? 'true' : undefined}
                       aria-describedby={fieldErrors.deliveryDate ? 'order-err-deliveryDate' : undefined}
                     >
-                      <option value="">Select a delivery date</option>
+                      <option value="">
+                        {fulfillmentType === 'pickup' ? 'Select a pickup date' : 'Select a delivery date'}
+                      </option>
                       {availableDates.map((date) => (
                         <option key={date} value={date}>
                           {formatDeliveryDate(date)}
@@ -675,7 +807,7 @@ export default function OrderPage() {
                       {fieldErrors.deliveryDate}
                     </p>
                   )}
-                  {!fieldErrors.deliveryDate && isRecurring && currentUser && (
+                  {!fieldErrors.deliveryDate && recurringActive && currentUser && (
                     <p className="text-xs text-gray-500 mt-1">
                       Your first delivery will be scheduled for the next available {deliveryDate || 'selected day'}
                     </p>
@@ -779,6 +911,8 @@ export default function OrderPage() {
                   />
                 </div>
 
+                {fulfillmentType === 'delivery' && (
+                <>
                 <div className="md:col-span-2" data-field-error={fieldErrors.address ? 'true' : undefined}>
                   <label htmlFor="order-address" className="block text-sm font-medium text-gray-700 mb-2">
                     Delivery Address *
@@ -878,9 +1012,11 @@ export default function OrderPage() {
                     <p id="order-zip-hint" className="text-xs text-gray-500 mt-1">We deliver to Multnomah County (Portland area) only</p>
                   )}
                 </div>
+                </>
+                )}
 
                 {/* Save Address Prompt for Logged-in Users */}
-                {currentUser && userProfile && showSaveAddressPrompt && (
+                {fulfillmentType === 'delivery' && currentUser && userProfile && showSaveAddressPrompt && (
                   <div className="md:col-span-2">
                     <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
                       <div className="flex items-start space-x-3">

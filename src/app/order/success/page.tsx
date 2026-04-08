@@ -4,26 +4,7 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { formatDeliveryDate } from '@/config/app-config';
-
-interface OrderDetails {
-  breadQuantities: Record<string, number>;
-  deliveryDate: string;
-  address: string;
-  city: string;
-  zipCode: string;
-  customerName: string;
-  email: string;
-  phone: string;
-  comments: string;
-  orderItems: Array<{
-    id: string;
-    name: string;
-    price: number;
-    quantity: number;
-    total: number;
-  }>;
-  totalAmount: number;
-}
+import type { OrderDetails } from '@/lib/types';
 
 export default function SuccessPage() {
   const [orderDetails, setOrderDetails] = useState<OrderDetails | null>(null);
@@ -38,7 +19,10 @@ export default function SuccessPage() {
     }
 
     try {
-      const details = JSON.parse(storedOrderData);
+      const details = JSON.parse(storedOrderData) as OrderDetails & { items?: OrderDetails['orderItems'] };
+      if (!details.orderItems?.length && Array.isArray(details.items)) {
+        details.orderItems = details.items;
+      }
       setOrderDetails(details);
       // Clear the order data from session storage
       sessionStorage.removeItem('orderData');
@@ -79,6 +63,8 @@ export default function SuccessPage() {
       </div>
     );
   }
+
+  const isPickup = orderDetails.fulfillmentType === 'pickup';
 
   return (
     <div className="min-h-screen bg-gray-50 py-20">
@@ -136,14 +122,25 @@ export default function SuccessPage() {
             </div>
           </div>
 
-          {/* Delivery Information */}
+          {/* Pickup / delivery */}
           <div className="bg-gray-50 rounded-lg p-6 mb-8 text-left">
-            <h2 className="text-xl font-semibold text-gray-900 mb-4">Delivery Information</h2>
+            <h2 className="text-xl font-semibold text-gray-900 mb-4">
+              {isPickup ? 'Pickup information' : 'Delivery information'}
+            </h2>
             <div className="space-y-2 text-gray-700">
               <p><strong>Name:</strong> {orderDetails.customerName}</p>
-              <p><strong>Address:</strong> {orderDetails.address}</p>
-              <p><strong>City:</strong> {orderDetails.city}, {orderDetails.zipCode}</p>
-              <p><strong>Delivery Date:</strong> {formatDeliveryDate(orderDetails.deliveryDate)}</p>
+              {isPickup ? (
+                <p><strong>Pickup location:</strong> {orderDetails.pickupLocation || orderDetails.address}</p>
+              ) : (
+                <>
+                  <p><strong>Address:</strong> {orderDetails.address}</p>
+                  <p><strong>City:</strong> {orderDetails.city}, {orderDetails.zipCode}</p>
+                </>
+              )}
+              <p>
+                <strong>{isPickup ? 'Pickup date' : 'Delivery date'}:</strong>{' '}
+                {formatDeliveryDate(orderDetails.deliveryDate)}
+              </p>
               <p><strong>Email:</strong> {orderDetails.email}</p>
               <p><strong>Phone:</strong> {orderDetails.phone}</p>
               {orderDetails.comments && (
@@ -169,7 +166,11 @@ export default function SuccessPage() {
                 <div className="flex-shrink-0 w-6 h-6 bg-blue-500 text-white rounded-full flex items-center justify-center text-sm font-bold mr-3 mt-0.5">
                   2
                 </div>
-                <p className="text-gray-700">We will deliver your order at the address you provided and the day you selected.</p>
+                <p className="text-gray-700">
+                  {isPickup
+                    ? 'We will have your order ready for pickup on the day you selected.'
+                    : 'We will deliver your order at the address you provided and the day you selected.'}
+                </p>
               </div>
             </div>
           </div>

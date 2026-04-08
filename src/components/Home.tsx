@@ -5,33 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { BREAD_TYPES } from "@/config/app-config";
 import { PaymentSuccessModal } from "./PaymentSuccessModal";
-
-interface PaymentSuccessData {
-  orderDetails: {
-    breadQuantities: Record<string, number>;
-    deliveryDate: string;
-    address: string;
-    city: string;
-    zipCode: string;
-    customerName: string;
-    email: string;
-    phone: string;
-    comments: string;
-    orderItems: Array<{
-      id: string;
-      name: string;
-      price: number;
-      quantity: number;
-      total: number;
-    }>;
-    totalAmount: number;
-  };
-  paymentIntentId?: string;
-  setupIntentId?: string;
-  isRecurring: boolean;
-  timestamp: string;
-  status: 'payment_completed' | 'setup_completed';
-}
+import type { PaymentSuccessData } from "@/lib/types";
 
 export default function Home() {
   const [showPaymentSuccess, setShowPaymentSuccess] = useState(false);

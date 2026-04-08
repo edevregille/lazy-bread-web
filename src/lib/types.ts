@@ -1,4 +1,6 @@
 // Order-related interfaces
+export type FulfillmentType = 'pickup' | 'delivery';
+
 export interface OrderItem {
   id: string;
   name: string;
@@ -8,7 +10,8 @@ export interface OrderItem {
 }
 
 export interface OrderDetails {
-  breadQuantities: Record<string, number>;
+  /** Omitted in some checkout payloads that only send orderItems */
+  breadQuantities?: Record<string, number>;
   deliveryDate: string;
   address: string;
   city: string;
@@ -21,6 +24,10 @@ export interface OrderDetails {
   totalAmount: number;
   isRecurring?: boolean;
   frequency?: 'weekly' | 'bi-weekly' | 'every-4-weeks';
+  /** Defaults to delivery when omitted (legacy orders). */
+  fulfillmentType?: FulfillmentType;
+  /** Full display line for pickup location when fulfillmentType is pickup. */
+  pickupLocation?: string;
 }
 // Firebase-specific Order interface (different from OrderDetails)
 export interface Order {
