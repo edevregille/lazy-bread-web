@@ -473,10 +473,32 @@ export default function OrderPage() {
         <div className="bg-white rounded-lg shadow-lg p-4 sm:p-6">
           <div className="mb-8">
             <h1 className="text-3xl sm:text-4xl font-semibold text-bakery-primary mb-4 sm:mb-6">Place your order</h1>
-            <p className="text-base sm:text-lg text-earth-brown">
-              Select your favorite focaccias and choose your delivery date, we will bring it to you. 
-              <br/>For specific orders or any question, send us an email or reach out via instagram.
-            </p>
+            <div className="flex flex-col md:flex-row md:items-start gap-6 lg:gap-8">
+              <div className="flex-1 min-w-0 space-y-4 text-base sm:text-lg text-earth-brown leading-relaxed">
+                <p>
+                  Can&apos;t make it to the bread stand during the week? No problem! Place your order here and I&apos;ll bring it to you. Or order and reserve your favorite flavor to come pick up at the stand after work.
+                </p>
+                <p>
+                  Each of the focaccia &quot;loaves&quot; are roughly 9.5 x 13 inches, and the sandwich loaves are the typical 9 inch size.
+                </p>
+                <p>
+                  Payment is collected only after the delivery or pickup has been made.
+                </p>
+                <p>
+                  For larger orders or any other ordering questions, please shoot me an email or text message - lazybreadpdx@gmail.com / 206-272-0839
+                </p>
+              </div>
+              <div className="w-full max-w-md mx-auto md:mx-0 md:max-w-[min(100%,22rem)] lg:max-w-sm shrink-0">
+                <Image
+                  src="/breads/description.jpg"
+                  alt="Lazy Bread focaccia and loaves"
+                  width={1200}
+                  height={900}
+                  className="w-full h-auto rounded-lg object-cover shadow-md"
+                  sizes="(max-width: 768px) 100vw, 22rem"
+                />
+              </div>
+            </div>
           </div>
 
           {/* Holiday Mode Check */}
@@ -544,29 +566,29 @@ export default function OrderPage() {
                   </p>
                 </div>
               )}
-              <div className="space-y-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-5">
                 {BREAD_TYPES_RUNTIME.filter(bread => bread.availableForOrders).map((bread) => (
                   <div
                     key={bread.name}
-                    className="bg-white rounded-lg shadow-md p-3 sm:p-4 border border-bakery-light flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-4"
+                    className="bg-white rounded-lg shadow-md p-3 sm:p-4 border border-bakery-light flex flex-col gap-3 min-w-0 h-full"
                   >
-                    <div className="flex flex-row gap-3 min-w-0 flex-1 items-start sm:items-center">
-                      <div className="relative w-24 h-24 sm:w-40 sm:h-40 shrink-0 rounded-lg overflow-hidden bg-gray-100">
+                    <div className="flex flex-row gap-3 min-w-0 flex-1 items-start">
+                      <div className="relative w-24 h-24 md:w-28 md:h-28 shrink-0 rounded-lg overflow-hidden bg-gray-100">
                         <Image
                           src={breadImageSrc(bread)}
                           alt={bread.name}
                           fill
-                          sizes="(max-width: 640px) 6rem, 10rem"
+                          sizes="(max-width: 768px) 6rem, 7rem"
                           className="object-cover"
                         />
                       </div>
-                      <div className="flex-1 min-w-0 pt-0.5 sm:pt-0">
-                        <h3 className="text-base sm:text-lg font-semibold text-bakery-primary leading-tight">{bread.name}</h3>
-                        <p className="text-sm text-gray-600 mt-1 line-clamp-4 sm:line-clamp-none">{bread.description}</p>
-                        <p className="text-base sm:text-lg font-bold text-bakery-primary mt-2">${bread.price.toFixed(2)}</p>
+                      <div className="flex-1 min-w-0 pt-0.5">
+                        <h3 className="text-base md:text-lg font-semibold text-bakery-primary leading-tight">{bread.name}</h3>
+                        <p className="text-sm text-gray-600 mt-1 line-clamp-4 md:line-clamp-[5]">{bread.description}</p>
+                        <p className="text-base md:text-lg font-bold text-bakery-primary mt-2">${bread.price.toFixed(2)}</p>
                       </div>
                     </div>
-                    <div className="flex items-center justify-center gap-4 sm:gap-3 shrink-0 sm:pl-0 pt-1 border-t border-gray-100 sm:border-0 sm:pt-0">
+                    <div className="flex items-center justify-center gap-4 shrink-0 pt-1 border-t border-gray-100">
                       <button
                         type="button"
                         onClick={() => updateQuantity(bread.name, (breadQuantities[bread.name] || 0) - 1)}
