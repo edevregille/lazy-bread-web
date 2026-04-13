@@ -78,40 +78,75 @@ export const PICKUP_ADDRESS_ZIP = '97218';
 export const PICKUP_ADDRESS_DISPLAY = `${PICKUP_ADDRESS_LINE}, ${PICKUP_ADDRESS_CITY}, ${PICKUP_ADDRESS_STATE} ${PICKUP_ADDRESS_ZIP}`;
 
 export let BREAD_TYPES: BreadType[] = [
-  { 
-    id: 'classic-salt', 
-    name: 'Classic Salt Loaf', 
-    price: 6.00, 
-    description: 'Traditional sourdough focaccia finished off with a light sprinkling of course kosher salt. Ready for anything!',
-    availableForOrders: true, 
+  {
+    id: 'classic-salt',
+    name: 'Classic Salt',
+    price: 6,
+    description:
+      'Traditional sourdough focaccia finished off with a light sprinkling of course kosher salt. Ready for anything!',
+    availableForOrders: true,
+    image_name: 'classic-salt.jpg',
   },
-  { 
-    id: 'rosemary', 
-    name: 'Rosemary Loaf', 
-    price: 6.00, 
-    description: 'Backyard rosemary gives a delicate flavor to this loaf that pairs beautifully with the slight sourdough tang.',
-    availableForOrders: true, 
+  {
+    id: 'rosemary',
+    name: 'Rosemary',
+    price: 6,
+    description:
+      'Backyard rosemary gives a delicate flavor to this loaf that pairs beautifully with the slight sourdough tang.',
+    availableForOrders: true,
+    image_name: 'rosemary-salt.jpg',
   },
-  { 
-    id: 'green-olive', 
-    name: 'Olive', 
-    price: 6.00, 
+  {
+    id: 'green-olive',
+    name: 'Green Olive',
+    price: 6,
     description: 'Laced with green pimento olives throughout.',
-    availableForOrders: true, 
+    availableForOrders: true,
+    image_name: 'olive.jpg',
   },
-  { 
-    id: 'caramelized-onion', 
-    name: 'Caramelized onion with herbs de Provence', 
-    price: 6.00, 
-    description: 'Savory onions caramelized and baked into the dough for an added hit of flavor',
-    availableForOrders: true, 
+  {
+    id: 'caramelized-onion',
+    name: 'Caramelized Onion and Herbs de Provence',
+    price: 6,
+    description:
+      'Savory onions caramelized and baked into the dough for an added hit of flavor',
+    availableForOrders: true,
+    image_name: 'caramelized-onion.jpg',
   },
-  { 
-    id: 'dilly-bread', 
-    name: 'Dilly bread', 
-    price: 6.00, 
+  {
+    id: 'dilly-bread',
+    name: 'Dilly bread',
+    price: 6,
     description: 'Dill seeds and onions bring comforting flavor to our tangy sourdough',
-    availableForOrders: true, 
+    availableForOrders: false,
+  },
+  {
+    id: 'bread-1776111837101',
+    name: '"Everything" Seasoning',
+    price: 0,
+    description: '',
+    availableForOrders: false,
+  },
+  {
+    id: 'bread-1776111935501',
+    name: 'Applewood smoked salt',
+    price: 0,
+    description: '',
+    availableForOrders: false,
+  },
+  {
+    id: 'bread-1776111976220',
+    name: 'Rosemary & Garlic',
+    price: 0,
+    description: '',
+    availableForOrders: false,
+  },
+  {
+    id: 'bread-1776111984863',
+    name: 'Rosemary & Olive',
+    price: 0,
+    description: '',
+    availableForOrders: false,
   },
 ];
 
@@ -160,36 +195,38 @@ export let FIND_US_LOCATIONS = [
     address: '55 NE Holman St, Portland OR',
     image: '/popup-shop.jpg',
     imageAlt: 'Pop-up Shop',
-    schedule: 'Wednesdays and Fridays 8am to 9pm',
+    schedule: 'Tuesdays, Wednesdays and Fridays 8am to 9pm',
     active: true,
     coordinates: {
       lat: 45.5647,
-      lng: -122.6587
-    }
-  },{
+      lng: -122.6587,
+    },
+  },
+  {
     id: 'woodlawn-farmers-market',
     name: 'Woodlawn Farmers Market',
-    address: 'Woodlawn Farmers Market, Portland OR',
+    address: 'Woodlawn Triangle, Portland OR',
     image: '/contact-market.png',
     imageAlt: 'Woodlawn Farmers Market',
     schedule: 'Most Saturdays June - October',
     active: true,
     coordinates: {
       lat: 45.5647,
-      lng: -122.6587
-    }
-  },{
+      lng: -122.6587,
+    },
+  },
+  {
     id: 'cafe-eleven',
     name: 'Café Eleven',
-    address: '435 NE Rosa Parks Way, Portland OR 97211',
+    address: '435 NE Rosa Parks, Portland OR 97211',
     image: '/contact-cafe11.png',
     imageAlt: 'Café Eleven location',
     schedule: 'Weekends',
     active: true,
     coordinates: {
       lat: 45.5801,
-      lng: -122.6587
-    }
+      lng: -122.6587,
+    },
   },
 ];
 
