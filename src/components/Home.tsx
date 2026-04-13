@@ -70,10 +70,9 @@ export default function Home() {
       <section className="py-8 px-8 pb-16 bg-warm-cream mb-8">
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-12">
-            <h2 className="text-4xl font-semibold text-bakery-primary mb-6">Our Varieties</h2>
+            <h2 className="text-4xl font-semibold text-bakery-primary mb-6">About the bread</h2>
             <p className="text-xl md:text-2xl font-body text-earth-brown mb-8 leading-relaxed">
-              Each focaccia is crafted with our signature sourdough starter and organic flour, 
-              creating unique flavors that celebrate local, seasonal produce.
+            When sourcing the flour for Lazy Bread, my priorities are that it is both organic and free from synthetic nutrients and dough conditioners. I won’t sell what I wouldn’t feed my own family. The focaccia flavors sold in the bread stand are simple but impactful and offerings will vary slightly each day. 
             </p>
           </div>
           
@@ -90,7 +89,7 @@ export default function Home() {
             </div>
             <div className="md:w-full p-6 md:p-8">
               <h3 className="text-2xl font-semibold text-bakery-primary mb-6">
-                Available at Farmers Markets
+                Current Flavors
               </h3>
               
               <div className="space-y-4">
@@ -104,7 +103,7 @@ export default function Home() {
                       </div>
                       <div>
                         <h4 className="text-lg font-body font-semibold text-earth-brown">{item.name}</h4>
-                        <p className="mt-1 text-sm font-accent text-earth-brown opacity-80">{item.description}</p>
+                        {/* <p className="mt-1 text-sm font-accent text-earth-brown opacity-80">{item.description}</p> */}
                       </div>
                     </div>
                   </div>
