@@ -142,8 +142,10 @@ body {
   border: 2px solid var(--primary);
 }
 
+/* Border color only — do not use border shorthand here, or directional utilities
+   (e.g. border-b) on header/footer will pick up full box borders. */
 .border-bakery-light {
-  border: 1px solid var(--accent);
+  border-color: var(--accent);
 }
 
 .border-golden {
