@@ -92,17 +92,17 @@ export default function Home() {
                 Current Flavors
               </h3>
               
-              <div className="space-y-4">
+              <div className="space-y-2">
                 {BREAD_TYPES.map((item, index) => (
-                  <div key={index} className="bg-white rounded-lg shadow-lg p-6 hover:shadow-xl transition-shadow">
-                    <div className="flex items-start">
-                      <div className="flex-shrink-0 h-8 w-8 rounded-full bg-golden-wheat flex items-center justify-center mr-4 shadow-golden">
-                        <svg className="h-5 w-5 text-white" fill="currentColor" viewBox="0 0 20 20">
+                  <div key={index} className="bg-white rounded-lg shadow-lg px-3 py-2 hover:shadow-xl transition-shadow">
+                    <div className="flex items-center">
+                      <div className="flex-shrink-0 h-6 w-6 rounded-full bg-golden-wheat flex items-center justify-center mr-2.5 shadow-golden">
+                        <svg className="h-3.5 w-3.5 text-white" fill="currentColor" viewBox="0 0 20 20">
                           <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                         </svg>
                       </div>
                       <div>
-                        <h4 className="text-lg font-body font-semibold text-earth-brown">{item.name}</h4>
+                        <h4 className="text-base font-body font-semibold text-earth-brown leading-snug">{item.name}</h4>
                         {/* <p className="mt-1 text-sm font-accent text-earth-brown opacity-80">{item.description}</p> */}
                       </div>
                     </div>
