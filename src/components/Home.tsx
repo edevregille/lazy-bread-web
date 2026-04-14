@@ -37,10 +37,10 @@ export default function Home() {
     <>
       <h1 className="sr-only">Lazy Bread PDX — Organic sourdough focaccia bakery in Portland, Oregon</h1>
       {/* Hero Section */}
-      <section className="py-8 px-8 bg-warm-cream">
-        <div className="max-w-6xl mx-auto">
+      <section className="py-6 md:py-8 px-0 md:px-8 bg-warm-cream">
+        <div className="max-w-6xl mx-auto px-3 sm:px-5 md:px-0">
           <Link href="/order" className="block cursor-pointer hover:opacity-90 transition-opacity">
-            {/* Mobile Image */}
+            {/* Mobile: narrower gutter than body default so the image renders wider/taller at the same aspect ratio */}
             <Image 
               src="/home-ordering-mobile.png" 
               alt="Order Now" 
