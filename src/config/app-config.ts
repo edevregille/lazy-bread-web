@@ -166,8 +166,8 @@ export let BUSINESS_SETTINGS = {
   
   // Business hours and delivery
   deliveryDays: ["Wednesday","Friday"],
-  minOrderAdvanceHours: 36,
-  maxOrderQuantity: 5,
+  minOrderAdvanceHours: 2,
+  maxOrderQuantity: 20,
   // Excluded delivery dates (format: YYYY-MM-DD)
   excludedDeliveryDates: [
     "2025-11-26",
@@ -287,16 +287,51 @@ export const getDayNumber = (dayName: string): number => {
   return dayNameToNumber[dayName] ?? -1;
 };
 
+const LA_TIME_ZONE = "America/Los_Angeles";
+
+/** YYYY-MM-DD calendar date in America/Los_Angeles for an instant (for lexicographic compare). */
+function formatYmdInLa(instant: Date): string {
+  const fmt = new Intl.DateTimeFormat("en-CA", {
+    timeZone: LA_TIME_ZONE,
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  });
+  const parts = fmt.formatToParts(instant);
+  const y = parts.find((p) => p.type === "year")?.value;
+  const mo = parts.find((p) => p.type === "month")?.value;
+  const d = parts.find((p) => p.type === "day")?.value;
+  return `${y}-${mo}-${d}`;
+}
+
+/** UTC epoch ms for the first instant of civil calendar day `ymd` (YYYY-MM-DD) in America/Los_Angeles. */
+function getStartOfLaCalendarDayUtcMillis(ymd: string): number {
+  const [y, mo, d] = ymd.split("-").map(Number);
+  let lo = Date.UTC(y, mo - 1, d - 2);
+  let hi = Date.UTC(y, mo - 1, d + 2);
+  while (lo < hi) {
+    const mid = Math.floor((lo + hi) / 2);
+    if (formatYmdInLa(new Date(mid)) < ymd) lo = mid + 1;
+    else hi = mid;
+  }
+  return lo;
+}
+
+/** True if order deadline (now + advance hours) is strictly before start of delivery day in LA. */
+function isBeforeStartOfDeliveryDayPst(deadlineMs: number, deliveryDayYmd: string): boolean {
+  return deadlineMs < getStartOfLaCalendarDayUtcMillis(deliveryDayYmd);
+}
+
 // Helper function to get current time in PST
 export const getCurrentTimeInPST = (): Date => {
-  return new Date(new Date().toLocaleString("en-US", {timeZone: "America/Los_Angeles"}));
+  return new Date(new Date().toLocaleString("en-US", { timeZone: LA_TIME_ZONE }));
 };
 
 // Helper function to format current time in PST for debugging
 export const getCurrentTimeInPSTString = (): string => {
   const pstTime = getCurrentTimeInPST();
   return pstTime.toLocaleString('en-US', {
-    timeZone: 'America/Los_Angeles',
+    timeZone: LA_TIME_ZONE,
     year: 'numeric',
     month: '2-digit',
     day: '2-digit',
@@ -311,82 +346,81 @@ export const getCurrentTimeInPSTString = (): string => {
 export const getNextDeliveryDateForDay = (dayName: string): string | null => {
   const dayNumber = getDayNumber(dayName);
   if (dayNumber === -1) return null;
-  
+
   const pstTime = getCurrentTimeInPST();
-  
-  // Start from tomorrow
-  const currentDate = new Date(pstTime);
-  currentDate.setDate(currentDate.getDate() + 1);
-  
-  // Add minimum order time
-  const minOrderTime = new Date(pstTime);
-  minOrderTime.setHours(minOrderTime.getHours() + BUSINESS_SETTINGS.minOrderAdvanceHours);
-  
-  // Find the next occurrence of this day
-  for (let i = 0; i < 14; i++) { // Look up to 2 weeks ahead
-    const date = new Date(currentDate);
-    date.setDate(date.getDate() + i);
-    
-    // Convert the date to PST for day calculation
-    const pstDate = new Date(date.toLocaleString("en-US", {timeZone: "America/Los_Angeles"}));
+  const deadlineMs =
+    pstTime.getTime() + BUSINESS_SETTINGS.minOrderAdvanceHours * 60 * 60 * 1000;
+
+  const fmt = new Intl.DateTimeFormat("en-CA", {
+    timeZone: LA_TIME_ZONE,
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  });
+
+  const checkDate = new Date(pstTime);
+  checkDate.setHours(0, 0, 0, 0);
+
+  for (let i = 0; i < 14; i++) {
+    const probe = new Date(checkDate);
+    probe.setDate(probe.getDate() + i);
+    const pstDate = new Date(probe.toLocaleString("en-US", { timeZone: LA_TIME_ZONE }));
     const dayOfWeek = pstDate.getDay();
-    
-    // Format date as YYYY-MM-DD for comparison
-    const dateStr = date.toISOString().split('T')[0];
-    
-    if (dayOfWeek === dayNumber && date > minOrderTime && !BUSINESS_SETTINGS.excludedDeliveryDates.includes(dateStr)) {
+    const parts = fmt.formatToParts(pstDate);
+    const y = parts.find((p) => p.type === "year")?.value;
+    const m = parts.find((p) => p.type === "month")?.value;
+    const da = parts.find((p) => p.type === "day")?.value;
+    const dateStr = `${y}-${m}-${da}`;
+
+    if (
+      dayOfWeek === dayNumber &&
+      isBeforeStartOfDeliveryDayPst(deadlineMs, dateStr) &&
+      !BUSINESS_SETTINGS.excludedDeliveryDates.includes(dateStr)
+    ) {
       return dateStr;
     }
   }
-  
+
   return null;
 };
 
 export const getAvailableDeliveryDates = (): string[] => {
-  
-  const allowedDeliveryDays = BUSINESS_SETTINGS.deliveryDays.map(day => getDayNumber(day));
-  
-  const results: string[] = [];
-  // Use PST as the source of truth for time calculations
-  const nowPST = getCurrentTimeInPST();
-  const deadline = new Date(nowPST.getTime() + BUSINESS_SETTINGS.minOrderAdvanceHours * 60 * 60 * 1000); 
+  const allowedDeliveryDays = BUSINESS_SETTINGS.deliveryDays.map((day) => getDayNumber(day));
 
-  // Start checking from today's date (PST), move forward day-by-day
+  const results: string[] = [];
+  const nowPST = getCurrentTimeInPST();
+  const deadlineMs =
+    nowPST.getTime() + BUSINESS_SETTINGS.minOrderAdvanceHours * 60 * 60 * 1000;
+
   const checkDate = new Date(nowPST);
   checkDate.setHours(0, 0, 0, 0);
 
-  while (results.length < 3) {
-    // Convert the current iteration date to PST for accurate weekday calculation
-    const pstDate = new Date(checkDate.toLocaleString("en-US", { timeZone: "America/Los_Angeles" }));
-    const dayOfWeek = pstDate.getDay(); // 0 = Sunday, 6 = Saturday
+  const fmt = new Intl.DateTimeFormat("en-CA", {
+    timeZone: LA_TIME_ZONE,
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  });
 
-    // Format candidate date and deadline into YYYY-MM-DD in PST for lexicographic comparison
-    const fmt = new Intl.DateTimeFormat("en-CA", {
-      timeZone: "America/Los_Angeles",
-      year: "numeric",
-      month: "2-digit",
-      day: "2-digit"
-    });
+  let guard = 0;
+  while (results.length < 3 && guard++ < 120) {
+    const pstDate = new Date(checkDate.toLocaleString("en-US", { timeZone: LA_TIME_ZONE }));
+    const dayOfWeek = pstDate.getDay();
 
     const candidateParts = fmt.formatToParts(pstDate);
-    const cYear = candidateParts.find(p => p.type === "year")?.value;
-    const cMonth = candidateParts.find(p => p.type === "month")?.value;
-    const cDay = candidateParts.find(p => p.type === "day")?.value;
+    const cYear = candidateParts.find((p) => p.type === "year")?.value;
+    const cMonth = candidateParts.find((p) => p.type === "month")?.value;
+    const cDay = candidateParts.find((p) => p.type === "day")?.value;
     const candidateStr = `${cYear}-${cMonth}-${cDay}`;
 
-    const deadlineParts = fmt.formatToParts(deadline);
-    const dYear = deadlineParts.find(p => p.type === "year")?.value;
-    const dMonth = deadlineParts.find(p => p.type === "month")?.value;
-    const dDay = deadlineParts.find(p => p.type === "day")?.value;
-    const deadlineStr = `${dYear}-${dMonth}-${dDay}`;
-
-    // Only include if it's an allowed delivery day AND its PST calendar day is strictly after the 36h deadline day
-    // AND it's not in the excluded dates list
-    if (allowedDeliveryDays.includes(dayOfWeek) && candidateStr > deadlineStr && !BUSINESS_SETTINGS.excludedDeliveryDates.includes(candidateStr)) {
-      results.push(candidateStr); // e.g. "2025-08-16"
+    if (
+      allowedDeliveryDays.includes(dayOfWeek) &&
+      isBeforeStartOfDeliveryDayPst(deadlineMs, candidateStr) &&
+      !BUSINESS_SETTINGS.excludedDeliveryDates.includes(candidateStr)
+    ) {
+      results.push(candidateStr);
     }
 
-    // Move to next day (from PST baseline)
     checkDate.setDate(checkDate.getDate() + 1);
   }
   return results;
