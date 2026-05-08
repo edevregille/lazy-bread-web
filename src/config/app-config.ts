@@ -193,7 +193,7 @@ export let FIND_US_LOCATIONS = [
     id: 'pop-up-shop',
     name: 'Pop-Up Shop',
     address: '55 NE Holman St, Portland OR',
-    image: '/popup-shop.jpg',
+    image: '/popup-shop.png',
     imageAlt: 'Pop-up Shop',
     schedule: 'Tuesdays, Wednesdays and Fridays 8am to 9pm',
     active: true,
