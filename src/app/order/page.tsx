@@ -584,7 +584,7 @@ export default function OrderPage() {
                       </div>
                       <div className="flex-1 min-w-0 pt-0.5">
                         <h3 className="text-base md:text-lg font-semibold text-bakery-primary leading-tight">{bread.name}</h3>
-                        <p className="text-sm text-gray-600 mt-1 line-clamp-4 md:line-clamp-[5]">{bread.description}</p>
+                        <p className="text-sm text-gray-600 mt-1 break-words">{bread.description}</p>
                         <p className="text-base md:text-lg font-bold text-bakery-primary mt-2">${bread.price.toFixed(2)}</p>
                       </div>
                     </div>
