@@ -1,6 +1,6 @@
 # Lazy Bread PDX — Web storefront
 
-Customer-facing Next.js app for **Lazy Bread PDX**, an organic sourdough bakery in Portland, Oregon. Visitors browse products, place one-time delivery or pickup orders, and pay with Stripe as guests — no account required.
+Customer-facing Next.js app for **Lazy Bread PDX**, an organic sourdough bakery in Portland, Oregon. Visitors can browse products, place one-time delivery or pickup orders, and pay with Stripe as guests — no account required.
 
 This README explains **what the interface does** and how it connects to **Stripe** and other services.
 
