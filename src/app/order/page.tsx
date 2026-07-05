@@ -1,9 +1,8 @@
 "use client";
 
-import { useState, useEffect, useLayoutEffect, useRef } from 'react';
+import { useState, useEffect, useLayoutEffect } from 'react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
-import { useAuth } from '@/contexts/AuthContext';
 import {
   BREAD_TYPES,
   getAvailableDeliveryDates,
@@ -16,11 +15,8 @@ import {
   PICKUP_ADDRESS_ZIP,
   type BreadType,
 } from '@/config/app-config';
-import { isSubscriptionEnabled } from '@/config/feature-flags';
 import type { FulfillmentType } from '@/lib/types';
 import { useConfig } from '@/contexts/ConfigContext';
-import { updateUserProfile } from '@/lib/firebaseService';
-import AuthModal from '@/components/auth/AuthModal';
 
 interface OrderItem {
   id: string;
@@ -36,7 +32,6 @@ function breadImageSrc(bread: BreadType) {
 }
 
 export default function OrderPage() {
-  const { currentUser, userProfile, refreshUserProfile } = useAuth();
   const { config: runtimeConfig } = useConfig();
   const router = useRouter();
   
@@ -54,20 +49,10 @@ export default function OrderPage() {
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
   const [comments, setComments] = useState('');
-  const [isRecurring, setIsRecurring] = useState(false);
-  const [frequency, setFrequency] = useState<'weekly' | 'bi-weekly' | 'every-4-weeks'>('weekly');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
-  const [showAuthModal, setShowAuthModal] = useState(false);
-  const [authModalMode, setAuthModalMode] = useState<'signin' | 'signup' | 'forgot-password'>('signup');
-  const [showSaveAddressPrompt, setShowSaveAddressPrompt] = useState(false);
-  const [savingAddress, setSavingAddress] = useState(false);
-  const [addressSaved, setAddressSaved] = useState(false);
   const [fulfillmentType, setFulfillmentType] = useState<FulfillmentType>('delivery');
-
-  /** When true, skip profile-based prefill so a restored checkout draft is not overwritten. */
-  const suppressProfilePrefillRef = useRef(false);
 
   const ORDER_DATA_STORAGE_KEY = 'orderData';
 
@@ -105,39 +90,13 @@ export default function OrderPage() {
       if (typeof d.email === 'string') setEmail(d.email);
       if (typeof d.phone === 'string') setPhone(d.phone);
       if (typeof d.comments === 'string') setComments(d.comments);
-      if (isSubscriptionEnabled && typeof d.isRecurring === 'boolean') {
-        setIsRecurring(d.isRecurring);
-      }
-      if (
-        d.frequency === 'weekly' ||
-        d.frequency === 'bi-weekly' ||
-        d.frequency === 'every-4-weeks'
-      ) {
-        setFrequency(d.frequency);
-      }
       if (d.fulfillmentType === 'pickup' || d.fulfillmentType === 'delivery') {
         setFulfillmentType(d.fulfillmentType);
       }
-
-      suppressProfilePrefillRef.current = true;
     } catch {
       // ignore corrupt storage
     }
   }, []);
-
-  useEffect(() => {
-    if (!isSubscriptionEnabled) {
-      setIsRecurring(false);
-    }
-  }, []);
-
-  const recurringActive = isSubscriptionEnabled && isRecurring;
-
-  useEffect(() => {
-    if (recurringActive) {
-      setFulfillmentType('delivery');
-    }
-  }, [recurringActive]);
 
   // Phone number formatter function
   const formatPhoneNumber = (value: string): string => {
@@ -163,52 +122,12 @@ export default function OrderPage() {
     setPhone(formatted);
   };
 
-  // Pre-fill form with user profile data if available (skip when restoring a payment draft)
-  useEffect(() => {
-    if (suppressProfilePrefillRef.current) {
-      return;
-    }
-    if (userProfile) {
-      if (fulfillmentType === 'delivery') {
-        setAddress(userProfile.deliveryAddress || '');
-        setCity('Portland');
-        setZipCode(userProfile.deliveryZipCode || '');
-      }
-      setCustomerName(userProfile.displayName || '');
-      setEmail(userProfile.email || '');
-      setPhone(userProfile.phone || '');
-    } else if (currentUser) {
-      setCustomerName(currentUser.displayName || '');
-      setEmail(currentUser.email || '');
-    }
-  }, [userProfile, currentUser, fulfillmentType]);
-
   // Reset loading state on component unmount or route change
   useEffect(() => {
     return () => {
       setLoading(false);
     };
   }, []);
-
-  // Show save address prompt when user fills in address fields (delivery only)
-  useEffect(() => {
-    if (
-      fulfillmentType !== 'delivery' ||
-      !currentUser ||
-      !userProfile ||
-      !address.trim() ||
-      !zipCode.trim() ||
-      showSaveAddressPrompt
-    ) {
-      return;
-    }
-    const currentAddress = userProfile.deliveryAddress || '';
-    const currentZipCode = userProfile.deliveryZipCode || '';
-    if (address.trim() !== currentAddress || zipCode.trim() !== currentZipCode) {
-      setShowSaveAddressPrompt(true);
-      setAddressSaved(false);
-    }
-  }, [address, zipCode, currentUser, userProfile, showSaveAddressPrompt, fulfillmentType]);
 
   const availableDates = getAvailableDeliveryDates();
 
@@ -275,26 +194,6 @@ export default function OrderPage() {
     });
   };
 
-  const handleRecurringToggle = (checked: boolean) => {
-    if (checked && !currentUser) {
-      // User wants recurring order but is not signed in
-      // Don't check the box, just show sign-in modal
-      setAuthModalMode('signup');
-      setShowAuthModal(true);
-      return;
-    }
-    // Allow checking/unchecking the box if user is signed in
-    setIsRecurring(checked);
-  };
-
-  const handleAuthSuccess = async () => {
-    await refreshUserProfile();
-    setShowAuthModal(false);
-    if (isSubscriptionEnabled) {
-      setIsRecurring(true);
-    }
-  };
-
   const calculateTotal = () => {
     return Object.entries(breadQuantities).reduce((total, [breadType, quantity]) => {
       const bread = BREAD_TYPES_RUNTIME.find(b => b.name === breadType && b.availableForOrders);
@@ -334,20 +233,14 @@ export default function OrderPage() {
       hasErrors = true;
     }
     
-    if (recurringActive && !currentUser) {
-      setError('Please sign in to place a recurring order');
-      return false;
-    }
     if (calculateTotal() === 0) {
       errors.breadItems = 'Please select at least one bread item';
       hasErrors = true;
     }
     if (!deliveryDate) {
-      errors.deliveryDate = recurringActive
-        ? 'Please select a delivery day'
-        : fulfillmentType === 'pickup'
-          ? 'Please select a pickup date'
-          : 'Please select a delivery date';
+      errors.deliveryDate = fulfillmentType === 'pickup'
+        ? 'Please select a pickup date'
+        : 'Please select a delivery date';
       hasErrors = true;
     }
     if (fulfillmentType === 'delivery') {
@@ -447,8 +340,6 @@ export default function OrderPage() {
         phone: phone.trim(),
         comments: comments.trim(),
         totalAmount,
-        isRecurring: recurringActive,
-        frequency: recurringActive ? frequency : undefined
       };
 
       // Store order data in session storage for payment page
@@ -475,6 +366,9 @@ export default function OrderPage() {
             <h1 className="text-3xl sm:text-4xl font-semibold text-bakery-primary mb-4 sm:mb-6">Place your order</h1>
             <div className="flex flex-col md:flex-row md:items-start gap-6 lg:gap-8">
               <div className="flex-1 min-w-0 space-y-4 text-base sm:text-lg text-earth-brown leading-relaxed">
+                <p>
+                Free delivery & pick-up options available up to three weeks in advance.
+                </p>
                 <p>
                   Can&apos;t make it to the bread stand during the week? No problem! Place your order here and I&apos;ll bring it to you. Or order and reserve your favorite flavor to come pick up at the stand after work.
                 </p>
@@ -625,55 +519,6 @@ export default function OrderPage() {
               </div>
             </div>
 
-            {/* Order Type Selection — NEXT_PUBLIC_ENABLE_SUBSCRIPTION === "true" */}
-            {isSubscriptionEnabled && (
-            <div>
-              <div className="bg-gradient-to-r from-yellow-50 to-orange-50 border-2 border-yellow-200 rounded-lg p-6 hover:border-yellow-300 transition-colors">
-                <div className="flex items-start">
-                  <div className="flex-1">
-                    <div className="flex items-start space-x-3 mb-2">
-                      <input
-                        id="order-recurring"
-                        type="checkbox"
-                        checked={isRecurring && !!currentUser}
-                        onChange={(e) => handleRecurringToggle(e.target.checked)}
-                        disabled={isHolidayMode}
-                        className="w-5 h-5 mt-1 shrink-0 rounded border-gray-300 text-bakery-primary focus:ring-bakery-primary focus:ring-2 disabled:opacity-50"
-                      />
-                      <div className="flex-1 min-w-0">
-                        <label htmlFor="order-recurring" className="text-lg font-semibold text-gray-900 cursor-pointer block">
-                          Set up as weekly, bi-weekly or every 4 weeks focaccias delivery
-                        </label>
-                    <p className="text-gray-700 mb-3 mt-2">
-                      Get fresh focaccias delivered to your door every week!
-                      {isRecurring && !currentUser && (
-                        <span className="block mt-2 text-sm text-orange-600 font-medium">
-                          ⚠️ Please sign in to activate your recurring order
-                        </span>
-                      )}
-                    </p>
-                    <div className="bg-white rounded-lg p-3 border border-yellow-200">
-                      <div className="flex items-center space-x-2 text-sm text-gray-600">
-                        <svg className="w-4 h-4 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                        </svg>
-                        <span>Modify, pause or cancel anytime</span>
-                      </div>
-                      <div className="flex items-center space-x-2 text-sm text-gray-600 mt-1">
-                        <svg className="w-4 h-4 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                        </svg>
-                        <span>Payment is charged only after delivery</span>
-                      </div>
-                    </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-            )}
-
             {/* Pickup or delivery */}
             <div>
               <h2 className="text-2xl font-semibold text-bakery-primary mb-6">Pickup or delivery</h2>
@@ -699,7 +544,7 @@ export default function OrderPage() {
                               return next;
                             });
                           }}
-                          disabled={isHolidayMode || recurringActive}
+                          disabled={isHolidayMode}
                         />
                         <span>
                           <span className="font-semibold text-bakery-primary">Pickup</span>
@@ -721,117 +566,52 @@ export default function OrderPage() {
                         </span>
                       </label>
                     </div>
-                    {recurringActive && (
-                      <p className="text-xs text-gray-500 mt-2">Subscriptions use delivery only.</p>
-                    )}
                   </fieldset>
                 </div>
-                {recurringActive && (
-                  <div>
-                    <label htmlFor="order-frequency" className="block text-sm font-medium text-gray-700 mb-2">
-                      Delivery Frequency *
-                    </label>
-                    <select
-                      id="order-frequency"
-                      value={frequency}
-                      onChange={(e) => setFrequency(e.target.value as 'weekly' | 'bi-weekly' | 'every-4-weeks')}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-bakery-primary focus:border-transparent"
-                      required
-                      disabled={isHolidayMode}
-                    >
-                      <option value="weekly">Weekly</option>
-                      <option value="bi-weekly">Bi-weekly (Delivering every 2 weeks)</option>
-                      <option value="every-4-weeks">Delivering every 4 weeks</option>
-                    </select>
-                    <p className="text-xs text-gray-500 mt-1">
-                      Choose how often you&apos;d like to receive your delivery
-                    </p>
-                  </div>
-                )}
                 <div data-field-error={fieldErrors.deliveryDate ? 'true' : undefined}>
                   <label htmlFor="order-delivery" className="block text-sm font-medium text-gray-700 mb-2">
-                    {recurringActive
-                      ? 'Delivery Day *'
-                      : fulfillmentType === 'pickup'
-                        ? 'Pickup date *'
-                        : 'Delivery date *'}
+                    {fulfillmentType === 'pickup'
+                      ? 'Pickup date *'
+                      : 'Delivery date *'}
                   </label>
-                  {recurringActive ? (
-                    <select
-                      id="order-delivery"
-                      value={deliveryDate}
-                      onChange={(e) => {
-                        setDeliveryDate(e.target.value);
-                        if (fieldErrors.deliveryDate) {
-                          setFieldErrors(prev => {
-                            const newErrors = { ...prev };
-                            delete newErrors.deliveryDate;
-                            return newErrors;
-                          });
-                        }
-                      }}
-                      className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-bakery-primary focus:border-transparent ${
-                        fieldErrors.deliveryDate 
-                          ? 'border-red-500 bg-red-50' 
-                          : 'border-gray-300'
-                      }`}
-                      required
-                      disabled={isHolidayMode}
-                      aria-invalid={fieldErrors.deliveryDate ? 'true' : undefined}
-                      aria-describedby={fieldErrors.deliveryDate ? 'order-err-deliveryDate' : undefined}
-                    >
-                      <option value="">Select your preferred delivery day</option>
-                      {BUSINESS_SETTINGS_RUNTIME.deliveryDays.map((day) => (
-                        <option key={day} value={day.toLowerCase()}>
-                          {day}s
-                        </option>
-                      ))}
-                    </select>
-                  ) : (
-                    <select
-                      id="order-delivery"
-                      value={deliveryDate}
-                      onChange={(e) => {
-                        setDeliveryDate(e.target.value);
-                        if (fieldErrors.deliveryDate) {
-                          setFieldErrors(prev => {
-                            const newErrors = { ...prev };
-                            delete newErrors.deliveryDate;
-                            return newErrors;
-                          });
-                        }
-                      }}
-                      className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-bakery-primary focus:border-transparent ${
-                        fieldErrors.deliveryDate 
-                          ? 'border-red-500 bg-red-50' 
-                          : 'border-gray-300'
-                      }`}
-                      required
-                      disabled={isHolidayMode}
-                      aria-invalid={fieldErrors.deliveryDate ? 'true' : undefined}
-                      aria-describedby={fieldErrors.deliveryDate ? 'order-err-deliveryDate' : undefined}
-                    >
-                      <option value="">
-                        {fulfillmentType === 'pickup' ? 'Select a pickup date' : 'Select a delivery date'}
+                  <select
+                    id="order-delivery"
+                    value={deliveryDate}
+                    onChange={(e) => {
+                      setDeliveryDate(e.target.value);
+                      if (fieldErrors.deliveryDate) {
+                        setFieldErrors(prev => {
+                          const newErrors = { ...prev };
+                          delete newErrors.deliveryDate;
+                          return newErrors;
+                        });
+                      }
+                    }}
+                    className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-bakery-primary focus:border-transparent ${
+                      fieldErrors.deliveryDate
+                        ? 'border-red-500 bg-red-50'
+                        : 'border-gray-300'
+                    }`}
+                    required
+                    disabled={isHolidayMode}
+                    aria-invalid={fieldErrors.deliveryDate ? 'true' : undefined}
+                    aria-describedby={fieldErrors.deliveryDate ? 'order-err-deliveryDate' : undefined}
+                  >
+                    <option value="">
+                      {fulfillmentType === 'pickup' ? 'Select a pickup date' : 'Select a delivery date'}
+                    </option>
+                    {availableDates.map((date) => (
+                      <option key={date} value={date}>
+                        {formatDeliveryDate(date)}
                       </option>
-                      {availableDates.map((date) => (
-                        <option key={date} value={date}>
-                          {formatDeliveryDate(date)}
-                        </option>
-                      ))}
-                    </select>
-                  )}
+                    ))}
+                  </select>
                   {fieldErrors.deliveryDate && (
                     <p id="order-err-deliveryDate" className="text-sm text-red-600 mt-1 flex items-center" role="alert">
                       <svg className="w-4 h-4 mr-1 shrink-0" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
                         <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
                       </svg>
                       {fieldErrors.deliveryDate}
-                    </p>
-                  )}
-                  {!fieldErrors.deliveryDate && recurringActive && currentUser && (
-                    <p className="text-xs text-gray-500 mt-1">
-                      Your first delivery will be scheduled for the next available {deliveryDate || 'selected day'}
                     </p>
                   )}
                 </div>
@@ -1037,64 +817,6 @@ export default function OrderPage() {
                 </>
                 )}
 
-                {/* Save Address Prompt for Logged-in Users */}
-                {fulfillmentType === 'delivery' && currentUser && userProfile && showSaveAddressPrompt && (
-                  <div className="md:col-span-2">
-                    <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-                      <div className="flex items-start space-x-3">
-                        <div className="flex-shrink-0">
-                          <svg className="w-5 h-5 text-blue-600 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-                          </svg>
-                        </div>
-                        <div className="flex-1">
-                          <h3 className="text-sm font-medium text-blue-900 mb-1">
-                            Save this delivery address to your profile?
-                          </h3>
-                          <p className="text-sm text-blue-700 mb-3">
-                            This will make future orders faster by pre-filling your delivery information.
-                          </p>
-                          <div className="flex space-x-3">
-                            <button
-                              type="button"
-                              onClick={async () => {
-                                if (!currentUser?.uid) return;
-                                
-                                try {
-                                  setSavingAddress(true);
-                                  await updateUserProfile(currentUser.uid, {
-                                    deliveryAddress: address.trim(),
-                                    deliveryCity: 'Portland',
-                                    deliveryZipCode: zipCode.trim(),
-                                    deliveryState: 'OR',
-                                    phone: phone.trim(),
-                                  });
-                                  setAddressSaved(true);
-                                  setShowSaveAddressPrompt(false);
-                                  // Show success message briefly
-                                  setTimeout(() => {
-                                    // You could add a success state here if needed
-                                  }, 2000);
-                                } catch (error) {
-                                  console.error('Error saving address:', error);
-                                  // You could add error handling here if needed
-                                } finally {
-                                  setSavingAddress(false);
-                                }
-                              }}
-                              disabled={savingAddress || addressSaved || !address.trim() || !zipCode.trim()}
-                              className="btn-primary-sm"
-                            >
-                              {savingAddress ? 'Saving...' : addressSaved ? 'Address Saved!' : 'Save Address'}
-                            </button>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                )}
-
                 <div className="md:col-span-2">
                   <label htmlFor="order-comments" className="block text-sm font-medium text-gray-700 mb-2">
                     Special Instructions
@@ -1161,14 +883,6 @@ export default function OrderPage() {
           </form>
         </div>
       </div>
-
-      {/* Auth Modal for Recurring Orders */}
-      <AuthModal 
-        isOpen={showAuthModal} 
-        onClose={() => setShowAuthModal(false)}
-        initialMode={authModalMode}
-        onAuthSuccess={handleAuthSuccess}
-      />
     </div>
   );
-} 
+}

@@ -13,10 +13,6 @@ export function setRuntimeConfig(config: any) {
     NAV_ITEMS.length = 0;
     NAV_ITEMS.push(...config.NAV_ITEMS);
   }
-  if (config.AUTH_NAV_ITEMS) {
-    AUTH_NAV_ITEMS.length = 0;
-    AUTH_NAV_ITEMS.push(...config.AUTH_NAV_ITEMS);
-  }
   if (config.BREAD_TYPES) {
     BREAD_TYPES.length = 0;
     BREAD_TYPES.push(...config.BREAD_TYPES);
@@ -47,13 +43,6 @@ export function setRuntimeConfig(config: any) {
 
 // Fallback values (used until S3 config is loaded)
 export let NAV_ITEMS = [
-  { name: "Home", path: "/" },
-  { name: "Order", path: "/order" },
-  { name: "About", path: "/about" },
-  { name: "Find Us", path: "/find-us" },
-];
-
-export let AUTH_NAV_ITEMS = [
   { name: "Home", path: "/" },
   { name: "Order", path: "/order" },
   { name: "About", path: "/about" },

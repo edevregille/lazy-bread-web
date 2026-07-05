@@ -2,7 +2,6 @@
 
 export interface AppConfig {
   NAV_ITEMS: Array<{ name: string; path: string }>;
-  AUTH_NAV_ITEMS: Array<{ name: string; path: string }>;
   BREAD_TYPES: Array<{
     id: string;
     name: string;

@@ -3,13 +3,21 @@
 import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { BREAD_TYPES } from "@/config/app-config";
+import { BREAD_TYPES, BUSINESS_SETTINGS } from "@/config/app-config";
+import { useConfig } from "@/contexts/ConfigContext";
 import { PaymentSuccessModal } from "./PaymentSuccessModal";
 import type { PaymentSuccessData } from "@/lib/types";
 
 export default function Home() {
   const [showPaymentSuccess, setShowPaymentSuccess] = useState(false);
   const [paymentData, setPaymentData] = useState<PaymentSuccessData | null>(null);
+  const { config: runtimeConfig } = useConfig();
+  const isHolidayMode = (runtimeConfig?.BUSINESS_SETTINGS || BUSINESS_SETTINGS).isHolidayMode;
+  const heroMobileSrc = isHolidayMode ? "/hero-vacation-mobile.svg" : "/hero-mobile.svg";
+  const heroDesktopSrc = isHolidayMode ? "/hero-vacation-desktop.svg" : "/hero-desktop.svg";
+  const heroAlt = isHolidayMode
+    ? "Lazy Bread PDX is on vacation — re-opening soon"
+    : "Lazy Bread PDX — 100% sourdough focaccia, order now";
 
   useEffect(() => {
     // Check for payment success data in session storage
@@ -39,30 +47,12 @@ export default function Home() {
       {/* Hero Section */}
       <section className="py-6 md:py-8 px-0 md:px-8 bg-warm-cream">
         <div className="max-w-6xl mx-auto px-3 sm:px-5 md:px-0">
-          <Link href="/order" className="block cursor-pointer hover:opacity-90 transition-opacity">
-            {/* Mobile: narrower gutter than body default so the image renders wider/taller at the same aspect ratio */}
-            <Image 
-              src="/home-ordering-mobile.png" 
-              alt="Order Now" 
-              width={1920}
-              height={1080}
-              quality={100}
-              priority
-              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 100vw, 1200px"
-              className="object-contain w-full h-auto rounded-lg shadow-lg md:hidden"
-            />
-            {/* Desktop Image */}
-            <Image 
-              src="/home-ordering.png" 
-              alt="Order Now" 
-              width={1920}
-              height={1080}
-              quality={100}
-              priority
-              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 100vw, 1200px"
-              className="object-contain w-full h-auto rounded-lg shadow-lg hidden md:block"
-            />
-          </Link>
+          <HeroImage
+            href={isHolidayMode ? undefined : "/order"}
+            mobileSrc={heroMobileSrc}
+            desktopSrc={heroDesktopSrc}
+            alt={heroAlt}
+          />
         </div>
       </section>
 
@@ -72,8 +62,13 @@ export default function Home() {
           <div className="text-center mb-12">
             <h2 className="text-4xl font-semibold text-bakery-primary mb-6">About the bread</h2>
             <p className="text-xl md:text-2xl font-body text-earth-brown mb-8 leading-relaxed">
-            When sourcing the flour for Lazy Bread, my priorities are that it is both organic and free from synthetic nutrients and dough conditioners. I won’t sell what I wouldn’t feed my own family. The focaccia flavors sold in the bread stand are simple but impactful and offerings will vary slightly each day. 
+              When sourcing the flour for Lazy Bread, my priorities are that it be both organic and free from synthetic nutrients and dough conditioners. I won’t sell what I wouldn’t feed my own family. The focaccia flavors sold in the bread stand are simple but impactful and offerings will vary slightly each day.
+              <br /> <br />
+              Free delivery &amp; pickup options available.
             </p>
+            <Link href="/order" className="inline-block hover:opacity-90 transition-opacity">
+              <button className="btn-primary-lg">Order Now</button>
+            </Link>
           </div>
           
           <div className="grid md:grid-cols-2 gap-8 items-center">
@@ -123,5 +118,48 @@ export default function Home() {
         />
       )}
     </>
+  );
+}
+
+function HeroImage({
+  href,
+  mobileSrc,
+  desktopSrc,
+  alt,
+}: {
+  href?: string;
+  mobileSrc: string;
+  desktopSrc: string;
+  alt: string;
+}) {
+  const images = (
+    <>
+      {/* Mobile: portrait crop of the same artwork so the sign stays large and legible on narrow screens */}
+      <img
+        src={mobileSrc}
+        alt={alt}
+        width={375}
+        height={500}
+        className="w-full h-auto rounded-lg shadow-lg md:hidden"
+      />
+      {/* Desktop: full landscape artwork */}
+      <img
+        src={desktopSrc}
+        alt={alt}
+        width={1000}
+        height={500}
+        className="w-full h-auto rounded-lg shadow-lg hidden md:block"
+      />
+    </>
+  );
+
+  if (!href) {
+    return <div className="block">{images}</div>;
+  }
+
+  return (
+    <Link href={href} className="block cursor-pointer hover:opacity-90 transition-opacity">
+      {images}
+    </Link>
   );
 }

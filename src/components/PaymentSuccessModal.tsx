@@ -1,10 +1,9 @@
 'use client'
 
 import React from 'react';
-import { useRouter } from 'next/navigation';
 import { Modal } from './ui/Modal';
 import { formatDeliveryDate } from '@/config/app-config';
-import type { OrderDetails, PaymentSuccessData } from '@/lib/types';
+import type { PaymentSuccessData } from '@/lib/types';
 
 interface PaymentSuccessModalProps {
   isOpen: boolean;
@@ -17,38 +16,15 @@ export const PaymentSuccessModal: React.FC<PaymentSuccessModalProps> = ({
   onClose,
   paymentData
 }) => {
-  const router = useRouter();
-  const { orderDetails, isRecurring, status } = paymentData;
+  const { orderDetails, status } = paymentData;
   const isSetupIntent = status === 'setup_completed';
   const isPickup = orderDetails.fulfillmentType === 'pickup';
-
-  const handleClose = () => {
-    if (isRecurring) {
-      router.push('/dashboard');
-    } else {
-      onClose();
-    }
-  };
-
-  // Helper function to format frequency label
-  const getFrequencyLabel = (frequency?: string): string => {
-    switch (frequency) {
-      case 'weekly':
-        return 'Weekly';
-      case 'bi-weekly':
-        return 'Bi-weekly';
-      case 'every-4-weeks':
-        return 'Every 4 weeks';
-      default:
-        return 'Weekly';
-    }
-  };
 
   return (
     <Modal
       isOpen={isOpen}
-      onClose={handleClose}
-      title={isRecurring ? "✅ Subscription Confirmed!" : "🎉 Payment Successful!"}
+      onClose={onClose}
+      title="🎉 Payment Successful!"
     >
       <div className="space-y-6">
         {/* Success Message */}
@@ -69,10 +45,7 @@ export const PaymentSuccessModal: React.FC<PaymentSuccessModalProps> = ({
             </svg>
           </div>
           <h2 className="text-2xl font-bold text-gray-900 mb-2">
-            {isRecurring 
-              ? "Your subscription is confirmed!" 
-              : "Thank you for your order!"
-            }
+            Thank you for your order!
           </h2>
         </div>
 
@@ -110,19 +83,9 @@ export const PaymentSuccessModal: React.FC<PaymentSuccessModalProps> = ({
                 <p><strong>City:</strong> {orderDetails.city}, {orderDetails.zipCode}</p>
               </>
             )}
-            {isRecurring && orderDetails.frequency && (
-              <p><strong>Frequency:</strong> {getFrequencyLabel(orderDetails.frequency)}</p>
-            )}
             <p>
-              <strong>
-                {isPickup
-                  ? 'Pickup date'
-                  : isRecurring
-                    ? 'Delivery day'
-                    : 'Delivery date'}
-                :
-              </strong>{' '}
-              {isRecurring ? `Every ${orderDetails.deliveryDate}` : formatDeliveryDate(orderDetails.deliveryDate)}
+              <strong>{isPickup ? 'Pickup date' : 'Delivery date'}:</strong>{' '}
+              {formatDeliveryDate(orderDetails.deliveryDate)}
             </p>
             <p><strong>Email:</strong> {orderDetails.email}</p>
             <p><strong>Phone:</strong> {orderDetails.phone}</p>
@@ -135,38 +98,35 @@ export const PaymentSuccessModal: React.FC<PaymentSuccessModalProps> = ({
           </div>
         </div>
 
-        {/* Next Steps - Only show for regular orders, not subscriptions */}
-        {!isRecurring && (
-          <div className="bg-green-50 rounded-lg p-4">
-            <h3 className="text-lg font-semibold text-gray-900 mb-2">What&apos;s Next?</h3>
-            <div className="space-y-2 text-sm">
-              <div className="flex items-start">
-                <div className="flex-shrink-0 w-5 h-5 bg-green-500 text-white rounded-full flex items-center justify-center text-xs font-bold mr-2 mt-0.5">
-                  1
-                </div>
-                <p className="text-gray-700">We&apos;ll send you a confirmation email with your order details.</p>
+        <div className="bg-green-50 rounded-lg p-4">
+          <h3 className="text-lg font-semibold text-gray-900 mb-2">What&apos;s Next?</h3>
+          <div className="space-y-2 text-sm">
+            <div className="flex items-start">
+              <div className="flex-shrink-0 w-5 h-5 bg-green-500 text-white rounded-full flex items-center justify-center text-xs font-bold mr-2 mt-0.5">
+                1
               </div>
-              <div className="flex items-start">
-                <div className="flex-shrink-0 w-5 h-5 bg-green-500 text-white rounded-full flex items-center justify-center text-xs font-bold mr-2 mt-0.5">
-                  2
-                </div>
-                <p className="text-gray-700">
-                  {isPickup
-                    ? 'We will have your order ready for pickup on the date you selected.'
-                    : 'We will deliver to your doorstep on the day you selected.'}
-                </p>
+              <p className="text-gray-700">We&apos;ll send you a confirmation email with your order details.</p>
+            </div>
+            <div className="flex items-start">
+              <div className="flex-shrink-0 w-5 h-5 bg-green-500 text-white rounded-full flex items-center justify-center text-xs font-bold mr-2 mt-0.5">
+                2
               </div>
+              <p className="text-gray-700">
+                {isPickup
+                  ? 'We will have your order ready for pickup on the date you selected.'
+                  : 'We will deliver to your doorstep on the day you selected.'}
+              </p>
             </div>
           </div>
-        )}
+        </div>
 
         {/* Close Button */}
         <div className="flex justify-center">
           <button
-            onClick={handleClose}
+            onClick={onClose}
             className="btn-primary"
           >
-            {isRecurring ? 'Go to Dashboard' : 'Continue'}
+            Continue
           </button>
         </div>
       </div>

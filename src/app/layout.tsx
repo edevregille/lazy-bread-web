@@ -3,7 +3,6 @@ import Script from "next/script";
 import "./globals.css";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import { AuthProvider } from "@/contexts/AuthContext";
 import { ConfigProvider } from "@/contexts/ConfigContext";
 import DatadogRumInit from "@/components/DatadogRumInit";
 export const metadata: Metadata = {
@@ -76,29 +75,27 @@ export default function RootLayout({
         />
         <DatadogRumInit />
         <ConfigProvider>
-          <AuthProvider>
-            <div className="min-h-screen flex flex-col">
-              <div className="flex-grow">
-                <a
-                  href="#main-content"
-                  className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-[100] focus:px-4 focus:py-2 focus:bg-bakery-primary focus:text-white focus:rounded-lg focus:shadow-lg focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-bakery-primary"
-                >
-                  Skip to main content
-                </a>
-                <Header />
-                <main
-                  id="main-content"
-                  tabIndex={-1}
-                  className="pt-20 pb-24 outline-none"
-                >
-                  <div className="container mx-auto">
-                    {children}
-                  </div>
-                </main>
-                <Footer />
-              </div>
+          <div className="min-h-screen flex flex-col">
+            <div className="flex-grow">
+              <a
+                href="#main-content"
+                className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-[100] focus:px-4 focus:py-2 focus:bg-bakery-primary focus:text-white focus:rounded-lg focus:shadow-lg focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-bakery-primary"
+              >
+                Skip to main content
+              </a>
+              <Header />
+              <main
+                id="main-content"
+                tabIndex={-1}
+                className="pt-20 pb-24 outline-none"
+              >
+                <div className="container mx-auto">
+                  {children}
+                </div>
+              </main>
+              <Footer />
             </div>
-          </AuthProvider>
+          </div>
         </ConfigProvider>
       </body>
     </html>

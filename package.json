@@ -14,13 +14,10 @@
   "dependencies": {
     "@stripe/react-stripe-js": "^3.1.1",
     "@stripe/stripe-js": "^7.5.0",
-    "firebase": "^11.10.0",
-    "firebase-admin": "^13.4.0",
     "gtag": "^1.0.1",
     "next": "^16.0.7",
     "react": "^19.2.1",
     "react-dom": "^19.2.1",
-    "react-firebase-hooks": "^5.1.1",
     "react-google-recaptcha": "^3.1.0",
     "stripe": "^17.6.0"
   },
