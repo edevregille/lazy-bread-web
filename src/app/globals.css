@@ -7,17 +7,17 @@
 :root {
   --background: #FFFFFF;
   --foreground: #1F1F1F;
-  --primary: #B87D6A;
-  --primary-light: #D4A799;
-  --primary-dark: #9A6B5A;
+  --primary: #79518F;
+  --primary-light: #C39BD3;
+  --primary-dark: #6B3F80;
   --secondary: #8B7D6B;
-  --accent: #9CAF88;
+  --accent: #79518F;
   --warm-cream: #FAF8F5;
   --warm-beige: #F5F3F0;
   --earth-brown: #5C4A3A;
   --golden-wheat: #C9A961;
   --sage-green: #9CAF88;
-  --rust-orange: #B87D6A;
+  --rust-orange: #79518F;
   --black: #000000;
   --gray-light: #F7F7F7;
   --gray-medium: #E5E5E5;
@@ -137,6 +137,10 @@ body {
   box-shadow: 0 2px 8px rgba(201, 169, 97, 0.15), 0 1px 3px rgba(201, 169, 97, 0.1);
 }
 
+.shadow-accent {
+  box-shadow: 0 2px 8px rgba(121, 81, 143, 0.15), 0 1px 3px rgba(121, 81, 143, 0.1);
+}
+
 /* Organic Borders */
 .border-bakery {
   border: 2px solid var(--primary);
@@ -162,8 +166,8 @@ body {
   font-size: 16px;
   transition: all 0.2s ease;
   box-shadow: 
-    0 2px 4px rgba(184, 125, 106, 0.2),
-    0 1px 2px rgba(184, 125, 106, 0.15);
+    0 2px 4px rgba(142, 95, 168, 0.2),
+    0 1px 2px rgba(142, 95, 168, 0.15);
   border: none;
   cursor: pointer;
   position: relative;
@@ -184,8 +188,8 @@ body {
 .btn-bakery-primary:hover {
   transform: translateY(-1px);
   box-shadow: 
-    0 4px 8px rgba(184, 125, 106, 0.25),
-    0 2px 4px rgba(184, 125, 106, 0.2);
+    0 4px 8px rgba(142, 95, 168, 0.25),
+    0 2px 4px rgba(142, 95, 168, 0.2);
   background: var(--primary-dark);
 }
 
@@ -196,14 +200,14 @@ body {
 .btn-bakery-primary:active {
   transform: translateY(0);
   box-shadow: 
-    0 1px 2px rgba(184, 125, 106, 0.2);
+    0 1px 2px rgba(142, 95, 168, 0.2);
 }
 
 .btn-bakery-primary:focus {
   outline: none;
   box-shadow: 
-    0 2px 4px rgba(184, 125, 106, 0.2),
-    0 0 0 3px rgba(184, 125, 106, 0.2);
+    0 2px 4px rgba(142, 95, 168, 0.2),
+    0 0 0 3px rgba(142, 95, 168, 0.2);
 }
 
 .btn-bakery-primary:disabled {
@@ -220,14 +224,14 @@ body {
   font-weight: 500;
   border: 2px solid var(--primary);
   transition: all 0.2s ease;
-  box-shadow: 0 1px 2px rgba(184, 125, 106, 0.1);
+  box-shadow: 0 1px 2px rgba(142, 95, 168, 0.1);
 }
 
 .btn-bakery-secondary:hover {
   transform: translateY(-1px);
   background: var(--primary);
   color: white;
-  box-shadow: 0 2px 4px rgba(184, 125, 106, 0.2);
+  box-shadow: 0 2px 4px rgba(142, 95, 168, 0.2);
 }
 
 /* Card Styles - Clean and Minimal */
@@ -257,8 +261,8 @@ body {
     45deg,
     transparent,
     transparent 2px,
-    rgba(184, 125, 106, 0.03) 2px,
-    rgba(184, 125, 106, 0.03) 4px
+    rgba(142, 95, 168, 0.03) 2px,
+    rgba(142, 95, 168, 0.03) 4px
   );
 }
 
@@ -277,7 +281,7 @@ body {
   bottom: 0;
   background-image: 
     radial-gradient(circle at 20% 80%, rgba(201, 169, 97, 0.05) 0%, transparent 50%),
-    radial-gradient(circle at 80% 20%, rgba(184, 125, 106, 0.03) 0%, transparent 50%);
+    radial-gradient(circle at 80% 20%, rgba(142, 95, 168, 0.03) 0%, transparent 50%);
   pointer-events: none;
 }
 
@@ -319,9 +323,9 @@ body {
   .btn-bakery-primary {
     @apply bg-bakery-primary text-white px-8 py-3.5 rounded-lg font-semibold text-base
            hover:bg-bakery-primary-dark transition-all duration-200 
-           shadow-[0_2px_4px_rgba(184,125,106,0.2),0_1px_2px_rgba(184,125,106,0.15)]
-           hover:shadow-[0_4px_8px_rgba(184,125,106,0.25),0_2px_4px_rgba(184,125,106,0.2)]
-           hover:-translate-y-0.5 active:translate-y-0 active:shadow-[0_1px_2px_rgba(184,125,106,0.2)]
+           shadow-[0_2px_4px_rgba(142,95,168,0.2),0_1px_2px_rgba(142,95,168,0.15)]
+           hover:shadow-[0_4px_8px_rgba(142,95,168,0.25),0_2px_4px_rgba(142,95,168,0.2)]
+           hover:-translate-y-0.5 active:translate-y-0 active:shadow-[0_1px_2px_rgba(142,95,168,0.2)]
            focus:outline-none focus:ring-2 focus:ring-bakery-primary focus:ring-offset-2
            disabled:opacity-60 disabled:cursor-not-allowed disabled:transform-none;
   }
@@ -329,7 +333,7 @@ body {
   .btn-bakery-secondary {
     @apply bg-transparent text-bakery-primary border-2 border-bakery-primary px-6 py-3 rounded-lg 
            font-semibold hover:bg-bakery-primary hover:text-white transition-all duration-200 
-           shadow-[0_1px_2px_rgba(184,125,106,0.1)] hover:shadow-[0_2px_4px_rgba(184,125,106,0.2)]
+           shadow-[0_1px_2px_rgba(142,95,168,0.1)] hover:shadow-[0_2px_4px_rgba(142,95,168,0.2)]
            focus:outline-none focus:ring-2 focus:ring-bakery-primary focus:ring-offset-2;
   }
 
@@ -370,9 +374,9 @@ body {
   .btn-primary {
     @apply text-white px-6 py-3 rounded-lg font-semibold
            transition-all duration-200 
-           shadow-[0_2px_4px_rgba(184,125,106,0.2),0_1px_2px_rgba(184,125,106,0.15)]
-           hover:shadow-[0_4px_8px_rgba(184,125,106,0.25),0_2px_4px_rgba(184,125,106,0.2)]
-           hover:-translate-y-0.5 active:translate-y-0 active:shadow-[0_1px_2px_rgba(184,125,106,0.2)]
+           shadow-[0_2px_4px_rgba(142,95,168,0.2),0_1px_2px_rgba(142,95,168,0.15)]
+           hover:shadow-[0_4px_8px_rgba(142,95,168,0.25),0_2px_4px_rgba(142,95,168,0.2)]
+           hover:-translate-y-0.5 active:translate-y-0 active:shadow-[0_1px_2px_rgba(142,95,168,0.2)]
            focus:outline-none focus:ring-2 focus:ring-bakery-primary focus:ring-offset-2
            disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none;
     background: var(--primary);
@@ -393,7 +397,7 @@ body {
   .btn-secondary {
     @apply bg-transparent text-bakery-primary border-2 border-bakery-primary px-6 py-3 rounded-lg 
            font-semibold hover:bg-bakery-primary hover:text-white transition-all duration-200 
-           shadow-[0_1px_2px_rgba(184,125,106,0.1)] hover:shadow-[0_2px_4px_rgba(184,125,106,0.2)]
+           shadow-[0_1px_2px_rgba(142,95,168,0.1)] hover:shadow-[0_2px_4px_rgba(142,95,168,0.2)]
            focus:outline-none focus:ring-2 focus:ring-bakery-primary focus:ring-offset-2
            disabled:opacity-50 disabled:cursor-not-allowed;
   }
@@ -407,7 +411,7 @@ body {
 /* Custom bakery patterns and effects */
 .bakery-texture {
   background-image: 
-    radial-gradient(circle at 25% 25%, rgba(184, 125, 106, 0.03) 0%, transparent 50%),
+    radial-gradient(circle at 25% 25%, rgba(142, 95, 168, 0.03) 0%, transparent 50%),
     radial-gradient(circle at 75% 75%, rgba(201, 169, 97, 0.03) 0%, transparent 50%);
 }
 
@@ -441,7 +445,7 @@ body {
 /* Authentic bakery background pattern */
 .bakery-pattern-bg {
   background-image: 
-    radial-gradient(circle at 20% 20%, rgba(184, 125, 106, 0.02) 0%, transparent 50%),
+    radial-gradient(circle at 20% 20%, rgba(142, 95, 168, 0.02) 0%, transparent 50%),
     radial-gradient(circle at 80% 80%, rgba(201, 169, 97, 0.02) 0%, transparent 50%),
     radial-gradient(circle at 40% 60%, rgba(92, 74, 58, 0.015) 0%, transparent 50%);
 }
@@ -463,5 +467,5 @@ body {
 }
 
 .orange-light{
-  box-shadow: 0 2px 4px rgba(184, 125, 106, 0.15), 0 1px 2px rgba(184, 125, 106, 0.1);
+  box-shadow: 0 2px 4px rgba(142, 95, 168, 0.15), 0 1px 2px rgba(142, 95, 168, 0.1);
 }

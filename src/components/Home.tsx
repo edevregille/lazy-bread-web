@@ -83,24 +83,25 @@ export default function Home() {
               />
             </div>
             <div className="md:w-full p-6 md:p-8">
-              <h3 className="text-2xl font-semibold text-bakery-primary mb-6">
-                Current Flavors
-              </h3>
-              
-              <div className="space-y-2">
+              <div className="flex items-center gap-3 mb-6">
+                <span className="h-px w-8 bg-bakery-primary/40" />
+                <h3 className="text-2xl font-semibold text-bakery-primary">
+                  Current Flavors
+                </h3>
+              </div>
+
+              <div className="flex flex-col gap-2.5">
                 {BREAD_TYPES.map((item, index) => (
-                  <div key={index} className="bg-white rounded-lg shadow-lg px-3 py-2 hover:shadow-xl transition-shadow">
-                    <div className="flex items-center">
-                      <div className="flex-shrink-0 h-6 w-6 rounded-full bg-golden-wheat flex items-center justify-center mr-2.5 shadow-golden">
-                        <svg className="h-3.5 w-3.5 text-white" fill="currentColor" viewBox="0 0 20 20">
-                          <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                        </svg>
-                      </div>
-                      <div>
-                        <h4 className="text-base font-body font-semibold text-earth-brown leading-snug">{item.name}</h4>
-                        {/* <p className="mt-1 text-sm font-accent text-earth-brown opacity-80">{item.description}</p> */}
-                      </div>
+                  <div
+                    key={index}
+                    className="flex items-center gap-3 bg-white rounded-xl border border-bakery-primary/10 px-3.5 py-3 shadow-sm hover:shadow-accent hover:border-bakery-primary/30 transition-all"
+                  >
+                    <div className="flex-shrink-0 h-6 w-6 rounded-full bg-bakery-primary/10 flex items-center justify-center">
+                      <svg className="h-3.5 w-3.5 text-bakery-primary" fill="currentColor" viewBox="0 0 20 20">
+                        <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                      </svg>
                     </div>
+                    <h4 className="text-sm sm:text-base font-body font-semibold text-earth-brown leading-snug">{item.name}</h4>
                   </div>
                 ))}
               </div>

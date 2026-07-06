@@ -1,10 +1,18 @@
+"use client";
+
 import React from "react";
 import { Title } from "./ui/Title";
 import Image from "next/image";
 import { FIND_US_LOCATIONS } from "@/config/app-config";
 import MapAddressLink from "@/components/MapAddressLink";
+import { useConfig } from "@/contexts/ConfigContext";
 
 export default function FindUs() {
+  const { config } = useConfig();
+  // Prefer locations from the S3-hosted config; fall back to the local
+  // config only if the S3 config hasn't loaded (or failed to load).
+  const locations = config?.FIND_US_LOCATIONS ?? FIND_US_LOCATIONS;
+
   return (
     <section className="background-gradient-warm py-16">
       <div className="max-w-6xl mx-auto px-8">
@@ -12,7 +20,7 @@ export default function FindUs() {
           Find us
         </h1>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-          {FIND_US_LOCATIONS.filter((location) => location.active).map((location) => (
+          {locations.filter((location) => location.active).map((location) => (
             <Title
               key={location.id}
               title={location.name}

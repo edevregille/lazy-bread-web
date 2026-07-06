@@ -25,8 +25,8 @@ export const metadata: Metadata = {
     title: 'Lazy Bread PDX',
   },
   other: {
-    'msapplication-TileColor': '#B87D6A',
-    'theme-color': '#B87D6A',
+    'msapplication-TileColor': '#79518F',
+    'theme-color': '#79518F',
   },
 };
 

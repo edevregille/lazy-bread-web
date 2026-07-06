@@ -184,7 +184,7 @@ export let FIND_US_LOCATIONS = [
     address: '55 NE Holman St, Portland OR',
     image: '/popup-shop.png',
     imageAlt: 'Pop-up Shop',
-    schedule: 'Tuesdays, Wednesdays and Fridays 8am to 9pm',
+    schedule: 'Wednesdays and Fridays 8am to 9pm',
     active: true,
     coordinates: {
       lat: 45.5647,
@@ -203,20 +203,7 @@ export let FIND_US_LOCATIONS = [
       lat: 45.5647,
       lng: -122.6587,
     },
-  },
-  {
-    id: 'cafe-eleven',
-    name: 'Café Eleven',
-    address: '435 NE Rosa Parks, Portland OR 97211',
-    image: '/contact-cafe11.png',
-    imageAlt: 'Café Eleven location',
-    schedule: 'Weekends',
-    active: true,
-    coordinates: {
-      lat: 45.5801,
-      lng: -122.6587,
-    },
-  },
+  }
 ];
 
 export let SOCIAL_MEDIA = {

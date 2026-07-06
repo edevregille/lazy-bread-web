@@ -15,16 +15,16 @@ export default {
         'bakery-cream': '#FAF8F5',      // Soft cream
         'bakery-brown': '#5C4A3A',      // Refined brown
         'bakery-gold': '#C9A961',       // Soft golden
-        'bakery-rust': '#9A6B5A',       // Muted terracotta
+        'bakery-rust': '#6B3F80',       // Deep plum
         'bakery-sage': '#9CAF88',        // Sage green
         'bakery-charcoal': '#1F1F1F',    // Dark charcoal
         'bakery-warm': '#F5F3F0',       // Warm beige
         'bakery-earth': '#5C4A3A',       // Earth brown
         'bakery-butter': '#F5F3F0',     // Soft butter
         'bakery-cinnamon': '#8B7D6B',   // Muted cinnamon
-        'bakery-primary': '#B87D6A',    // Soft terracotta primary
-        'bakery-primary-dark': '#9A6B5A', // Darker primary for hover
-        'bakery-primary-light': '#D4A799', // Lighter primary
+        'bakery-primary': '#79518F',    // Soft purple primary
+        'bakery-primary-dark': '#6B3F80', // Darker primary for hover
+        'bakery-primary-light': '#C39BD3', // Lighter primary
         'gray-light': '#F7F7F7',
         'gray-medium': '#E5E5E5',
         'gray-dark': '#6B6B6B',

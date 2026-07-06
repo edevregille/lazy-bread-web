@@ -33,17 +33,17 @@ export default function Header() {
 
                     {/* Desktop Navigation */}
                     <nav className="hidden md:block" aria-label="Main">
-                        <div className="flex items-center space-x-8">
+                        <div className="flex items-center gap-10">
                             {NAV_ITEMS.map((item) => {
                                 const isActive = pathname === item.path;
                                 return (
                                     <Link
                                         key={item.name}
                                         href={item.path}
-                                        className={`px-4 py-2 rounded-md text-lg font-body font-bold transition-colors duration-300 ${
+                                        className={`relative py-2 text-lg font-body font-semibold tracking-tight transition-colors duration-200 focus-visible:outline-none focus-visible:text-bakery-primary after:content-[''] after:absolute after:left-0 after:-bottom-0.5 after:h-0.5 after:rounded-full after:bg-bakery-primary after:transition-all after:duration-200 ${
                                             isActive
-                                                ? 'text-bakery-primary bg-warm-cream border-b-2 border-bakery-primary'
-                                                : 'text-earth-brown hover:text-bakery-primary hover:bg-warm-cream'
+                                                ? 'text-bakery-primary after:w-full'
+                                                : 'text-earth-brown hover:text-bakery-primary after:w-0 hover:after:w-full'
                                         }`}
                                         aria-current={isActive ? "page" : undefined}
                                     >
@@ -79,15 +79,15 @@ export default function Header() {
                     } md:hidden bg-white py-4 px-4 border-t border-bakery-light shadow-bakery`}
                     hidden={!isOpen}
                 >
-                    <div className="space-y-3">
+                    <div className="space-y-1">
                         {NAV_ITEMS.map((item) => {
                             const isActive = pathname === item.path;
                             return (
                                 <Link
                                     href={item.path}
-                                    className={`block py-3 px-4 rounded-md text-base font-body font-bold transition-colors duration-300 ${
+                                    className={`block py-3 px-4 rounded-md text-base font-body font-semibold transition-colors duration-200 focus-visible:outline-none focus-visible:bg-warm-cream ${
                                         isActive
-                                            ? 'text-bakery-primary bg-warm-cream border-l-4 border-bakery-primary'
+                                            ? 'text-bakery-primary bg-warm-cream'
                                             : 'text-earth-brown hover:text-bakery-primary hover:bg-warm-cream'
                                     }`}
                                     onClick={toggleMenu}
