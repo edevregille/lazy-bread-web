@@ -6,6 +6,7 @@ import Link from "next/link";
 import { BREAD_TYPES, BUSINESS_SETTINGS } from "@/config/app-config";
 import { useConfig } from "@/contexts/ConfigContext";
 import { PaymentSuccessModal } from "./PaymentSuccessModal";
+import NewsletterSignup from "./NewsletterSignup";
 import type { PaymentSuccessData } from "@/lib/types";
 
 export default function Home() {
@@ -56,12 +57,22 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Menu Section */}
-      <section className="py-8 px-8 pb-16 bg-warm-cream mb-8">
-        <div className="max-w-6xl mx-auto">
-          <div className="text-center mb-12">
+      {/* About Section */}
+      <section className="py-16 px-8 bg-warm-cream">
+        <div className="max-w-6xl mx-auto grid md:grid-cols-2 gap-10 md:gap-14 items-center">
+          <div className="flex items-center justify-center order-1">
+            <Image
+              src="/about.png"
+              alt="Fresh Organic Focaccia"
+              priority
+              width={500}
+              height={200}
+              className="object-contain w-full h-auto rounded-lg shadow-lg"
+            />
+          </div>
+          <div className="order-2 text-center md:text-left">
             <h2 className="text-4xl font-semibold text-bakery-primary mb-6">About the bread</h2>
-            <p className="text-xl md:text-2xl font-body text-earth-brown mb-8 leading-relaxed">
+            <p className="text-xl font-body text-earth-brown mb-8 leading-relaxed">
               When sourcing the flour for Lazy Bread, my priorities are that it be both organic and free from synthetic nutrients and dough conditioners. I won’t sell what I wouldn’t feed my own family. The focaccia flavors sold in the bread stand are simple but impactful and offerings will vary slightly each day.
               <br /> <br />
               Free delivery &amp; pickup options available.
@@ -70,43 +81,44 @@ export default function Home() {
               <button className="btn-primary-lg">Order Now</button>
             </Link>
           </div>
-          
-          <div className="grid md:grid-cols-2 gap-8 items-center">
-            <div className="flex items-center justify-center">
-              <Image 
-                src="/about.png"
-                alt="Fresh Organic Focaccia"
-                priority
-                width={500}
-                height={200}
-                className="object-contain w-full h-auto rounded-lg shadow-lg"
-              />
-            </div>
-            <div className="md:w-full p-6 md:p-8">
-              <div className="flex items-center gap-3 mb-6">
-                <span className="h-px w-8 bg-bakery-primary/40" />
-                <h3 className="text-2xl font-semibold text-bakery-primary">
-                  Current Flavors
-                </h3>
-              </div>
+        </div>
+      </section>
 
-              <div className="flex flex-col gap-2.5">
-                {BREAD_TYPES.map((item, index) => (
-                  <div
-                    key={index}
-                    className="flex items-center gap-3 bg-white rounded-xl border border-bakery-primary/10 px-3.5 py-3 shadow-sm hover:shadow-accent hover:border-bakery-primary/30 transition-all"
-                  >
-                    <div className="flex-shrink-0 h-6 w-6 rounded-full bg-bakery-primary/10 flex items-center justify-center">
-                      <svg className="h-3.5 w-3.5 text-bakery-primary" fill="currentColor" viewBox="0 0 20 20">
-                        <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                      </svg>
-                    </div>
-                    <h4 className="text-sm sm:text-base font-body font-semibold text-earth-brown leading-snug">{item.name}</h4>
-                  </div>
-                ))}
-              </div>
-            </div>
+      {/* Current Flavors Section */}
+      <section className="py-16 px-8 bg-white">
+        <div className="max-w-4xl mx-auto text-center">
+          <div className="flex items-center justify-center gap-3 mb-10">
+            <span className="h-px w-8 bg-bakery-primary/40" />
+            <h3 className="text-3xl font-semibold text-bakery-primary">
+              Current Flavors
+            </h3>
+            <span className="h-px w-8 bg-bakery-primary/40" />
           </div>
+
+          <div className="flex flex-wrap justify-center gap-3">
+            {BREAD_TYPES.map((item, index) => (
+              <div
+                key={index}
+                className="flex items-center gap-2 bg-warm-cream rounded-full pl-2 pr-4 py-2 border border-bakery-primary/10 shadow-sm hover:shadow-accent hover:border-bakery-primary/30 transition-all"
+              >
+                <span className="flex-shrink-0 h-5 w-5 rounded-full bg-bakery-primary/10 flex items-center justify-center">
+                  <svg className="h-3 w-3 text-bakery-primary" fill="currentColor" viewBox="0 0 20 20">
+                    <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                  </svg>
+                </span>
+                <span className="text-sm sm:text-base font-body font-semibold text-earth-brown whitespace-nowrap">
+                  {item.name}
+                </span>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Newsletter Section */}
+      <section className="py-16 px-8 background-gradient-warm">
+        <div className="max-w-6xl mx-auto">
+          <NewsletterSignup />
         </div>
       </section>
 
