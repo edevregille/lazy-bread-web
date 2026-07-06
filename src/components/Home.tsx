@@ -56,7 +56,7 @@ export default function Home() {
     <>
       <h1 className="sr-only">Lazy Bread PDX — Organic sourdough focaccia bakery in Portland, Oregon</h1>
       {/* Hero Section */}
-      <section className="py-6 md:py-8 px-0 md:px-8 bg-warm-cream">
+      <section className="py-6 md:py-8 px-0 md:px-8 background-gradient-warm">
         <div className="max-w-6xl mx-auto px-3 sm:px-5 md:px-0">
           <HeroImage
             href={isHolidayMode ? undefined : "/order"}
@@ -68,7 +68,7 @@ export default function Home() {
       </section>
 
       {/* About Section */}
-      <section className="py-16 px-8 bg-warm-cream">
+      <section className="py-16 px-8 background-gradient-warm">
         <div className="max-w-6xl mx-auto grid md:grid-cols-2 gap-10 md:gap-14 items-center">
           <div className="flex items-center justify-center order-1">
             <Image
@@ -76,8 +76,8 @@ export default function Home() {
               alt="Fresh Organic Focaccia"
               priority
               width={500}
-              height={200}
-              className="object-contain w-full h-auto rounded-lg shadow-lg"
+              height={400}
+              className="object-cover w-full h-64 sm:h-80 md:h-96 rounded-lg shadow-lg"
             />
           </div>
           <div className="order-2 text-center md:text-left">
@@ -95,15 +95,12 @@ export default function Home() {
       </section>
 
       {/* Current Flavors Section */}
-      <section className="py-16 px-8 bg-white">
-        <div className="max-w-6xl mx-auto grid md:grid-cols-2 gap-10 md:gap-14 items-center">
+      <section className="py-16 px-8 background-gradient-warm">
+        <div className="max-w-6xl mx-auto grid md:grid-cols-2 gap-10 md:gap-14">
           <div>
-            <div className="flex items-center gap-3 mb-8">
-              <span className="h-px w-8 bg-bakery-primary/40" />
-              <h3 className="text-3xl font-semibold text-bakery-primary">
-                Current Flavors
-              </h3>
-            </div>
+            <h3 className="text-3xl font-semibold text-bakery-primary mb-8">
+              Current Flavors
+            </h3>
 
             <div className="flex flex-col gap-2.5">
               {BREAD_TYPES.map((item, index) => (
@@ -124,9 +121,9 @@ export default function Home() {
             </div>
           </div>
 
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-2 grid-rows-2 gap-3 h-full">
             {FLAVOR_SHOWCASE_IMAGES.map((src) => (
-              <div key={src} className="aspect-square rounded-lg overflow-hidden shadow-lg">
+              <div key={src} className="rounded-lg overflow-hidden shadow-lg">
                 <img src={src} alt="" aria-hidden="true" className="w-full h-full object-cover" />
               </div>
             ))}
