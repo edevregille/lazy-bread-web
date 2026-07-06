@@ -9,6 +9,16 @@ import { PaymentSuccessModal } from "./PaymentSuccessModal";
 import NewsletterSignup from "./NewsletterSignup";
 import type { PaymentSuccessData } from "@/lib/types";
 
+// Same photos shown per bread on the order page listing (/breads/<image_name>).
+// Skip the generic default.jpg fallback so the showcase only uses real bread photos.
+const FLAVOR_SHOWCASE_IMAGES = Array.from(
+  new Set(
+    BREAD_TYPES.map((bread) => bread.image_name?.trim()).filter((name): name is string => Boolean(name))
+  )
+)
+  .slice(0, 4)
+  .map((name) => `/breads/${name}`);
+
 export default function Home() {
   const [showPaymentSuccess, setShowPaymentSuccess] = useState(false);
   const [paymentData, setPaymentData] = useState<PaymentSuccessData | null>(null);
@@ -86,29 +96,38 @@ export default function Home() {
 
       {/* Current Flavors Section */}
       <section className="py-16 px-8 bg-white">
-        <div className="max-w-4xl mx-auto text-center">
-          <div className="flex items-center justify-center gap-3 mb-10">
-            <span className="h-px w-8 bg-bakery-primary/40" />
-            <h3 className="text-3xl font-semibold text-bakery-primary">
-              Current Flavors
-            </h3>
-            <span className="h-px w-8 bg-bakery-primary/40" />
+        <div className="max-w-6xl mx-auto grid md:grid-cols-2 gap-10 md:gap-14 items-center">
+          <div>
+            <div className="flex items-center gap-3 mb-8">
+              <span className="h-px w-8 bg-bakery-primary/40" />
+              <h3 className="text-3xl font-semibold text-bakery-primary">
+                Current Flavors
+              </h3>
+            </div>
+
+            <div className="flex flex-col gap-2.5">
+              {BREAD_TYPES.map((item, index) => (
+                <div
+                  key={index}
+                  className="flex items-center gap-3 bg-warm-cream rounded-xl border border-bakery-primary/10 px-3.5 py-3 shadow-sm hover:shadow-accent hover:border-bakery-primary/30 transition-all"
+                >
+                  <span className="flex-shrink-0 h-6 w-6 rounded-full bg-bakery-primary/10 flex items-center justify-center">
+                    <svg className="h-3.5 w-3.5 text-bakery-primary" fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                    </svg>
+                  </span>
+                  <h4 className="text-sm sm:text-base font-body font-semibold text-earth-brown leading-snug">
+                    {item.name}
+                  </h4>
+                </div>
+              ))}
+            </div>
           </div>
 
-          <div className="flex flex-wrap justify-center gap-3">
-            {BREAD_TYPES.map((item, index) => (
-              <div
-                key={index}
-                className="flex items-center gap-2 bg-warm-cream rounded-full pl-2 pr-4 py-2 border border-bakery-primary/10 shadow-sm hover:shadow-accent hover:border-bakery-primary/30 transition-all"
-              >
-                <span className="flex-shrink-0 h-5 w-5 rounded-full bg-bakery-primary/10 flex items-center justify-center">
-                  <svg className="h-3 w-3 text-bakery-primary" fill="currentColor" viewBox="0 0 20 20">
-                    <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                  </svg>
-                </span>
-                <span className="text-sm sm:text-base font-body font-semibold text-earth-brown whitespace-nowrap">
-                  {item.name}
-                </span>
+          <div className="grid grid-cols-2 gap-3">
+            {FLAVOR_SHOWCASE_IMAGES.map((src) => (
+              <div key={src} className="aspect-square rounded-lg overflow-hidden shadow-lg">
+                <img src={src} alt="" aria-hidden="true" className="w-full h-full object-cover" />
               </div>
             ))}
           </div>

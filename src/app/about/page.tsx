@@ -6,7 +6,7 @@ export default function PageContact() {
   return (
     <div>
       <About />
-      <section className="py-16 px-8 bg-white">
+      <section className="py-16 px-8 background-gradient-warm">
         <div className="max-w-6xl mx-auto">
           <NewsletterSignup />
         </div>
