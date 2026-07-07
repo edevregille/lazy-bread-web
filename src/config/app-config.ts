@@ -256,8 +256,8 @@ export let ERROR_MESSAGES = {
 // Toggle showBanner and set messageBanner to give customers a heads up
 // (e.g. "We'll be closed the week of Aug 4th — no orders that week.").
 export let SITE_BANNER = {
-  showBanner: true,
-  messageBanner: "Heads up! We're switching to a new website. Please contact us if you have any questions.",
+  showBanner: false,
+  messageBanner: "",
 };
 
 // Helper function to convert day names to numbers
