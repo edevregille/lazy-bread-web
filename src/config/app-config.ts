@@ -39,6 +39,9 @@ export function setRuntimeConfig(config: any) {
   if (config.ERROR_MESSAGES) {
     Object.assign(ERROR_MESSAGES, config.ERROR_MESSAGES);
   }
+  if (config.SITE_BANNER) {
+    Object.assign(SITE_BANNER, config.SITE_BANNER);
+  }
 }
 
 // Fallback values (used until S3 config is loaded)
@@ -247,6 +250,14 @@ export let ERROR_MESSAGES = {
   phoneInvalid: "Please enter a valid US phone number (e.g., (503) 555-0123 or 503-555-0123)",
   captchaRequired: "Please complete the CAPTCHA verification",
   captchaNotConfigured: "⚠️ CAPTCHA is not configured. Please set up reCAPTCHA keys in your environment variables.",
+};
+
+// Site-wide announcement banner, shown under the header on every page.
+// Toggle showBanner and set messageBanner to give customers a heads up
+// (e.g. "We'll be closed the week of Aug 4th — no orders that week.").
+export let SITE_BANNER = {
+  showBanner: true,
+  messageBanner: "Heads up! We're switching to a new website. Please contact us if you have any questions.",
 };
 
 // Helper function to convert day names to numbers

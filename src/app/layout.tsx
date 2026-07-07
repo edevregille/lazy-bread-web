@@ -3,6 +3,7 @@ import Script from "next/script";
 import "./globals.css";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import AnnouncementBanner from "@/components/AnnouncementBanner";
 import { ConfigProvider } from "@/contexts/ConfigContext";
 import DatadogRumInit from "@/components/DatadogRumInit";
 export const metadata: Metadata = {
@@ -84,10 +85,12 @@ export default function RootLayout({
                 Skip to main content
               </a>
               <Header />
+              <AnnouncementBanner />
               <main
                 id="main-content"
                 tabIndex={-1}
-                className="pt-20 pb-24 outline-none"
+                className="pb-24 outline-none"
+                style={{ paddingTop: "calc(5rem + var(--banner-height, 0px))" }}
               >
                 <div className="container mx-auto">
                   {children}

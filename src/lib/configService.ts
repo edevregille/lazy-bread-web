@@ -57,6 +57,11 @@ export interface AppConfig {
     commentsHelper: string;
   };
   ERROR_MESSAGES: Record<string, string>;
+  /** Site-wide announcement banner shown under the header on every page. */
+  SITE_BANNER: {
+    showBanner: boolean;
+    messageBanner: string;
+  };
 }
 
 let cachedConfig: AppConfig | null = null;
