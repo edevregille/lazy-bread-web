@@ -410,9 +410,6 @@ export default function OrderPage() {
                   <h3 className="text-xl font-bold text-amber-900 mb-2">
                     {BUSINESS_SETTINGS_RUNTIME.holidayMessage}
                   </h3>
-                  <p className="text-amber-800 text-base leading-relaxed">
-                    We&apos;ll be back taking orders on <span className="font-semibold">{BUSINESS_SETTINGS_RUNTIME.returnDate}</span>. Thank you for your patience and we look forward to serving you again soon! 🌴
-                  </p>
                 </div>
               </div>
             </div>
