@@ -424,7 +424,7 @@ export default function OrderPage() {
             {/* Bread Selection */}
             <div data-field-error={fieldErrors.breadItems ? 'true' : undefined}>
               <div className="flex flex-col gap-2 sm:flex-row sm:justify-between sm:items-center mb-6">
-                <h2 className="text-xl sm:text-2xl font-semibold text-bakery-primary">Select your focaccias</h2>
+                <h2 className="text-xl sm:text-2xl font-semibold text-bakery-primary">Select your items</h2>
                 <div className="text-sm text-gray-600 shrink-0">
                   Max {BUSINESS_SETTINGS_RUNTIME.maxOrderQuantity} per order
                   {(() => {
