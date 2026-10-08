@@ -133,7 +133,7 @@ export default function PaymentPage() {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600 mx-auto"></div>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-bakery-primary mx-auto"></div>
           <p className="mt-4 text-gray-600">Setting up payment...</p>
         </div>
       </div>
@@ -187,7 +187,7 @@ export default function PaymentPage() {
                 <div className="border-t pt-3">
                   <div className="flex justify-between">
                     <span className="text-lg font-bold text-gray-900">Total</span>
-                    <span className="text-xl font-bold text-indigo-600">${orderDetails.totalAmount.toFixed(2)}</span>
+                    <span className="text-xl font-bold text-bakery-primary-dark">${orderDetails.totalAmount.toFixed(2)}</span>
                   </div>
                 </div>
               </div>
@@ -252,7 +252,7 @@ export default function PaymentPage() {
 
               {!clientSecret && (
                 <div className="text-center py-8">
-                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600 mx-auto mb-4"></div>
+                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-bakery-primary mx-auto mb-4"></div>
                   <p className="text-gray-600">Setting up payment form...</p>
                 </div>
               )}
@@ -321,7 +321,7 @@ function SetupForm({ onSuccess }: { onSuccess: () => void }) {
       <button
         type="submit"
         disabled={isProcessing}
-        className="w-full bg-bakery-primary text-white px-6 py-3 rounded-md hover:bg-bakery-primary-dark transition-colors font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+        className="w-full bg-bakery-primary-dark text-white px-6 py-3 rounded-md hover:bg-bakery-primary-deep transition-colors font-medium disabled:opacity-50 disabled:cursor-not-allowed"
       >
         {isProcessing ? 'Processing Order...' : 'Complete Order'}
       </button>

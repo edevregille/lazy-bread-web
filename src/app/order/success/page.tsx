@@ -57,7 +57,7 @@ export default function SuccessPage() {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600 mx-auto"></div>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-bakery-primary mx-auto"></div>
           <p className="mt-4 text-gray-600">Loading order details...</p>
         </div>
       </div>
@@ -153,17 +153,17 @@ export default function SuccessPage() {
           </div>
 
           {/* Next Steps */}
-          <div className="bg-blue-50 rounded-lg p-6 mb-8">
+          <div className="bg-bakery-primary-light rounded-lg p-6 mb-8">
             <h2 className="text-xl font-semibold text-gray-900 mb-4">What&apos;s Next?</h2>
             <div className="space-y-3 text-left">
               <div className="flex items-start">
-                <div className="flex-shrink-0 w-6 h-6 bg-blue-500 text-white rounded-full flex items-center justify-center text-sm font-bold mr-3 mt-0.5">
+                <div className="flex-shrink-0 w-6 h-6 bg-bakery-primary-dark text-white rounded-full flex items-center justify-center text-sm font-bold mr-3 mt-0.5">
                   1
                 </div>
                 <p className="text-gray-700">We&apos;ll send you a confirmation email with your order details.</p>
               </div>
               <div className="flex items-start">
-                <div className="flex-shrink-0 w-6 h-6 bg-blue-500 text-white rounded-full flex items-center justify-center text-sm font-bold mr-3 mt-0.5">
+                <div className="flex-shrink-0 w-6 h-6 bg-bakery-primary-dark text-white rounded-full flex items-center justify-center text-sm font-bold mr-3 mt-0.5">
                   2
                 </div>
                 <p className="text-gray-700">
@@ -179,7 +179,7 @@ export default function SuccessPage() {
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link
               href="/"
-              className="px-8 py-4 bg-indigo-600 text-white font-semibold rounded-lg hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition-colors"
+              className="px-8 py-4 bg-bakery-primary-dark text-white font-semibold rounded-lg hover:bg-bakery-primary-deep focus:outline-none focus:ring-2 focus:ring-bakery-primary focus:ring-offset-2 transition-colors"
             >
               🏠 Back to Home
             </Link>
@@ -195,7 +195,7 @@ export default function SuccessPage() {
           <div className="mt-8 pt-6 border-t border-gray-200">
             <p className="text-sm text-gray-600">
               Need help? Contact us at{' '}
-              <a href="mailto:support@lazybread.com" className="text-indigo-600 hover:text-indigo-800 font-medium">
+              <a href="mailto:support@lazybread.com" className="text-bakery-primary-dark hover:text-bakery-primary-deep font-medium">
                 support@lazybread.com
               </a>
             </p>

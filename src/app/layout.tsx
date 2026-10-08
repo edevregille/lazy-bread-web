@@ -26,8 +26,8 @@ export const metadata: Metadata = {
     title: 'Lazy Bread PDX',
   },
   other: {
-    'msapplication-TileColor': '#79518F',
-    'theme-color': '#79518F',
+    'msapplication-TileColor': '#E0443F',
+    'theme-color': '#E0443F',
   },
 };
 
@@ -80,7 +80,7 @@ export default function RootLayout({
             <div className="flex-grow">
               <a
                 href="#main-content"
-                className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-[100] focus:px-4 focus:py-2 focus:bg-bakery-primary focus:text-white focus:rounded-lg focus:shadow-lg focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-bakery-primary"
+                className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-[100] focus:px-4 focus:py-2 focus:bg-bakery-primary-dark focus:text-white focus:rounded-lg focus:shadow-lg focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-bakery-primary"
               >
                 Skip to main content
               </a>

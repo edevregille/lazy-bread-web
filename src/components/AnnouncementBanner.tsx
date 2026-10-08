@@ -46,7 +46,7 @@ export default function AnnouncementBanner() {
     <div
       ref={ref}
       role="status"
-      className="fixed top-20 inset-x-0 z-[9] bg-bakery-primary text-white text-sm sm:text-base font-body font-semibold text-center px-4 py-2.5 shadow-md"
+      className="fixed top-20 inset-x-0 z-[9] bg-bakery-primary-dark text-white text-sm sm:text-base font-body font-semibold text-center px-4 py-2.5 shadow-md"
     >
       {siteBanner.messageBanner}
     </div>

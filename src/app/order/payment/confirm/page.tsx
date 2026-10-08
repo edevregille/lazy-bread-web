@@ -25,7 +25,7 @@ function PaymentConfirmationForm() {
       <button
         type="submit"
         disabled={!isReady || isProcessing}
-        className="w-full bg-bakery-primary text-white px-6 py-3 rounded-md hover:bg-bakery-primary-dark transition-colors font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+        className="w-full bg-bakery-primary-dark text-white px-6 py-3 rounded-md hover:bg-bakery-primary-deep transition-colors font-medium disabled:opacity-50 disabled:cursor-not-allowed"
       >
         {!isReady ? 'Loading Payment Form...' : isProcessing ? 'Processing Payment...' : 'Complete Payment'}
       </button>
@@ -79,7 +79,7 @@ export default function PaymentConfirmationPage() {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600 mx-auto"></div>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-bakery-primary mx-auto"></div>
           <p className="mt-4 text-gray-600">Loading payment form...</p>
         </div>
       </div>
@@ -95,7 +95,7 @@ export default function PaymentConfirmationPage() {
           <p className="text-gray-600 mb-4">{error}</p>
           <button
             onClick={() => router.push('/order')}
-            className="px-6 py-2 bg-indigo-600 text-white font-semibold rounded-lg hover:bg-indigo-700"
+            className="px-6 py-2 bg-bakery-primary-dark text-white font-semibold rounded-lg hover:bg-bakery-primary-deep"
           >
             Back to Order
           </button>

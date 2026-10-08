@@ -7,17 +7,19 @@
 :root {
   --background: #FFFFFF;
   --foreground: #1F1F1F;
-  --primary: #79518F;
-  --primary-light: #C39BD3;
-  --primary-dark: #6B3F80;
+  /* Warm coral accent — shared with the Family edition palette. */
+  --primary: #E0443F;
+  --primary-light: #FBE4DC;
+  --primary-dark: #B62F2B;
+  --primary-deep: #8F2622;
   --secondary: #8B7D6B;
-  --accent: #79518F;
+  --accent: #E0443F;
   --warm-cream: #FAF8F5;
   --warm-beige: #F5F3F0;
   --earth-brown: #5C4A3A;
   --golden-wheat: #C9A961;
   --sage-green: #9CAF88;
-  --rust-orange: #79518F;
+  --rust-orange: #E0443F;
   --black: #000000;
   --gray-light: #F7F7F7;
   --gray-medium: #E5E5E5;
@@ -26,6 +28,19 @@
 
 html {
   scroll-padding-top: 5rem;
+}
+
+/* Native controls pick up the brand accent instead of the browser's blue. */
+input[type="radio"],
+input[type="checkbox"],
+input[type="range"],
+progress {
+  accent-color: var(--primary-dark);
+}
+
+::selection {
+  background: var(--primary-light);
+  color: var(--foreground);
 }
 
 body {
@@ -138,7 +153,7 @@ body {
 }
 
 .shadow-accent {
-  box-shadow: 0 2px 8px rgba(121, 81, 143, 0.15), 0 1px 3px rgba(121, 81, 143, 0.1);
+  box-shadow: 0 2px 8px rgba(224, 68, 63, 0.15), 0 1px 3px rgba(224, 68, 63, 0.1);
 }
 
 /* Organic Borders */
@@ -157,8 +172,10 @@ body {
 }
 
 /* Button Styles - Clean and Modern */
+/* Filled surfaces carry white text, so they use --primary-dark: white on the
+   coral accent itself is only 4.1:1 and fails AA at body sizes. */
 .btn-bakery-primary {
-  background: var(--primary);
+  background: var(--primary-dark);
   color: white;
   padding: 14px 32px;
   border-radius: 8px;
@@ -166,8 +183,8 @@ body {
   font-size: 16px;
   transition: all 0.2s ease;
   box-shadow: 
-    0 2px 4px rgba(142, 95, 168, 0.2),
-    0 1px 2px rgba(142, 95, 168, 0.15);
+    0 2px 4px rgba(224, 68, 63, 0.2),
+    0 1px 2px rgba(224, 68, 63, 0.15);
   border: none;
   cursor: pointer;
   position: relative;
@@ -188,9 +205,9 @@ body {
 .btn-bakery-primary:hover {
   transform: translateY(-1px);
   box-shadow: 
-    0 4px 8px rgba(142, 95, 168, 0.25),
-    0 2px 4px rgba(142, 95, 168, 0.2);
-  background: var(--primary-dark);
+    0 4px 8px rgba(224, 68, 63, 0.25),
+    0 2px 4px rgba(224, 68, 63, 0.2);
+  background: var(--primary-deep);
 }
 
 .btn-bakery-primary:hover::before {
@@ -200,14 +217,14 @@ body {
 .btn-bakery-primary:active {
   transform: translateY(0);
   box-shadow: 
-    0 1px 2px rgba(142, 95, 168, 0.2);
+    0 1px 2px rgba(224, 68, 63, 0.2);
 }
 
 .btn-bakery-primary:focus {
   outline: none;
   box-shadow: 
-    0 2px 4px rgba(142, 95, 168, 0.2),
-    0 0 0 3px rgba(142, 95, 168, 0.2);
+    0 2px 4px rgba(224, 68, 63, 0.2),
+    0 0 0 3px rgba(224, 68, 63, 0.2);
 }
 
 .btn-bakery-primary:disabled {
@@ -218,20 +235,20 @@ body {
 
 .btn-bakery-secondary {
   background: transparent;
-  color: var(--primary);
+  color: var(--primary-dark);
   padding: 12px 24px;
   border-radius: 8px;
   font-weight: 500;
   border: 2px solid var(--primary);
   transition: all 0.2s ease;
-  box-shadow: 0 1px 2px rgba(142, 95, 168, 0.1);
+  box-shadow: 0 1px 2px rgba(224, 68, 63, 0.1);
 }
 
 .btn-bakery-secondary:hover {
   transform: translateY(-1px);
-  background: var(--primary);
+  background: var(--primary-dark);
   color: white;
-  box-shadow: 0 2px 4px rgba(142, 95, 168, 0.2);
+  box-shadow: 0 2px 4px rgba(224, 68, 63, 0.2);
 }
 
 /* Card Styles - Clean and Minimal */
@@ -261,8 +278,8 @@ body {
     45deg,
     transparent,
     transparent 2px,
-    rgba(142, 95, 168, 0.03) 2px,
-    rgba(142, 95, 168, 0.03) 4px
+    rgba(224, 68, 63, 0.03) 2px,
+    rgba(224, 68, 63, 0.03) 4px
   );
 }
 
@@ -281,7 +298,7 @@ body {
   bottom: 0;
   background-image: 
     radial-gradient(circle at 20% 80%, rgba(201, 169, 97, 0.05) 0%, transparent 50%),
-    radial-gradient(circle at 80% 20%, rgba(142, 95, 168, 0.03) 0%, transparent 50%);
+    radial-gradient(circle at 80% 20%, rgba(224, 68, 63, 0.03) 0%, transparent 50%);
   pointer-events: none;
 }
 
@@ -321,19 +338,19 @@ body {
 /* Authentic Bakery Utility Classes */
 @layer components {
   .btn-bakery-primary {
-    @apply bg-bakery-primary text-white px-8 py-3.5 rounded-lg font-semibold text-base
-           hover:bg-bakery-primary-dark transition-all duration-200 
-           shadow-[0_2px_4px_rgba(142,95,168,0.2),0_1px_2px_rgba(142,95,168,0.15)]
-           hover:shadow-[0_4px_8px_rgba(142,95,168,0.25),0_2px_4px_rgba(142,95,168,0.2)]
-           hover:-translate-y-0.5 active:translate-y-0 active:shadow-[0_1px_2px_rgba(142,95,168,0.2)]
+    @apply bg-bakery-primary-dark text-white px-8 py-3.5 rounded-lg font-semibold text-base
+           hover:bg-bakery-primary-deep transition-all duration-200 
+           shadow-[0_2px_4px_rgba(224,68,63,0.2),0_1px_2px_rgba(224,68,63,0.15)]
+           hover:shadow-[0_4px_8px_rgba(224,68,63,0.25),0_2px_4px_rgba(224,68,63,0.2)]
+           hover:-translate-y-0.5 active:translate-y-0 active:shadow-[0_1px_2px_rgba(224,68,63,0.2)]
            focus:outline-none focus:ring-2 focus:ring-bakery-primary focus:ring-offset-2
            disabled:opacity-60 disabled:cursor-not-allowed disabled:transform-none;
   }
 
   .btn-bakery-secondary {
-    @apply bg-transparent text-bakery-primary border-2 border-bakery-primary px-6 py-3 rounded-lg 
-           font-semibold hover:bg-bakery-primary hover:text-white transition-all duration-200 
-           shadow-[0_1px_2px_rgba(142,95,168,0.1)] hover:shadow-[0_2px_4px_rgba(142,95,168,0.2)]
+    @apply bg-transparent text-bakery-primary-dark border-2 border-bakery-primary px-6 py-3 rounded-lg 
+           font-semibold hover:bg-bakery-primary-dark hover:text-white transition-all duration-200 
+           shadow-[0_1px_2px_rgba(224,68,63,0.1)] hover:shadow-[0_2px_4px_rgba(224,68,63,0.2)]
            focus:outline-none focus:ring-2 focus:ring-bakery-primary focus:ring-offset-2;
   }
 
@@ -374,16 +391,16 @@ body {
   .btn-primary {
     @apply text-white px-6 py-3 rounded-lg font-semibold
            transition-all duration-200 
-           shadow-[0_2px_4px_rgba(142,95,168,0.2),0_1px_2px_rgba(142,95,168,0.15)]
-           hover:shadow-[0_4px_8px_rgba(142,95,168,0.25),0_2px_4px_rgba(142,95,168,0.2)]
-           hover:-translate-y-0.5 active:translate-y-0 active:shadow-[0_1px_2px_rgba(142,95,168,0.2)]
+           shadow-[0_2px_4px_rgba(224,68,63,0.2),0_1px_2px_rgba(224,68,63,0.15)]
+           hover:shadow-[0_4px_8px_rgba(224,68,63,0.25),0_2px_4px_rgba(224,68,63,0.2)]
+           hover:-translate-y-0.5 active:translate-y-0 active:shadow-[0_1px_2px_rgba(224,68,63,0.2)]
            focus:outline-none focus:ring-2 focus:ring-bakery-primary focus:ring-offset-2
            disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none;
-    background: var(--primary);
+    background: var(--primary-dark);
   }
   
   .btn-primary:hover:not(:disabled) {
-    background: var(--primary-dark);
+    background: var(--primary-deep);
   }
 
   .btn-primary-sm {
@@ -395,15 +412,15 @@ body {
   }
 
   .btn-secondary {
-    @apply bg-transparent text-bakery-primary border-2 border-bakery-primary px-6 py-3 rounded-lg 
-           font-semibold hover:bg-bakery-primary hover:text-white transition-all duration-200 
-           shadow-[0_1px_2px_rgba(142,95,168,0.1)] hover:shadow-[0_2px_4px_rgba(142,95,168,0.2)]
+    @apply bg-transparent text-bakery-primary-dark border-2 border-bakery-primary px-6 py-3 rounded-lg 
+           font-semibold hover:bg-bakery-primary-dark hover:text-white transition-all duration-200 
+           shadow-[0_1px_2px_rgba(224,68,63,0.1)] hover:shadow-[0_2px_4px_rgba(224,68,63,0.2)]
            focus:outline-none focus:ring-2 focus:ring-bakery-primary focus:ring-offset-2
            disabled:opacity-50 disabled:cursor-not-allowed;
   }
 
   .btn-text {
-    @apply text-bakery-primary hover:text-bakery-primary-dark font-bold transition-colors duration-300
+    @apply text-bakery-primary-dark hover:text-bakery-primary-deep font-bold transition-colors duration-300
            focus:outline-none focus:ring-2 focus:ring-bakery-gold focus:ring-offset-2 rounded;
   }
 }
@@ -411,7 +428,7 @@ body {
 /* Custom bakery patterns and effects */
 .bakery-texture {
   background-image: 
-    radial-gradient(circle at 25% 25%, rgba(142, 95, 168, 0.03) 0%, transparent 50%),
+    radial-gradient(circle at 25% 25%, rgba(224, 68, 63, 0.03) 0%, transparent 50%),
     radial-gradient(circle at 75% 75%, rgba(201, 169, 97, 0.03) 0%, transparent 50%);
 }
 
@@ -445,27 +462,28 @@ body {
 /* Authentic bakery background pattern */
 .bakery-pattern-bg {
   background-image: 
-    radial-gradient(circle at 20% 20%, rgba(142, 95, 168, 0.02) 0%, transparent 50%),
+    radial-gradient(circle at 20% 20%, rgba(224, 68, 63, 0.02) 0%, transparent 50%),
     radial-gradient(circle at 80% 80%, rgba(201, 169, 97, 0.02) 0%, transparent 50%),
     radial-gradient(circle at 40% 60%, rgba(92, 74, 58, 0.015) 0%, transparent 50%);
 }
 
 /* Legacy classes for backward compatibility */
-.light-purple-filter {
+.light-accent-filter {
   filter: brightness(0.99) saturate(1) hue-rotate(20deg) opacity(0.7);
 }
 
-.text-gradient_indigo-purple {
+.text-gradient-accent {
   background: linear-gradient(90deg, var(--primary) 0%, var(--primary-dark) 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
 }
 
-.background-gradient_indigo-purple {
-  background: linear-gradient(90deg, var(--primary) 0%, var(--primary-dark) 100%);
+/* Carries white text, so it runs between the two deep coral stops. */
+.background-gradient-accent {
+  background: linear-gradient(90deg, var(--primary-dark) 0%, var(--primary-deep) 100%);
 }
 
 .orange-light{
-  box-shadow: 0 2px 4px rgba(142, 95, 168, 0.15), 0 1px 2px rgba(142, 95, 168, 0.1);
+  box-shadow: 0 2px 4px rgba(224, 68, 63, 0.15), 0 1px 2px rgba(224, 68, 63, 0.1);
 }

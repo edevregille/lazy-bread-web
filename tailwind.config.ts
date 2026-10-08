@@ -15,16 +15,17 @@ export default {
         'bakery-cream': '#FAF8F5',      // Soft cream
         'bakery-brown': '#5C4A3A',      // Refined brown
         'bakery-gold': '#C9A961',       // Soft golden
-        'bakery-rust': '#6B3F80',       // Deep plum
+        'bakery-rust': '#B62F2B',       // Deep coral
         'bakery-sage': '#9CAF88',        // Sage green
         'bakery-charcoal': '#1F1F1F',    // Dark charcoal
         'bakery-warm': '#F5F3F0',       // Warm beige
         'bakery-earth': '#5C4A3A',       // Earth brown
         'bakery-butter': '#F5F3F0',     // Soft butter
         'bakery-cinnamon': '#8B7D6B',   // Muted cinnamon
-        'bakery-primary': '#79518F',    // Soft purple primary
-        'bakery-primary-dark': '#6B3F80', // Darker primary for hover
-        'bakery-primary-light': '#C39BD3', // Lighter primary
+        'bakery-primary': '#E0443F',    // Warm coral accent (Family edition palette)
+        'bakery-primary-dark': '#B62F2B', // Deep coral: fills under white text, hover
+        'bakery-primary-deep': '#8F2622', // Hover for deep-coral fills
+        'bakery-primary-light': '#FBE4DC', // Coral at ~10%, tinted grounds under ink text
         'gray-light': '#F7F7F7',
         'gray-medium': '#E5E5E5',
         'gray-dark': '#6B6B6B',

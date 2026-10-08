@@ -81,7 +81,7 @@ const EmailSignup = () => {
             value={email}
             onChange={handleEmailChange}
             placeholder="Enter your email"
-            className="border px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 w-full"
+            className="border px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-bakery-primary w-full"
             autoComplete="email"
             aria-invalid={error ? "true" : undefined}
             aria-describedby={error ? emailErrorId : undefined}

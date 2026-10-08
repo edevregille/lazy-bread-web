@@ -11,8 +11,8 @@ export const Button: React.FC<ButtonProps> = ({ label, onClickAction , num}) => 
         <>
         <button
             onClick={onClickAction}
-            // className="background-gradient_indigo-purple text-white px-6 py-2 rounded-lg hover:bg-blue-600 focus:outline-none"
-            className='relative background-gradient_indigo-purple text-white px-6 py-2 font-bold rounded-lg hover:bg-blue-600 focus:outline-none w-full'
+            // className="background-gradient-accent text-white px-6 py-2 rounded-lg focus:outline-none"
+            className='relative background-gradient-accent text-white px-6 py-2 font-bold rounded-lg focus:outline-none w-full'
         >
         {label}
         {num && num > 0 ? (
