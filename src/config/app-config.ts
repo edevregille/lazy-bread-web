@@ -150,7 +150,7 @@ export let BUSINESS_SETTINGS = {
   
   // Contact information
   email: "lazybreadpdx@gmail.com",
-  phone: "+1 (206) 272-0418",
+  phone: "206-272-0839",
   instagram: "https://www.instagram.com/lazybreadpdx/",
   
   // Recurring orders
@@ -158,7 +158,7 @@ export let BUSINESS_SETTINGS = {
   
   // Business hours and delivery
   deliveryDays: ["Wednesday","Friday"],
-  minOrderAdvanceHours: 2,
+  minOrderAdvanceHours: 24,
   maxOrderQuantity: 20,
   // Excluded delivery dates (format: YYYY-MM-DD)
   excludedDeliveryDates: [

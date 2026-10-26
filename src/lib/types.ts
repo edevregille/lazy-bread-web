@@ -26,6 +26,10 @@ export interface OrderDetails {
   fulfillmentType?: FulfillmentType;
   /** Full display line for pickup location when fulfillmentType is pickup. */
   pickupLocation?: string;
+  /** When the customer agreed to the Terms of Sale, ISO 8601. */
+  termsAcceptedAt?: string;
+  /** Which version of the terms they agreed to. */
+  termsVersion?: string;
 }
 
 // Payment-related interfaces

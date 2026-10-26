@@ -1,10 +1,11 @@
 import React from 'react';
+import Link from 'next/link';
 
 const Footer: React.FC = () => {
   return (
     <footer className="fixed bottom-0 left-0 right-0 bg-white shadow-bakery border-t border-bakery-light py-4">
       <div className="container mx-auto px-4 h-full">
-        <div className="flex justify-center items-center space-x-8 h-full">
+        <div className="flex justify-center items-center gap-6 sm:gap-8 h-full">
           {/* Instagram */}
           <a 
             href="https://www.instagram.com/lazybreadpdx/" 
@@ -28,6 +29,14 @@ const Footer: React.FC = () => {
               <path d="M0 3v18h24V3H0zm21.518 2L12 12.713 2.482 5h19.036zM2 19V7.183l10 8.104 10-8.104V19H2z"/>
             </svg>
           </a>
+
+          {/* Terms of sale */}
+          <Link
+            href="/terms"
+            className="text-sm font-body text-gray-dark hover:text-bakery-primary-dark transition-colors duration-300"
+          >
+            Terms
+          </Link>
         </div>
       </div>
     </footer>

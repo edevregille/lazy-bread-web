@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useLayoutEffect } from 'react';
 import Image from 'next/image';
+import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import {
   BREAD_TYPES,
@@ -15,6 +16,7 @@ import {
   PICKUP_ADDRESS_ZIP,
   type BreadType,
 } from '@/config/app-config';
+import { TERMS_VERSION } from '@/config/terms';
 import type { FulfillmentType } from '@/lib/types';
 import { useConfig } from '@/contexts/ConfigContext';
 
@@ -53,6 +55,7 @@ export default function OrderPage() {
   const [error, setError] = useState('');
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
   const [fulfillmentType, setFulfillmentType] = useState<FulfillmentType>('delivery');
+  const [termsAccepted, setTermsAccepted] = useState(false);
 
   const ORDER_DATA_STORAGE_KEY = 'orderData';
 
@@ -267,6 +270,10 @@ export default function OrderPage() {
       errors.email = 'Please enter a valid email address';
       hasErrors = true;
     }
+    if (!termsAccepted) {
+      errors.terms = 'Please agree to the terms before continuing';
+      hasErrors = true;
+    }
 
     setFieldErrors(errors);
     
@@ -340,6 +347,10 @@ export default function OrderPage() {
         phone: phone.trim(),
         comments: comments.trim(),
         totalAmount,
+        // Stripe asks us to keep a record of the customer's agreement to the
+        // terms that authorize charging their saved card after handoff.
+        termsAcceptedAt: new Date().toISOString(),
+        termsVersion: TERMS_VERSION,
       };
 
       // Store order data in session storage for payment page
@@ -867,11 +878,65 @@ export default function OrderPage() {
 
 
 
+            {/* Payment authorization — the opt-in Stripe requires before we
+                save a card and charge it after pickup or delivery. */}
+            <div
+              className={`rounded-lg border p-4 ${
+                fieldErrors.terms
+                  ? 'border-red-300 bg-red-50'
+                  : 'border-gray-300 bg-gray-50'
+              }`}
+              {...(fieldErrors.terms ? { 'data-field-error': true } : {})}
+            >
+              <label className="flex items-start gap-3 cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={termsAccepted}
+                  onChange={(e) => {
+                    setTermsAccepted(e.target.checked);
+                    if (e.target.checked && fieldErrors.terms) {
+                      setFieldErrors((prev) => {
+                        const { terms, ...rest } = prev;
+                        void terms;
+                        return rest;
+                      });
+                    }
+                  }}
+                  className="mt-1 h-4 w-4 flex-shrink-0"
+                  aria-describedby="terms-explainer"
+                  aria-invalid={fieldErrors.terms ? true : undefined}
+                />
+                <span className="text-sm text-earth-brown">
+                  <span className="font-semibold">
+                    I agree to the{' '}
+                    <Link
+                      href="/terms"
+                      target="_blank"
+                      className="underline hover:text-bakery-primary-dark"
+                    >
+                      Terms of Sale
+                    </Link>
+                    .
+                  </span>{' '}
+                  <span id="terms-explainer" className="block mt-1 text-gray-dark">
+                    We save your card at checkout but do not charge it then. You
+                    authorize us to charge it once, for the total shown, after
+                    your order has been picked up or delivered.
+                  </span>
+                </span>
+              </label>
+              {fieldErrors.terms && (
+                <p className="mt-2 text-sm text-red-700" role="alert">
+                  {fieldErrors.terms}
+                </p>
+              )}
+            </div>
+
             {/* Submit Button */}
             <div className="text-center">
               <button
                 type="submit"
-                disabled={loading || calculateTotal() === 0 || isHolidayMode || getOrderItems().length < 1}
+                disabled={loading || calculateTotal() === 0 || isHolidayMode || getOrderItems().length < 1 || !termsAccepted}
                 className="btn-primary"
               >
                 {isHolidayMode ? 'Orders Temporarily Disabled' : loading ? 'Processing...' : 'Proceed to Payment'}

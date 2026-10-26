@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from 'react';
+import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { Elements, PaymentElement, useStripe, useElements } from '@stripe/react-stripe-js';
 import { loadStripe } from '@stripe/stripe-js';
@@ -69,6 +70,8 @@ export default function PaymentPage() {
               comments: orderDetails.comments,
               fulfillmentType: orderDetails.fulfillmentType,
               pickupLocation: orderDetails.pickupLocation,
+              termsAcceptedAt: orderDetails.termsAcceptedAt,
+              termsVersion: orderDetails.termsVersion,
             },
             isGuest: true,
           })
@@ -237,7 +240,17 @@ export default function PaymentPage() {
                           <strong>Complete your order:</strong>{' '}
                           {isPickup
                             ? 'provide a payment method and we will charge you only when your order is ready for pickup.'
-                            : 'provide a payment method and we will charge you only when the order is delivered.'}
+                            : 'provide a payment method and we will charge you only when the order is delivered.'}{' '}
+                          Your card is saved now and charged once, for the total
+                          above, as set out in our{' '}
+                          <Link
+                            href="/terms"
+                            target="_blank"
+                            className="underline font-medium"
+                          >
+                            Terms of Sale
+                          </Link>
+                          .
                         </p>
                       </div>
                     </div>

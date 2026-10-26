@@ -390,6 +390,8 @@ export async function createSetupIntent(
     comments?: string;
     fulfillmentType?: 'pickup' | 'delivery';
     pickupLocation?: string;
+    termsAcceptedAt?: string;
+    termsVersion?: string;
   },
   userId?: string,
   frequency?: 'weekly' | 'bi-weekly' | 'every-4-weeks',
@@ -417,6 +419,10 @@ export async function createSetupIntent(
       comments: orderDetails.comments || '',
       fulfillmentType: orderDetails.fulfillmentType ?? 'delivery',
       pickupLocation: orderDetails.pickupLocation ?? '',
+      // Record of the customer's agreement to be charged off-session after
+      // handoff, which Stripe asks us to keep.
+      termsAcceptedAt: orderDetails.termsAcceptedAt ?? '',
+      termsVersion: orderDetails.termsVersion ?? '',
       isRecurring: isRecurring ? 'true' : 'false',
       userId: userId || '',
       ...(isRecurring && frequency ? { frequency: frequency } : {}),
