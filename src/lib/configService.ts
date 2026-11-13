@@ -10,8 +10,6 @@ export interface AppConfig {
     availableForOrders: boolean;
     /** Public URL of the bread photo (S3). Omit to use default.jpg */
     image_url?: string;
-    /** @deprecated Legacy filename under public/breads; superseded by image_url */
-    image_name?: string;
   }>;
   BUSINESS_SETTINGS: {
     isHolidayMode: boolean;
