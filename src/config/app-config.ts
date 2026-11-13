@@ -58,9 +58,24 @@ export type BreadType = {
   price: number;
   description: string;
   availableForOrders: boolean;
-  /** Filename in public/breads (e.g. rosemary.jpg). Omit to use default.jpg */
+  /** Public URL of the bread photo (uploaded from the POS admin to S3). */
+  image_url?: string;
+  /**
+   * @deprecated Legacy: filename in public/breads (e.g. rosemary.jpg). Superseded by image_url;
+   * kept as a fallback until every bread in config.json has been migrated.
+   */
   image_name?: string;
 };
+
+export const DEFAULT_BREAD_IMAGE = '/breads/default.jpg';
+
+/** Photo for a bread, or null when none is set. */
+export function breadImageUrl(bread: Pick<BreadType, 'image_url' | 'image_name'>): string | null {
+  const url = bread.image_url?.trim();
+  if (url) return url;
+  const name = bread.image_name?.trim();
+  return name ? `/breads/${name}` : null;
+}
 
 /** In-store pickup address (order flow). */
 export const PICKUP_ADDRESS_LINE = '55 NE Holman Street';

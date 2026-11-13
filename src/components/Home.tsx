@@ -3,27 +3,27 @@
 import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { BREAD_TYPES, BUSINESS_SETTINGS } from "@/config/app-config";
+import { BREAD_TYPES, BUSINESS_SETTINGS, breadImageUrl, type BreadType } from "@/config/app-config";
 import { useConfig } from "@/contexts/ConfigContext";
 import { PaymentSuccessModal } from "./PaymentSuccessModal";
 import NewsletterSignup from "./NewsletterSignup";
 import type { PaymentSuccessData } from "@/lib/types";
 
-// Same photos shown per bread on the order page listing (/breads/<image_name>).
-// Skip the generic default.jpg fallback so the showcase only uses real bread photos.
-const FLAVOR_SHOWCASE_IMAGES = Array.from(
-  new Set(
-    BREAD_TYPES.map((bread) => bread.image_name?.trim()).filter((name): name is string => Boolean(name))
-  )
-)
-  .slice(0, 4)
-  .map((name) => `/breads/${name}`);
+// Same photos shown per bread on the order page listing.
+// Skip breads without a photo so the showcase only uses real bread photos (no default.jpg).
+function flavorShowcaseImages(breads: BreadType[]): string[] {
+  return Array.from(
+    new Set(breads.map(breadImageUrl).filter((src): src is string => Boolean(src)))
+  ).slice(0, 4);
+}
 
 export default function Home() {
   const [showPaymentSuccess, setShowPaymentSuccess] = useState(false);
   const [paymentData, setPaymentData] = useState<PaymentSuccessData | null>(null);
   const { config: runtimeConfig } = useConfig();
   const isHolidayMode = (runtimeConfig?.BUSINESS_SETTINGS || BUSINESS_SETTINGS).isHolidayMode;
+  const breadTypes: BreadType[] = runtimeConfig?.BREAD_TYPES || BREAD_TYPES;
+  const flavorShowcaseImagesList = flavorShowcaseImages(breadTypes);
   const heroMobileSrc = isHolidayMode ? "/hero-vacation-mobile.svg" : "/hero-mobile.svg";
   const heroDesktopSrc = isHolidayMode ? "/hero-vacation-desktop.svg" : "/hero-desktop.svg";
   const heroAlt = isHolidayMode
@@ -103,7 +103,7 @@ export default function Home() {
             </h3>
 
             <div className="flex flex-col gap-2.5">
-              {BREAD_TYPES.map((item, index) => (
+              {breadTypes.map((item, index) => (
                 <div
                   key={index}
                   className="flex items-center gap-3 bg-warm-cream rounded-xl border border-bakery-primary/10 px-3.5 py-3 shadow-sm hover:shadow-accent hover:border-bakery-primary/30 transition-all"
@@ -122,7 +122,7 @@ export default function Home() {
           </div>
 
           <div className="grid grid-cols-2 grid-rows-2 gap-3 h-full">
-            {FLAVOR_SHOWCASE_IMAGES.map((src) => (
+            {flavorShowcaseImagesList.map((src) => (
               <div key={src} className="rounded-lg overflow-hidden shadow-lg">
                 <img src={src} alt="" aria-hidden="true" className="w-full h-full object-cover" />
               </div>

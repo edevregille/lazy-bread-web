@@ -14,7 +14,8 @@ import {
   PICKUP_ADDRESS_LINE,
   PICKUP_ADDRESS_CITY,
   PICKUP_ADDRESS_ZIP,
-  type BreadType,
+  DEFAULT_BREAD_IMAGE,
+  breadImageUrl,
 } from '@/config/app-config';
 import { TERMS_VERSION } from '@/config/terms';
 import type { FulfillmentType } from '@/lib/types';
@@ -26,11 +27,6 @@ interface OrderItem {
   price: number;
   quantity: number;
   total: number;
-}
-
-function breadImageSrc(bread: BreadType) {
-  const name = bread.image_name?.trim();
-  return `/breads/${name || 'default.jpg'}`;
 }
 
 export default function OrderPage() {
@@ -477,7 +473,7 @@ export default function OrderPage() {
                     <div className="flex flex-row gap-3 min-w-0 flex-1 items-start">
                       <div className="relative w-24 h-24 md:w-28 md:h-28 shrink-0 rounded-lg overflow-hidden bg-gray-100">
                         <Image
-                          src={breadImageSrc(bread)}
+                          src={breadImageUrl(bread) || DEFAULT_BREAD_IMAGE}
                           alt={bread.name}
                           fill
                           sizes="(max-width: 768px) 6rem, 7rem"

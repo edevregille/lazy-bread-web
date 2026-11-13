@@ -8,7 +8,9 @@ export interface AppConfig {
     price: number;
     description: string;
     availableForOrders: boolean;
-    /** Filename under public/breads (e.g. rosemary.jpg). Omit to use default.jpg */
+    /** Public URL of the bread photo (S3). Omit to use default.jpg */
+    image_url?: string;
+    /** @deprecated Legacy filename under public/breads; superseded by image_url */
     image_name?: string;
   }>;
   BUSINESS_SETTINGS: {
