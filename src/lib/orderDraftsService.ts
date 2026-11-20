@@ -60,7 +60,8 @@ async function call<T>(method: 'POST' | 'PATCH', body: unknown): Promise<T> {
     headers: { 'Content-Type': 'application/json', 'x-internal-key': key },
     body: JSON.stringify(body),
     cache: 'no-store',
-    signal: AbortSignal.timeout(10_000),
+    // Under the Lambda's 15 s timeout and the route's maxDuration, so a slow call fails cleanly.
+    signal: AbortSignal.timeout(15_000),
   });
   const data = await response.json().catch(() => ({}));
   if (!response.ok) {

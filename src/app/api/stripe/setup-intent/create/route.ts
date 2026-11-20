@@ -1,5 +1,5 @@
 import { randomUUID } from 'crypto';
-import { NextRequest, NextResponse } from 'next/server';
+import { after, NextRequest, NextResponse } from 'next/server';
 import { createSetupIntent, createSetupIntentForDraft, createOrFindCustomer } from '@/lib/stripeService';
 import {
   attachSetupIntentToDraft,
@@ -7,6 +7,9 @@ import {
   OrderDraftError,
   upsertOrderDraft,
 } from '@/lib/orderDraftsService';
+
+// The default (10 s) is too tight: a cold order drafts Lambda plus the Stripe calls can exceed it.
+export const maxDuration = 30;
 
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
@@ -69,16 +72,20 @@ export async function POST(request: NextRequest) {
       termsVersion: orderDetails.termsVersion,
     });
 
-    // Informational only: the webhook finds the draft through the SetupIntent metadata.
-    try {
-      await attachSetupIntentToDraft(draft.draftId, setupIntent.id);
-    } catch (error) {
-      console.error('Failed to attach setup intent to order draft (non-blocking):', {
-        draftId: draft.draftId,
-        setupIntentId: setupIntent.id,
-        error: error instanceof Error ? error.message : error,
-      });
-    }
+    // Informational only (the webhook finds the draft through the SetupIntent metadata),
+    // so it runs after the response is sent instead of making the customer wait.
+    const draftId = draft.draftId;
+    after(async () => {
+      try {
+        await attachSetupIntentToDraft(draftId, setupIntent.id);
+      } catch (error) {
+        console.error('Failed to attach setup intent to order draft (non-blocking):', {
+          draftId,
+          setupIntentId: setupIntent.id,
+          error: error instanceof Error ? error.message : error,
+        });
+      }
+    });
 
     return NextResponse.json({
       clientSecret: setupIntent.client_secret,
