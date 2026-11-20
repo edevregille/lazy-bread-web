@@ -434,6 +434,38 @@ export async function createSetupIntent(
   return await stripe.setupIntents.create(setupIntentData);
 }
 
+/**
+ * Create a setup intent for a one-time order whose details are stored in an order draft.
+ * Metadata carries only the draft id (plus the short terms record Stripe asks us to keep),
+ * so it stays far below Stripe's 500-character limit per value whatever the cart holds.
+ * The webhook turns the draft into an order on setup_intent.succeeded.
+ */
+export async function createSetupIntentForDraft(
+  customerId: string,
+  draftId: string,
+  terms?: { termsAcceptedAt?: string; termsVersion?: string },
+): Promise<Stripe.SetupIntent> {
+  const stripe = await getStripe();
+
+  return await stripe.setupIntents.create(
+    {
+      customer: customerId,
+      usage: 'off_session',
+      automatic_payment_methods: {
+        enabled: true,
+        allow_redirects: 'never',
+      },
+      metadata: {
+        orderType: 'online',
+        isRecurring: 'false',
+        orderDraftId: draftId,
+        termsAcceptedAt: terms?.termsAcceptedAt ?? '',
+        termsVersion: terms?.termsVersion ?? '',
+      },
+    },
+  );
+}
+
 export async function updateSetupIntent(setupIntentId: string, paymentMethodId: string): Promise<Stripe.SetupIntent> {
   const stripe = await getStripe();
   return await stripe.setupIntents.update(setupIntentId, {

@@ -30,6 +30,8 @@ export interface OrderDetails {
   termsAcceptedAt?: string;
   /** Which version of the terms they agreed to. */
   termsVersion?: string;
+  /** One id per checkout; the server uses it as the order draft id. */
+  checkoutId?: string;
 }
 
 // Payment-related interfaces

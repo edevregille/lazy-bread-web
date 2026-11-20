@@ -73,15 +73,23 @@ export default function PaymentPage() {
               termsAcceptedAt: orderDetails.termsAcceptedAt,
               termsVersion: orderDetails.termsVersion,
             },
+            checkoutId: orderDetails.checkoutId,
             isGuest: true,
           })
         });
 
+        const responseData = await response.json().catch(() => ({}));
+
         if (!response.ok) {
+          // 400s carry a message meant for the customer (e.g. an item is no longer available).
+          if (response.status === 400 && typeof responseData.error === 'string') {
+            setError(responseData.error);
+            setPaymentFlow('error');
+            return;
+          }
           throw new Error('Failed to create setup intent');
         }
 
-        const responseData = await response.json();
         setClientSecret(responseData.clientSecret);
         setIntentId(responseData.id);
         setPaymentFlow('guest-setup-intent');

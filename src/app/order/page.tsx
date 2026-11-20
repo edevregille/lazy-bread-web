@@ -55,6 +55,20 @@ export default function OrderPage() {
 
   const ORDER_DATA_STORAGE_KEY = 'orderData';
 
+  const getOrCreateCheckoutId = (): string | undefined => {
+    try {
+      const raw = sessionStorage.getItem(ORDER_DATA_STORAGE_KEY);
+      const previous = raw ? (JSON.parse(raw) as { checkoutId?: unknown }).checkoutId : undefined;
+      if (typeof previous === 'string' && previous) return previous;
+    } catch {
+      // ignore corrupt storage
+    }
+    // randomUUID needs a secure context; without it the server assigns an id.
+    return typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function'
+      ? crypto.randomUUID()
+      : undefined;
+  };
+
   // Restore form from sessionStorage when returning from payment (browser back or /order revisit)
   useLayoutEffect(() => {
     if (typeof window === 'undefined') return;
@@ -206,7 +220,8 @@ export default function OrderPage() {
       .map(([breadType, quantity]) => {
         const bread = BREAD_TYPES_RUNTIME.find(b => b.name === breadType && b.availableForOrders);
         return {
-          id: breadType,
+          // Catalog id (e.g. "classic-salt"); the server prices items by it.
+          id: bread ? bread.id : breadType,
           name: breadType,
           price: bread ? bread.price : 0,
           quantity,
@@ -349,8 +364,12 @@ export default function OrderPage() {
         termsVersion: TERMS_VERSION,
       };
 
+      // One id per checkout, kept when the customer comes back to edit the order,
+      // so the server updates the same order draft instead of creating another.
+      const checkoutId = getOrCreateCheckoutId();
+
       // Store order data in session storage for payment page
-      sessionStorage.setItem(ORDER_DATA_STORAGE_KEY, JSON.stringify(orderData));
+      sessionStorage.setItem(ORDER_DATA_STORAGE_KEY, JSON.stringify({ ...orderData, checkoutId }));
       
       // Redirect to payment page
       router.push('/order/payment');
